@@ -365,3 +365,11 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Test output files
+newDB.db
+messyDB
+messy.db
+output_test.budget
+output_test_expenses.exps
+log.txt
