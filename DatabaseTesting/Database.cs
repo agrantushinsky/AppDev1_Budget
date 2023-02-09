@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SQLite;
 using System.Threading;
+using System.Data.Entity.Infrastructure;
 
 // ===================================================================
 // Very important notes:
@@ -45,7 +46,10 @@ namespace Budget
             // If there was a database open before, close it and release the lock
             CloseDatabaseAndReleaseFile();
 
-            // your code
+            // Open connection to the database file:
+            string connectionSource = @$"URI=file:{filename}";
+            _connection = new SQLiteConnection(connectionSource);
+            _connection.Open();
         }
 
        // ===================================================================
