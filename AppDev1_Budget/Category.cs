@@ -18,12 +18,15 @@ namespace Budget
     // ====================================================================
     public class Category
     {
+
         // ====================================================================
         // Properties
         // ====================================================================
-        public int Id { get; set; }
-        public String Description { get; set; }
-        public CategoryType Type { get; set; }
+
+        //changed Id to be readonly
+        public int Id { get; }
+        public String Description { get; }
+        public CategoryType Type { get;  }
         public enum CategoryType
         {
             Income,
