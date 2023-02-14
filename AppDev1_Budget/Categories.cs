@@ -181,7 +181,8 @@ namespace Budget
         public void Delete(int Id)
         {
             int i = _Cats.FindIndex(x => x.Id == Id);
-            _Cats.RemoveAt(i);
+            if( i > -1 )
+                _Cats.RemoveAt(i);
         }
 
         // ====================================================================
