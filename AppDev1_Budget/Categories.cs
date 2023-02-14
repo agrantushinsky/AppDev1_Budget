@@ -231,6 +231,9 @@ namespace Budget
                         case "credit":
                             type = Category.CategoryType.Credit;
                             break;
+                        case "savings":
+                            type = Category.CategoryType.Savings;
+                            break;
                         default:
                             type = Category.CategoryType.Expense;
                             break;
