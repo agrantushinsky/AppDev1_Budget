@@ -42,9 +42,15 @@ namespace Budget
         }
 
         //Used for testing
-        public Categories(SQLiteConnection conn, bool whatthefuck) : this()
+        public Categories(SQLiteConnection conn, bool loadDefault)
         {
-        
+            if (loadDefault)
+            {
+                //DOESNT WORK 
+                SetCategoriesToDefaults();
+                _WriteToDatabase("C:\\Users\\2028706\\source\\repos\\AppDev1_Budget\\BudgetTesting\\newDB.db");
+            }
+            _LoadCategories(conn);
         }
         // ====================================================================
         // get a specific category from the list where the id is the one specified
@@ -187,7 +193,7 @@ namespace Budget
         public void Delete(int Id)
         {
             int i = _Cats.FindIndex(x => x.Id == Id);
-            if( i > -1 )
+            if (i > -1)
                 _Cats.RemoveAt(i);
         }
 
@@ -306,7 +312,7 @@ namespace Budget
         {
             _Cats.Insert(id, new Category(id, newDescr, type));
             _Cats.RemoveAt(id + 1);
-
+        } 
         private void _WriteToDatabase(string filepath)
         {
             // TODO: This is probably needed
@@ -351,6 +357,7 @@ namespace Budget
 
         private void _LoadCategories(SQLiteConnection connection)
         {
+            _Cats.Clear();
             // Constants for reader indices
             const int IDX_ID = 0, IDX_DESCRIPTION = 1, IDX_CATEGORY = 2;
 
