@@ -6,11 +6,11 @@ using Budget;
 
 namespace BudgetCodeTests
 {
+    [Collection("Sequential")]
     public class TestHomeBudget_GetBudgetItemsByMonth
     {
-        string testInputFile = TestConstants.testBudgetFile;
+        string testInputFile = TestConstants.testExpensesInputFile;
         
-
 
         // ========================================================================
         // Get Expenses By Month Method tests
@@ -20,8 +20,12 @@ namespace BudgetCodeTests
         public void HomeBudgetMethod_GetBudgetItemsByMonth_NoStartEnd_NoFilter()
         {
             // Arrange
-            string inFile = GetSolutionDir() + "\\" + testInputFile;
-            HomeBudget homeBudget = new HomeBudget(inFile);
+            string folder = TestConstants.GetSolutionDir();
+            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            HomeBudget homeBudget = new HomeBudget(messyDB, inFile, false);
             int maxRecords = TestConstants.budgetItemsByMonth_MaxRecords;
             BudgetItemsByMonth firstRecord = TestConstants.budgetItemsByMonth_FirstRecord;
 
@@ -53,8 +57,12 @@ namespace BudgetCodeTests
         public void HomeBudgetMethod_GetBudgetItemsByMonth_NoStartEnd_FilterbyCategory()
         {
             // Arrange
-            string inFile = GetSolutionDir() + "\\" + testInputFile;
-            HomeBudget homeBudget = new HomeBudget(inFile);
+            string folder = TestConstants.GetSolutionDir();
+            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            HomeBudget homeBudget = new HomeBudget(messyDB, inFile, false);
             int maxRecords = TestConstants.budgetItemsByMonth_FilteredByCat9_number;
             BudgetItemsByMonth firstRecord = TestConstants.budgetItemsByMonth_FirstRecord_FilteredCat9;
 
@@ -85,8 +93,13 @@ namespace BudgetCodeTests
         public void HomeBudgetMethod_GetBudgetItemsByMonth_2018_filterDateAndCat9()
         {
             // Arrange
-            string inFile = GetSolutionDir() + "\\" + testInputFile;
-            HomeBudget homeBudget = new HomeBudget(inFile);
+            string folder = TestConstants.GetSolutionDir();
+            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            HomeBudget homeBudget = new HomeBudget(messyDB, inFile, false);
+
             List<Expense> listExpenses = TestConstants.filteredbyYear2018();
             List<Category> listCategories = homeBudget.categories.List();
             List<BudgetItemsByMonth> validBudgetItemsByMonth = TestConstants.getBudgetItemsBy2018_01_filteredByCat9();
@@ -114,15 +127,19 @@ namespace BudgetCodeTests
             }
         }
 
-
         // ========================================================================
 
         [Fact]
         public void HomeBudgetMethod_GetBudgetItemsByMonth_2018_filterDate()
         {
             // Arrange
-            string inFile = GetSolutionDir() + "\\" + testInputFile;
-            HomeBudget homeBudget = new HomeBudget(inFile);
+            string folder = TestConstants.GetSolutionDir();
+            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            HomeBudget homeBudget = new HomeBudget(messyDB, inFile, false);
+
             List<BudgetItemsByMonth> validBudgetItemsByMonth = TestConstants.getBudgetItemsBy2018_01();
             BudgetItemsByMonth firstRecord = validBudgetItemsByMonth[0];
 
@@ -148,49 +165,6 @@ namespace BudgetCodeTests
 
             }
         }
-
-
-
-        // ========================================================================
-
-        // -------------------------------------------------------
-        // helpful functions, ... they are not tests
-        // -------------------------------------------------------
-
-        private String GetSolutionDir()
-        {
-
-            // this is valid for C# .Net Foundation (not for C# .Net Core)
-            return Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..\\..\\..\\"));
-        }
-
-        // source taken from: https://www.dotnetperls.com/file-equals
-
-        private bool FileEquals(string path1, string path2)
-        {
-            byte[] file1 = File.ReadAllBytes(path1);
-            byte[] file2 = File.ReadAllBytes(path2);
-            if (file1.Length == file2.Length)
-            {
-                for (int i = 0; i < file1.Length; i++)
-                {
-                    if (file1[i] != file2[i])
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
-            return false;
-        }
-
-        private bool FileSameSize(string path1, string path2)
-        {
-            byte[] file1 = File.ReadAllBytes(path1);
-            byte[] file2 = File.ReadAllBytes(path2);
-            return (file1.Length == file2.Length);
-        }
-
     }
 }
 

@@ -73,6 +73,12 @@ namespace Budget
             ReadFromFile(budgetFileName);
         }
 
+        //Used for tests
+        public HomeBudget(String budgetFileName, string inputFile, bool v) : this(budgetFileName)
+        {
+
+        }
+
         #region OpenNewAndSave
         // ---------------------------------------------------------------
         // Read

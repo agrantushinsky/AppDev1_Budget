@@ -35,10 +35,4 @@
     <Amount>25</Amount>
     <Category>14</Category>
   </Expense>
-  <Expense ID="8">
-    <Date>2/14/2023 12:20:22 PM</Date>
-    <Description>McDonalds</Description>
-    <Amount>35.27</Amount>
-    <Category>14</Category>
-  </Expense>
 </Expenses>
