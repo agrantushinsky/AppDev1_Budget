@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Xml;
-using System.Data.SqlClient;
 using System.Data.SQLite;
 
 // ============================================================================
@@ -307,6 +306,87 @@ namespace Budget
         {
             _Cats.Insert(id, new Category(id, newDescr, type));
             _Cats.RemoveAt(id + 1);
+
+        private void _WriteToDatabase(string filepath)
+        {
+            // TODO: This is probably needed
+            // if(BudgetFiles.VerifyReadFromFileName(filepath))
+
+            // Try to load an existing database:
+            try
+            {
+                // Initialize the connection
+                Database.existingDatabase(filepath);
+            } 
+            catch (FileNotFoundException e)
+            {
+                // If the file was not found, create the database
+                Database.newDatabase(filepath);
+            }
+
+            // Now that the database connection is up, write all categories to the database:
+            foreach (Category category in _Cats)
+                _InsertCategory(category);
+        }
+
+        private void _ReadFromDatabase(string filepath)
+        {
+            // TODO: This is probably needed
+            // if(BudgetFiles.VerifyReadFromFileName(filepath))
+
+            // Establish connection to the database
+            try
+            {
+                Database.existingDatabase(filepath);
+            }
+            catch
+            {
+                // Not database, nothing else to do in this method. Return.
+                return;
+            }
+
+            // Load the categories.
+            _LoadCategories(Database.dbConnection);
+        }
+
+        private void _LoadCategories(SQLiteConnection connection)
+        {
+            // Constants for reader indices
+            const int IDX_ID = 0, IDX_DESCRIPTION = 1, IDX_CATEGORY = 2;
+
+            // Create the select command
+            const string selectCommandText = "SELECT Id, Description, TypeId FROM categories";
+            using var selectCommand = new SQLiteCommand(selectCommandText, connection);
+
+            // Execute the reader
+            using SQLiteDataReader reader = selectCommand.ExecuteReader();
+
+            // Loop through all the reader information
+            while(reader.Read())
+            {
+                // Add the category to the list from the database
+                _Cats.Add(new Category(
+                    reader.GetInt32(IDX_ID), 
+                    reader.GetString(IDX_DESCRIPTION),
+                    (Category.CategoryType)reader.GetInt32(IDX_CATEGORY)));
+            }
+        }
+
+        private void _InsertCategory(Category category)
+        {
+            // Create the insert command text
+            const string insertCommandText = "INSERT INTO categories(Id, Description, TypeId) VALUES(@Id, '@Description', @TypeId)";
+
+            // Initialize the insert command with the command text and connection.
+            using var insertCommand = new SQLiteCommand(insertCommandText, Database.dbConnection);
+
+            // Setup parameters:
+            insertCommand.Parameters.Add(new SQLiteParameter("@Id", category.Id));
+            insertCommand.Parameters.Add(new SQLiteParameter("@Description", category.Description));
+            insertCommand.Parameters.Add(new SQLiteParameter("@TypeId", category.Type));
+
+            // Finally, execute the command
+            insertCommand.ExecuteNonQuery();
         }
     }
 }
