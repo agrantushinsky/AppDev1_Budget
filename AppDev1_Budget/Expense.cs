@@ -20,6 +20,8 @@ namespace Budget
         // ====================================================================
         // Properties
         // ====================================================================
+
+        //Changed to be readonly
         public int Id { get; }
         public DateTime Date { get;  }
         public Double Amount { get; set; }

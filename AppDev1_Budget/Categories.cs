@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Xml;
+using System.Data.SqlClient;
+using System.Data.SQLite;
 
 // ============================================================================
 // (c) Sandy Bultena 2018
@@ -40,6 +42,11 @@ namespace Budget
             SetCategoriesToDefaults();
         }
 
+        //Used for testing
+        public Categories(SQLiteConnection conn, bool whatthefuck) : this()
+        {
+        
+        }
         // ====================================================================
         // get a specific category from the list where the id is the one specified
         // ====================================================================
@@ -290,6 +297,17 @@ namespace Budget
 
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="newDescr"></param>
+        /// <param name="income"></param>
+        public void UpdateProperties(int id, string newDescr, Category.CategoryType type)
+        {
+            _Cats.Insert(id, new Category(id, newDescr, type));
+            _Cats.RemoveAt(id + 1);
+        }
     }
 }
 
