@@ -17,28 +17,13 @@ namespace Budget
     // ====================================================================
     public class Expense
     {
-        private double _amount;        
 
         // ====================================================================
         // Properties
         // ====================================================================
         public int Id { get; }
         public DateTime Date { get;  }
-        public Double Amount
-        {
-            get { return _amount; }
-            set
-            {
-                if(this.Category == Convert.ToInt32(Budget.Category.CategoryType.Expense))
-                {
-                    _amount = value * -1;
-                }
-                else
-                {
-                    _amount = value;
-                }
-            }
-        }
+        public Double Amount { get; set; }
         public String Description { get; set; }
         public int Category { get; set; }
 
