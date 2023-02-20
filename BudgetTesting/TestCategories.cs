@@ -261,6 +261,8 @@ namespace BudgetCodeTests
             // Arrange
             String dir = GetSolutionDir();
             Categories categories = new Categories();
+
+            //saving the categories data from file to property
             categories.ReadFromFile(dir + "\\" + testInputFile);
             string fileName = TestConstants.CategoriesOutputTestFile;
             String outputFile = dir + "\\" + fileName;

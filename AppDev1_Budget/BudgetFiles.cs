@@ -30,7 +30,7 @@ namespace Budget
         public static String VerifyReadFromFileName(String FilePath)
         {
             //Null filepath is not accepted
-            if (FilePath == null)
+            if (FilePath == null || FilePath == String.Empty)
             {
                 throw new FileNotFoundException("File path must be specified");
             }
@@ -50,11 +50,12 @@ namespace Budget
         /// <param name="FilePath">The filepath to validate</param>
         /// <returns>The path of the file where data will be written on</returns>
         /// <exception cref="FileNotFoundException">If the file path is null</exception>
+        /// <exception cref="ArgumentException">If the file path to be created is invalid</exception>
         /// <exception cref="Exception">If the file is read only</exception>
         public static String VerifyWriteToFileName(String FilePath)
         {
             //FilePath must always be specficied
-            if (FilePath == null)
+            if (FilePath == null || FilePath == String.Empty)
             {
                 throw new FileNotFoundException("File path must be specified");
             }
@@ -62,7 +63,14 @@ namespace Budget
             //If file does not exist, create file
             if (!File.Exists(FilePath))
             {
-                File.Create(FilePath).Close();
+                try
+                {
+                    File.Create(FilePath).Close();
+                }
+                catch(Exception e)
+                {
+                    throw new ArgumentException("Can't create file: invalid file path");
+                }
 
             }
 

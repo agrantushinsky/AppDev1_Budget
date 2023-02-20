@@ -9,29 +9,41 @@ namespace BudgetCodeTests
     public class TestHomeBudget
     {
         string testInputFile = TestConstants.testBudgetFile;
-        
 
         // ========================================================================
 
         [Fact]
-        public void HomeBudgetObject_New_NoFileSpecified()
+        public void HomeBudget_NullFileNameNotAccepted()
         {
-            // Arrange
+            Assert.Throws<Exception>(() =>
+            {
+                HomeBudget budget = new HomeBudget(null);
+            });
 
-            // Act
-            HomeBudget homeBudget  = new HomeBudget();
+        }
 
-            // Assert 
-            Assert.IsType<HomeBudget>(homeBudget);
+        // ========================================================================
 
-            Assert.True(typeof(HomeBudget).GetProperty("FileName").CanWrite == false, "Filename read only");
-            Assert.True(typeof(HomeBudget).GetProperty("DirName").CanWrite == false, "Dirname read only");
-            Assert.True(typeof(HomeBudget).GetProperty("PathName").CanWrite == false, "Pathname read only");
-            Assert.True(typeof(HomeBudget).GetProperty("categories").CanWrite == false, "categories read only");
-            Assert.True(typeof(HomeBudget).GetProperty("expenses").CanWrite == false, "expenses read only");
+        [Fact]
+        public void HomeBudget_EmptyFileNameNotAccepted()
+        {
+            Assert.Throws<Exception>(() =>
+            {
+                HomeBudget budget = new HomeBudget("");
+            });
 
-            Assert.Empty(homeBudget.expenses.List());
-            Assert.NotEmpty(homeBudget.categories.List());
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void BudgetFiles_VerifyWriteToFileName_InvalidFilePath()
+        {
+            Assert.Throws<ArgumentException>(() =>
+            {
+                BudgetFiles.VerifyWriteToFileName("a*bc");
+            });
+
         }
 
         // ========================================================================
@@ -65,10 +77,10 @@ namespace BudgetCodeTests
             int numCategories = TestConstants.numberOfCategoriesInFile;
             Expense firstExpenseInFile = TestConstants.firstExpenseInFile;
             Category firstCategoryInFile = TestConstants.firstCategoryInFile;
-            HomeBudget homeBudget = new HomeBudget();
+            HomeBudget homeBudget = new HomeBudget(file);
 
             // Act
-            homeBudget.ReadFromFile(file);
+            //homeBudget.ReadFromFile(file);
             Expense firstExpense = homeBudget.expenses.List()[0];
             Category firstCategory = homeBudget.categories.List()[0];
 

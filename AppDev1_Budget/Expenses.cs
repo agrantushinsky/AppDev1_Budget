@@ -21,7 +21,6 @@ namespace Budget
     // ====================================================================
     public class Expenses
     {
-        private static String DefaultFileName = "budget.txt";
         private List<Expense> _Expenses = new List<Expense>();
         private string _FileName;
         private string _DirName;
@@ -57,7 +56,7 @@ namespace Budget
             // ---------------------------------------------------------------
             // get filepath name (throws exception if it doesn't exist)
             // ---------------------------------------------------------------
-            filepath = BudgetFiles.VerifyReadFromFileName(filepath, DefaultFileName);
+            filepath = BudgetFiles.VerifyReadFromFileName(filepath);
 
             // ---------------------------------------------------------------
             // read the expenses from the xml file
@@ -75,7 +74,7 @@ namespace Budget
 
         // ====================================================================
         // save to a file
-        // if filepath is not specified, read/save in AppData file
+        // if filepath is not specified, throws an exception
         // ====================================================================
         public void SaveToFile(String filepath = null)
         {
@@ -94,9 +93,9 @@ namespace Budget
             _FileName = null;
 
             // ---------------------------------------------------------------
-            // get filepath name (throws exception if it doesn't exist)
+            // get filepath name (throws exception if it's null and read only)
             // ---------------------------------------------------------------
-            filepath = BudgetFiles.VerifyWriteToFileName(filepath, DefaultFileName);
+            filepath = BudgetFiles.VerifyWriteToFileName(filepath);
 
             // ---------------------------------------------------------------
             // save as XML
