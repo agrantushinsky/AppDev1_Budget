@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
+﻿using System.Data.SQLite;
 using System.Xml;
-using System.Data.SQLite;
 
 // ============================================================================
 // (c) Sandy Bultena 2018
@@ -42,15 +36,16 @@ namespace Budget
         }
 
         //Used for testing
-        public Categories(SQLiteConnection conn, bool loadDefault)
+        public Categories(SQLiteConnection conn, bool newDatabase)
         {
-            if (loadDefault)
+            if (newDatabase)
             {
-                //DOESNT WORK 
                 SetCategoriesToDefaults();
-                _WriteToDatabase("C:\\Users\\2028706\\source\\repos\\AppDev1_Budget\\BudgetTesting\\newDB.db");
             }
-            _LoadCategories(conn);
+            else
+            {
+                _LoadCategories(conn);
+            }
         }
         // ====================================================================
         // get a specific category from the list where the id is the one specified
@@ -303,16 +298,17 @@ namespace Budget
         }
 
         /// <summary>
-        ///
+        /// Finds the category in the list and replaces it with the passed category data.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="newDescr"></param>
-        /// <param name="income"></param>
+        /// <param name="id">The id of the category to replace.</param>
+        /// <param name="newDescr">The description of the new category.</param>
+        /// <param name="type">The CategoryType of the new category.</param>
         public void UpdateProperties(int id, string newDescr, Category.CategoryType type)
         {
-            _Cats.Insert(id, new Category(id, newDescr, type));
-            _Cats.RemoveAt(id + 1);
-        } 
+            int index = _Cats.FindIndex(x => x.Id == id);
+            if (index >= 0)
+                _Cats[index]=new Category(id,newDescr, type);
+        }
         private void _WriteToDatabase(string filepath)
         {
             // TODO: This is probably needed
@@ -323,7 +319,7 @@ namespace Budget
             {
                 // Initialize the connection
                 Database.existingDatabase(filepath);
-            } 
+            }
             catch (FileNotFoundException e)
             {
                 // If the file was not found, create the database
@@ -335,6 +331,7 @@ namespace Budget
                 _InsertCategory(category);
         }
 
+        //Tries to convert the filepath to a db connection
         private void _ReadFromDatabase(string filepath)
         {
             // TODO: This is probably needed
@@ -369,11 +366,11 @@ namespace Budget
             using SQLiteDataReader reader = selectCommand.ExecuteReader();
 
             // Loop through all the reader information
-            while(reader.Read())
+            while (reader.Read())
             {
                 // Add the category to the list from the database
                 _Cats.Add(new Category(
-                    reader.GetInt32(IDX_ID), 
+                    reader.GetInt32(IDX_ID),
                     reader.GetString(IDX_DESCRIPTION),
                     (Category.CategoryType)reader.GetInt32(IDX_CATEGORY)));
             }
