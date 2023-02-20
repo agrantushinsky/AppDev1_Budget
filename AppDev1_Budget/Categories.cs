@@ -191,8 +191,12 @@ namespace Budget
         public void Delete(int Id)
         {
             int i = _Cats.FindIndex(x => x.Id == Id);
+            // Delete from list
             if (i > -1)
                 _Cats.RemoveAt(i);
+
+            // Delete from database
+            _DeleteCategory(Id);
         }
 
         // ====================================================================
@@ -202,6 +206,9 @@ namespace Budget
         // ====================================================================
         public List<Category> List()
         {
+            // First load the category and then create the deep-copied list:
+            _LoadCategories(Database.dbConnection);
+
             List<Category> newList = new List<Category>();
             foreach (Category category in _Cats)
             {
@@ -394,6 +401,21 @@ namespace Budget
 
             // Finally, execute the command
             insertCommand.ExecuteNonQuery();
+        }
+
+        private void _DeleteCategory(int id)
+        {
+            // Create the delete command text
+            const string deleteCommandText = "DELETE FROM categories WHERE Id=@Id";
+
+            // Initialize the delete command with the command text and connection
+            using var deleteCommand = new SQLiteCommand(deleteCommandText, Database.dbConnection);
+
+            // Setup the ID parameter
+            deleteCommand.Parameters.Add(new SQLiteParameter("@Id", id));
+
+            // Execute the delete operation
+            deleteCommand.ExecuteNonQuery();
         }
     }
 }
