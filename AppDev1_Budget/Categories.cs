@@ -169,6 +169,7 @@ namespace Budget
         private void Add(Category cat)
         {
             _Cats.Add(cat);
+            _InsertCategory(cat);
         }
 
         public void Add(String desc, Category.CategoryType type)
@@ -179,7 +180,9 @@ namespace Budget
                 new_num = (from c in _Cats select c.Id).Max();
                 new_num++;
             }
-            _Cats.Add(new Category(new_num, desc, type));
+            Category newCategory = new Category(new_num, desc, type);
+            _Cats.Add(newCategory);
+            _InsertCategory(newCategory);
         }
 
         // ====================================================================
