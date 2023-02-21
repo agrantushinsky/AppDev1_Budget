@@ -268,7 +268,6 @@ namespace Budget
 
         private void _RemoveAll()
         {
-            // TODO: Ask Sandy about this
             _DeleteAllFromTable("categories");
             _DeleteAllFromTable("categoryTypes");
         }
