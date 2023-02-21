@@ -218,7 +218,7 @@ namespace Budget
             }
             catch (Exception ex)
             {
-                throw new Exception("Error while deleting category from database: " + ex.Message);
+                throw new SQLiteException($"Error while deleting category of id: {id} from database: {ex.Message}");
             }
         }
 
@@ -281,7 +281,13 @@ namespace Budget
             using var deleteCommand = new SQLiteCommand(deleteCommandText, Database.dbConnection);
 
             // Execute the delete operation
-            deleteCommand.ExecuteNonQuery();
+            try
+            {
+                deleteCommand.ExecuteNonQuery();
+            } catch (Exception ex)
+            {
+                throw new SQLiteException($"Error while deleting all values from table: {table} Message: {ex.Message}");
+            }
         }
 
         private int _GetNextID()
