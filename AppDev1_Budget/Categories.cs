@@ -1,5 +1,4 @@
 ﻿using System.Data.SQLite;
-using System.Xml;
 
 // ============================================================================
 // (c) Sandy Bultena 2018
@@ -179,7 +178,16 @@ namespace Budget
             deleteCommand.Prepare();
 
             // Execute the delete operation
-            deleteCommand.ExecuteNonQuery();
+
+            //Throw excetion if not allowed to delete in database
+            try
+            {
+                deleteCommand.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error while deleting category from database: " + ex.Message);
+            }
         }
 
         private Category? _SelectCategory(int id)
