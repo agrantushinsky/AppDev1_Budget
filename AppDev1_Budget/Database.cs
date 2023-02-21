@@ -73,11 +73,6 @@ namespace Budget
                         Id INTEGER PRIMARY KEY NOT NULL,
                         Description TEXT NOT NULL
                     );
-
-                    INSERT INTO categoryTypes VALUES(1, 'Income');
-                    INSERT INTO categoryTypes VALUES(2, 'Expense');
-                    INSERT INTO categoryTypes VALUES(3, 'Credit');
-                    INSERT INTO categoryTypes VALUES(4, 'Savings');
                 ";
 
             // Create, execute, and dispose of command for table creation:

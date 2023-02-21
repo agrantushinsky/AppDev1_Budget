@@ -62,6 +62,12 @@ namespace Budget
         {
             _RemoveAll();
 
+            // Add default categoryTypes
+            _InsertCategoryType((int)Category.CategoryType.Income + 1, "Income");
+            _InsertCategoryType((int)Category.CategoryType.Expense + 1, "Expense");
+            _InsertCategoryType((int)Category.CategoryType.Credit + 1, "Credit");
+            _InsertCategoryType((int)Category.CategoryType.Savings + 1, "Savings");
+
             // ---------------------------------------------------------------
             // Add Defaults
             // ---------------------------------------------------------------
@@ -166,6 +172,23 @@ namespace Budget
             insertCommand.ExecuteNonQuery();
         }
 
+        private void _InsertCategoryType(int typeId, string description)
+        {
+            // Create the insert command text
+            const string insertCommandText = "INSERT INTO categoryTypes(Id, Description) VALUES(@Id, @Description)";
+
+            // Initialize the insert command with the command text and connection.
+            using var insertCommand = new SQLiteCommand(insertCommandText, Database.dbConnection);
+
+            // Setup parameters:
+            insertCommand.Parameters.Add(new SQLiteParameter("@Id", typeId));
+            insertCommand.Parameters.Add(new SQLiteParameter("@Description", description));
+            insertCommand.Prepare();
+
+            // Finally, execute the command
+            insertCommand.ExecuteNonQuery();
+        }
+
         private void _DeleteCategory(int id)
         {
             // Create the delete command text
@@ -228,8 +251,15 @@ namespace Budget
 
         private void _RemoveAll()
         {
+            // TODO: Ask Sandy about this
+            _DeleteAllFromTable("categories");
+            _DeleteAllFromTable("categoryTypes");
+        }
+
+        private void _DeleteAllFromTable(string table)
+        {
             // Create the delete command text
-            const string deleteCommandText = "DELETE FROM categories";
+            string deleteCommandText = $"DELETE FROM {table}";
 
             // Initialize the delete command with the command text and connection
             using var deleteCommand = new SQLiteCommand(deleteCommandText, Database.dbConnection);
