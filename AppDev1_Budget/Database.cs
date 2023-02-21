@@ -40,6 +40,13 @@ namespace Budget
         // ===================================================================
         // create and open a new database
         // ===================================================================
+
+        /// <summary>
+        /// Creates a new database at the specified file path. Then adds the tables expenses,categories and categoryTypes to the databse.
+        /// </summary>
+        /// <param name="filename">The name of the file you want to create the new database in.</param>
+        /// <exception cref="FileNotFoundException">If file doesn't exist.</exception>
+
         public static void newDatabase(string filename)
         {
             // Open connection to the database:
@@ -85,6 +92,11 @@ namespace Budget
        // ===================================================================
        // open an existing database
        // ===================================================================
+       /// <summary>
+       /// Opens a connection to the passed filename
+       /// </summary>
+       /// <param name="filename">The name of the db file you want to open</param>
+       /// <exception cref="FileNotFoundException">If file doesn't exist.</exception>
        public static void existingDatabase(string filename)
         {
             // If the file doesn't exist, throw an exception:

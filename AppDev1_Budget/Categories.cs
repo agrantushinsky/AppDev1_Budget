@@ -100,6 +100,10 @@ namespace Budget
         // ====================================================================
         // Delete category
         // ====================================================================
+        /// <summary>
+        /// Deletes the category with the specified id from the database.
+        /// </summary>
+        /// <param name="Id">The id of the category you want to delete</param>
         public void Delete(int Id)
         {
             // Delete from database
@@ -111,6 +115,11 @@ namespace Budget
         // Note:  make new copy of list, so user cannot modify what is part of
         //        this instance
         // ====================================================================
+
+        /// <summary>
+        /// Gets all the categories from the database.
+        /// </summary>
+        /// <returns>A list of all of the categories in the database table.</returns>
         public List<Category> List()
         {
             return _GetCategories(Database.dbConnection);

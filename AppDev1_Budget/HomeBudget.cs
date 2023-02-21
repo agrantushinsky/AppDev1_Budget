@@ -74,9 +74,23 @@ namespace Budget
         }
 
         //Used for tests
-        public HomeBudget(String budgetFileName, string inputFile, bool v) : this(budgetFileName)
+        public HomeBudget(String databaseFile, string expenseFile, bool newDatabase=false) 
         {
+            if (!newDatabase && File.Exists(databaseFile))
+            {
+                Database.existingDatabase(databaseFile);
+            }
+            else
+            {
+                Database.newDatabase(databaseFile);
+                newDatabase = true;
 
+            }
+            _categories = new Categories(Database.dbConnection, newDatabase);
+            _expenses = new Expenses();
+
+            //read the expense from the xml
+            _expenses.ReadFromFile(expenseFile);
         }
 
         #region OpenNewAndSave
