@@ -52,7 +52,7 @@ namespace Budget
                     DROP TABLE IF EXISTS categoryTypes;
 
                     CREATE TABLE expenses (
-                        Id INTEGER PRIMARY KEY NOT NULL IDENTITY(0, 1),
+                        Id INTEGER PRIMARY KEY NOT NULL,
                         Date TEXT NOT NULL,
                         Description TEXT NOT NULL,
                         Amount REAL NOT NULL,
@@ -62,7 +62,7 @@ namespace Budget
                     );
 
                     CREATE TABLE categories (
-                        Id INTEGER PRIMARY KEY NOT NULL IDENTITY(0, 1),
+                        Id INTEGER PRIMARY KEY NOT NULL,
                         Description TEXT NOT NULL,
                         TypeId INTEGER NOT NULL,
 
@@ -73,6 +73,11 @@ namespace Budget
                         Id INTEGER PRIMARY KEY NOT NULL,
                         Description TEXT NOT NULL
                     );
+
+                    INSERT INTO categoryTypes VALUES(1, 'Income');
+                    INSERT INTO categoryTypes VALUES(2, 'Expense');
+                    INSERT INTO categoryTypes VALUES(3, 'Credit');
+                    INSERT INTO categoryTypes VALUES(4, 'Savings');
                 ";
 
             // Create, execute, and dispose of command for table creation:

@@ -142,7 +142,7 @@ namespace Budget
                 categories.Add(new Category(
                     reader.GetInt32(IDX_ID),
                     reader.GetString(IDX_DESCRIPTION),
-                    (Category.CategoryType)reader.GetInt32(IDX_CATEGORY)));
+                    (Category.CategoryType)reader.GetInt32(IDX_CATEGORY) - 1));
             }
             return categories;
         }
@@ -150,16 +150,17 @@ namespace Budget
         private void _InsertCategory(string description, Category.CategoryType type)
         {
             // Create the insert command text
-            const string insertCommandText = "INSERT INTO categories(Id, Description, TypeId) VALUES(@Id, '@Description', @TypeId)";
+            const string insertCommandText = "INSERT INTO categories(Id, Description, TypeId) VALUES(@Id, @Description, @TypeId)";
 
             // Initialize the insert command with the command text and connection.
             using var insertCommand = new SQLiteCommand(insertCommandText, Database.dbConnection);
 
             // Setup parameters:
             int nextId = _GetNextID();
-            insertCommand.Parameters.Add(new SQLiteParameter("@Id", sadf));
+            insertCommand.Parameters.Add(new SQLiteParameter("@Id", nextId));
             insertCommand.Parameters.Add(new SQLiteParameter("@Description", description));
-            insertCommand.Parameters.Add(new SQLiteParameter("@TypeId", type));
+            insertCommand.Parameters.Add(new SQLiteParameter("@TypeId", type + 1));
+            insertCommand.Prepare();
 
             // Finally, execute the command
             insertCommand.ExecuteNonQuery();
@@ -175,6 +176,7 @@ namespace Budget
 
             // Setup the ID parameter
             deleteCommand.Parameters.Add(new SQLiteParameter("@Id", id));
+            deleteCommand.Prepare();
 
             // Execute the delete operation
             deleteCommand.ExecuteNonQuery();
@@ -185,13 +187,14 @@ namespace Budget
             const int IDX_ID = 0, IDX_DESCRIPTION = 1, IDX_CATEGORY = 2;
 
             // Create the select command text
-            const string selectCommandText = "SELECT FROM categories WHERE Id=@Id";
+            const string selectCommandText = "SELECT Id, Description, TypeId FROM categories WHERE Id=@Id";
 
             // Initialize the select command with the command text and connection
             using var selectCommand = new SQLiteCommand(selectCommandText, Database.dbConnection);
 
             // Setup the ID parameter
             selectCommand.Parameters.Add(new SQLiteParameter("@Id", id));
+            selectCommand.Prepare();
 
             // Execute the reader
             using SQLiteDataReader reader = selectCommand.ExecuteReader();
@@ -202,7 +205,7 @@ namespace Budget
             return new Category(
                 reader.GetInt32(IDX_ID),
                 reader.GetString(IDX_DESCRIPTION),
-                (Category.CategoryType)reader.GetInt32(IDX_CATEGORY));
+                (Category.CategoryType)reader.GetInt32(IDX_CATEGORY) - 1);
         }
 
         private void _UpdateCategory(Category newCategory)
@@ -215,8 +218,9 @@ namespace Budget
 
             // Setup parameters:
             updateCommand.Parameters.Add(new SQLiteParameter("@Id", newCategory.Id));
-            updateCommand.Parameters.Add(new SQLiteParameter("@DesnewCription", newCategory.Description));
-            updateCommand.Parameters.Add(new SQLiteParameter("@TypeId", newCategory.Type));
+            updateCommand.Parameters.Add(new SQLiteParameter("@Description", newCategory.Description));
+            updateCommand.Parameters.Add(new SQLiteParameter("@TypeId", newCategory.Type + 1));
+            updateCommand.Prepare();
 
             // Finally, execute the command
             updateCommand.ExecuteNonQuery();
@@ -236,8 +240,6 @@ namespace Budget
 
         private int _GetNextID()
         {
-            List<Category> categories = new List<Category>();
-
             // Create the select command
             const string selectCommandText = "SELECT MAX(Id) FROM categories";
             using var selectCommand = new SQLiteCommand(selectCommandText, Database.dbConnection);
@@ -248,6 +250,10 @@ namespace Budget
             // Loop through all the reader information
             if (!reader.Read())
                 return -1;
+
+            // If MAX aggregate function returned null, return a 0 ID.
+            if (reader[0].GetType() == typeof(DBNull))
+                return 0;
 
             return reader.GetInt32(0) + 1;
         }
