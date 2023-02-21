@@ -29,7 +29,7 @@ namespace Budget
         public CategoryType Type { get;  }
         public enum CategoryType
         {
-            Income,
+            Income=1,
             Expense,
             Credit,
             Savings

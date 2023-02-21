@@ -62,10 +62,10 @@ namespace Budget
             _RemoveAll();
 
             // Add default categoryTypes
-            _InsertCategoryType((int)Category.CategoryType.Income + 1, "Income");
-            _InsertCategoryType((int)Category.CategoryType.Expense + 1, "Expense");
-            _InsertCategoryType((int)Category.CategoryType.Credit + 1, "Credit");
-            _InsertCategoryType((int)Category.CategoryType.Savings + 1, "Savings");
+            _InsertCategoryType((int)Category.CategoryType.Income, "Income");
+            _InsertCategoryType((int)Category.CategoryType.Expense, "Expense");
+            _InsertCategoryType((int)Category.CategoryType.Credit, "Credit");
+            _InsertCategoryType((int)Category.CategoryType.Savings, "Savings");
 
             // ---------------------------------------------------------------
             // Add Defaults
@@ -156,7 +156,7 @@ namespace Budget
                 categories.Add(new Category(
                     reader.GetInt32(IDX_ID),
                     reader.GetString(IDX_DESCRIPTION),
-                    (Category.CategoryType)reader.GetInt32(IDX_CATEGORY) - 1));
+                    (Category.CategoryType)reader.GetInt32(IDX_CATEGORY)));
             }
             return categories;
         }
@@ -173,7 +173,7 @@ namespace Budget
             int nextId = _GetNextID();
             insertCommand.Parameters.Add(new SQLiteParameter("@Id", nextId));
             insertCommand.Parameters.Add(new SQLiteParameter("@Description", description));
-            insertCommand.Parameters.Add(new SQLiteParameter("@TypeId", type + 1));
+            insertCommand.Parameters.Add(new SQLiteParameter("@TypeId", type));
             insertCommand.Prepare();
 
             // Finally, execute the command
@@ -245,7 +245,7 @@ namespace Budget
             return new Category(
                 reader.GetInt32(IDX_ID),
                 reader.GetString(IDX_DESCRIPTION),
-                (Category.CategoryType)reader.GetInt32(IDX_CATEGORY) - 1);
+                (Category.CategoryType)reader.GetInt32(IDX_CATEGORY));
         }
 
         private void _UpdateCategory(Category newCategory)
@@ -259,7 +259,7 @@ namespace Budget
             // Setup parameters:
             updateCommand.Parameters.Add(new SQLiteParameter("@Id", newCategory.Id));
             updateCommand.Parameters.Add(new SQLiteParameter("@Description", newCategory.Description));
-            updateCommand.Parameters.Add(new SQLiteParameter("@TypeId", newCategory.Type + 1));
+            updateCommand.Parameters.Add(new SQLiteParameter("@TypeId", newCategory.Type));
             updateCommand.Prepare();
 
             // Finally, execute the command
