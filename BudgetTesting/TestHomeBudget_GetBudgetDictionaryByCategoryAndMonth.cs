@@ -7,11 +7,10 @@ using System.Dynamic;
 
 namespace BudgetCodeTests
 {
+    [Collection("Sequential")]
     public class TestHomeBudget_GetBudgetDictionaryByCategoryAndMonth
     {
-        string testInputFile = TestConstants.testBudgetFile;
-
-
+        string testInputFile = TestConstants.testExpensesInputFile;
 
         // ========================================================================
         // Get Expenses By Month Method tests
@@ -21,8 +20,13 @@ namespace BudgetCodeTests
         public void HomeBudgetMethod_GetBudgetDictionaryByCategoryAndMonth_NoStartEnd_NoFilter_VerifyNumberOfRecords()
         {
             // Arrange
-            string inFile = GetSolutionDir() + "\\" + testInputFile;
-            HomeBudget homeBudget = new HomeBudget(inFile);
+            string folder = TestConstants.GetSolutionDir();
+            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            HomeBudget homeBudget = new HomeBudget(messyDB, inFile, false);
+
             int maxRecords = TestConstants.budgetItemsByCategoryAndMonth_MaxRecords;
             Dictionary<string, object> firstRecord = TestConstants.getBudgetItemsByCategoryAndMonthFirstRecord();
 
@@ -40,8 +44,13 @@ namespace BudgetCodeTests
         public void HomeBudgetMethod_GetBudgetDictionaryByCategoryAndMonth_NoStartEnd_NoFilter_VerifyFirstRecord()
         {
             // Arrange
-            string inFile = GetSolutionDir() + "\\" + testInputFile;
-            HomeBudget homeBudget = new HomeBudget(inFile);
+            string folder = TestConstants.GetSolutionDir();
+            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            HomeBudget homeBudget = new HomeBudget(messyDB, inFile, false);
+
             int maxRecords = TestConstants.budgetItemsByCategoryAndMonth_MaxRecords; 
             Dictionary<string,object> firstRecord = TestConstants.getBudgetItemsByCategoryAndMonthFirstRecord();
 
@@ -60,8 +69,13 @@ namespace BudgetCodeTests
         public void HomeBudgetMethod_GetBudgetDictionaryByCategoryAndMonth_NoStartEnd_NoFilter_VerifyTotalsRecord()
         {
             // Arrange
-            string inFile = GetSolutionDir() + "\\" + testInputFile;
-            HomeBudget homeBudget = new HomeBudget(inFile);
+            string folder = TestConstants.GetSolutionDir();
+            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            HomeBudget homeBudget = new HomeBudget(messyDB, inFile, false);
+
             int maxRecords = TestConstants.budgetItemsByCategoryAndMonth_MaxRecords;
             Dictionary<string, object> totalsRecord = TestConstants.getBudgetItemsByCategoryAndMonthTotalsRecord();
 
@@ -81,8 +95,12 @@ namespace BudgetCodeTests
         public void HomeBudgetMethod_GetBudgetDictionaryByCategoryAndMonth_NoStartEnd_FilterbyCategory()
         {
             // Arrange
-            string inFile = GetSolutionDir() + "\\" + testInputFile;
-            HomeBudget homeBudget = new HomeBudget(inFile);
+            string folder = TestConstants.GetSolutionDir();
+            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            HomeBudget homeBudget = new HomeBudget(messyDB, inFile, false);
             List<Dictionary<string, object>> expectedResults =TestConstants.getBudgetItemsByCategoryAndMonthCat10();
 
             // Act
@@ -104,8 +122,12 @@ namespace BudgetCodeTests
         public void HomeBudgetMethod_GetBudgetDictionaryByCategoryAndMonth_2020()
         {
             // Arrange
-            string inFile = GetSolutionDir() + "\\" + testInputFile;
-            HomeBudget homeBudget = new HomeBudget(inFile);
+            string folder = TestConstants.GetSolutionDir();
+            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            HomeBudget homeBudget = new HomeBudget(messyDB, inFile, false);
             List<Dictionary<string, object>> expectedResults = TestConstants.getBudgetItemsByCategoryAndMonth2020();
 
             // Act
@@ -121,49 +143,11 @@ namespace BudgetCodeTests
             }
         }
 
-
-
-
         // ========================================================================
 
         // -------------------------------------------------------
         // helpful functions, ... they are not tests
         // -------------------------------------------------------
-
-        private String GetSolutionDir()
-        {
-
-            // this is valid for C# .Net Foundation (not for C# .Net Core)
-            return Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..\\..\\..\\"));
-        }
-
-        // source taken from: https://www.dotnetperls.com/file-equals
-
-        private bool FileEquals(string path1, string path2)
-        {
-            byte[] file1 = File.ReadAllBytes(path1);
-            byte[] file2 = File.ReadAllBytes(path2);
-            if (file1.Length == file2.Length)
-            {
-                for (int i = 0; i < file1.Length; i++)
-                {
-                    if (file1[i] != file2[i])
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
-            return false;
-        }
-
-        private bool FileSameSize(string path1, string path2)
-        {
-            byte[] file1 = File.ReadAllBytes(path1);
-            byte[] file2 = File.ReadAllBytes(path2);
-            return (file1.Length == file2.Length);
-        }
-
         Boolean AssertDictionaryForExpenseByCategoryAndMonthIsOK(Dictionary<string,object> recordExpeted, Dictionary<string,object> recordGot)
         {
             try

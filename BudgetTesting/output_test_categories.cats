@@ -14,6 +14,6 @@
   <Category ID="12" type="Expense">Insurance</Category>
   <Category ID="13" type="Expense">Transportation</Category>
   <Category ID="14" type="Expense">Eating Out</Category>
-  <Category ID="15" type="Expense">Savings</Category>
+  <Category ID="15" type="Savings">Savings</Category>
   <Category ID="16" type="Income">Income</Category>
 </Categories>
