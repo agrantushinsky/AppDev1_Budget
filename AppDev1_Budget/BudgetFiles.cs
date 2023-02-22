@@ -18,9 +18,6 @@ namespace Budget
     /// </summary>
     public class BudgetFiles
     {
-        private static String DefaultSavePath = @"Budget\";
-        private static String DefaultAppData = @"%USERPROFILE%\AppData\Local\";
-
         /// <summary>
         /// Checks if the provided filepath is not null and exists
         /// </summary>
