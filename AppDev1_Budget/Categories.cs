@@ -182,7 +182,8 @@ namespace Budget
         public void Delete(int Id)
         {
             int i = _Cats.FindIndex(x => x.Id == Id);
-            _Cats.RemoveAt(i);
+            if( i > -1 )
+                _Cats.RemoveAt(i);
         }
 
         // ====================================================================
@@ -231,6 +232,9 @@ namespace Budget
                             break;
                         case "credit":
                             type = Category.CategoryType.Credit;
+                            break;
+                        case "savings":
+                            type = Category.CategoryType.Savings;
                             break;
                         default:
                             type = Category.CategoryType.Expense;

@@ -197,14 +197,14 @@ namespace Budget
                 }
 
                 // keep track of running totals
-                total = total - e.Amount;
+                total = total + e.Amount;
                 items.Add(new BudgetItem
                 {
                     CategoryID = e.CatId,
                     ExpenseID = e.ExpId,
                     ShortDescription = e.Description,
                     Date = e.Date,
-                    Amount = -e.Amount,
+                    Amount = e.Amount,
                     Category = e.Category,
                     Balance = total
                 });
