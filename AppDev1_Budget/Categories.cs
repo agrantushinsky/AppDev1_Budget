@@ -15,7 +15,6 @@ namespace Budget
     // ====================================================================
     public class Categories
     {
-        private static String DefaultFileName = "budgetCategories.txt";
         private string _FileName;
         private string _DirName;
 
@@ -122,7 +121,7 @@ namespace Budget
         /// <returns>A list of all of the categories in the database table.</returns>
         public List<Category> List()
         {
-            return _GetCategories(Database.dbConnection);
+            return _GetCategories();
         }
 
         /// <summary>
@@ -136,7 +135,7 @@ namespace Budget
             _UpdateCategory(new Category(id, newDescr, type));
         }
 
-        private List<Category> _GetCategories(SQLiteConnection connection)
+        private List<Category> _GetCategories()
         {
             List<Category> categories = new List<Category>();
             // Constants for reader indices
@@ -144,7 +143,7 @@ namespace Budget
 
             // Create the select command
             const string selectCommandText = "SELECT Id, Description, TypeId FROM categories";
-            using var selectCommand = new SQLiteCommand(selectCommandText, connection);
+            using var selectCommand = new SQLiteCommand(selectCommandText, Database.dbConnection);
 
             // Execute the reader
             using SQLiteDataReader reader = selectCommand.ExecuteReader();
@@ -239,9 +238,11 @@ namespace Budget
             // Execute the reader
             using SQLiteDataReader reader = selectCommand.ExecuteReader();
 
+            // If the category was not found, just return null
             if (!reader.Read())
                 return null;
 
+            // Return the Category object
             return new Category(
                 reader.GetInt32(IDX_ID),
                 reader.GetString(IDX_DESCRIPTION),
