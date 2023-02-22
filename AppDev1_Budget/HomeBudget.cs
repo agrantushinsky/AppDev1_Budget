@@ -55,15 +55,6 @@ namespace Budget
         public Expenses expenses { get { return _expenses; } }
 
         // -------------------------------------------------------------------
-        // Constructor (new... default categories, no expenses)
-        // -------------------------------------------------------------------
-        public HomeBudget()
-        {
-            _categories = new Categories();
-            _expenses = new Expenses();
-        }
-
-        // -------------------------------------------------------------------
         // Constructor (existing budget ... must specify file)
         // -------------------------------------------------------------------
         public HomeBudget(String budgetFileName)
@@ -106,7 +97,7 @@ namespace Budget
             try
             {
                 // get filepath name (throws exception if it doesn't exist)
-                budgetFileName = BudgetFiles.VerifyReadFromFileName(budgetFileName, "");
+                budgetFileName = BudgetFiles.VerifyReadFromFileName(budgetFileName);
 
                 // If file exists, read it
                 string[] filenames = System.IO.File.ReadAllLines(budgetFileName);
@@ -157,7 +148,7 @@ namespace Budget
             // ---------------------------------------------------------------
             // get filepath name (throws exception if we can't write to the file)
             // ---------------------------------------------------------------
-            filepath = BudgetFiles.VerifyWriteToFileName(filepath, "");
+            filepath = BudgetFiles.VerifyWriteToFileName(filepath);
 
             String path = Path.GetDirectoryName(Path.GetFullPath(filepath));
             String file = Path.GetFileNameWithoutExtension(filepath);
@@ -226,14 +217,14 @@ namespace Budget
                 }
 
                 // keep track of running totals
-                total = total - e.Amount;
+                total = total + e.Amount;
                 items.Add(new BudgetItem
                 {
                     CategoryID = e.CatId,
                     ExpenseID = e.ExpId,
                     ShortDescription = e.Description,
                     Date = e.Date,
-                    Amount = -e.Amount,
+                    Amount = e.Amount,
                     Category = e.Category,
                     Balance = total
                 });

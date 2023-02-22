@@ -14,105 +14,71 @@ namespace Budget
 {
 
     /// <summary>
-    /// BudgetFiles class is used to manage the files used in the Budget project
+    /// BudgetFiles class is used to manage the file for the Budget project
     /// </summary>
     public class BudgetFiles
     {
-        private static String DefaultSavePath = @"Budget\";
-        private static String DefaultAppData = @"%USERPROFILE%\AppData\Local\";
-
-        // ====================================================================
-        // verify that the name of the file exists, or set the default file, and 
-        // is it readable?
-        // throws System.IO.FileNotFoundException if file does not exist
-        // ====================================================================
-        public static String VerifyReadFromFileName(String FilePath, String DefaultFileName)
+        /// <summary>
+        /// Checks if the provided filepath is not null and exists
+        /// </summary>
+        /// <param name="FilePath">The filepath to validate</param>
+        /// <returns>The path to the file to be read</returns>
+        /// <exception cref="FileNotFoundException">If the filepath is null or does not exists</exception>
+        public static String VerifyReadFromFileName(String FilePath)
         {
-
-            // ---------------------------------------------------------------
-            // if file path is not defined, use the default one in AppData
-            // ---------------------------------------------------------------
-            if (FilePath == null)
+            //Null filepath is not accepted
+            if (FilePath == null || FilePath == String.Empty)
             {
-                FilePath = Environment.ExpandEnvironmentVariables(DefaultAppData + DefaultSavePath + DefaultFileName);
+                throw new FileNotFoundException("File path must be specified");
             }
 
-            // ---------------------------------------------------------------
-            // does FilePath exist?
-            // ---------------------------------------------------------------
+            //If the file path doesn't exists, reading is impossible
             if (!File.Exists(FilePath))
             {
                 throw new FileNotFoundException("ReadFromFileException: FilePath (" + FilePath + ") does not exist");
             }
 
-            // ----------------------------------------------------------------
-            // valid path
-            // ----------------------------------------------------------------
             return FilePath;
-
         }
 
-        // ====================================================================
-        // verify that the name of the file exists, or set the default file, and 
-        // is it writable
-        // ====================================================================
-
-        public static String VerifyWriteToFileName(String FilePath, String DefaultFileName)
+        /// <summary>
+        /// Checks if the provided filepath is not null and is not read only. Creates file if it does not exists.
+        /// </summary>
+        /// <param name="FilePath">The filepath to validate</param>
+        /// <returns>The path of the file where data will be written on</returns>
+        /// <exception cref="FileNotFoundException">If the file path is null</exception>
+        /// <exception cref="ArgumentException">If the file path to be created is invalid</exception>
+        /// <exception cref="Exception">If the file is read only</exception>
+        public static String VerifyWriteToFileName(String FilePath)
         {
-            // ---------------------------------------------------------------
-            // if the directory for the path was not specified, then use standard application data
-            // directory
-            // ---------------------------------------------------------------
-            if (FilePath == null)
+            //FilePath must always be specficied
+            if (FilePath == null || FilePath == String.Empty)
             {
-                // create the default appdata directory if it does not already exist
-                String tmp = Environment.ExpandEnvironmentVariables(DefaultAppData);
-                if (!Directory.Exists(tmp))
-                {
-                    Directory.CreateDirectory(tmp);
-                }
-
-                // create the default Budget directory in the appdirectory if it does not already exist
-                tmp = Environment.ExpandEnvironmentVariables(DefaultAppData + DefaultSavePath);
-                if (!Directory.Exists(tmp))
-                {
-                    Directory.CreateDirectory(tmp);
-                }
-
-                FilePath = Environment.ExpandEnvironmentVariables(DefaultAppData + DefaultSavePath + DefaultFileName);
+                throw new FileNotFoundException("File path must be specified");
             }
 
-            // ---------------------------------------------------------------
-            // does directory where you want to save the file exist?
-            // ... this is possible if the user is specifying the file path
-            // ---------------------------------------------------------------
-            String folder = Path.GetDirectoryName(FilePath);
-            String delme = Path.GetFullPath(FilePath);
-            if (!Directory.Exists(folder))
+            //If file does not exist, create file
+            if (!File.Exists(FilePath))
             {
-                throw new Exception("SaveToFileException: FilePath (" + FilePath + ") does not exist");
-            }
-
-            // ---------------------------------------------------------------
-            // can we write to it?
-            // ---------------------------------------------------------------
-            if (File.Exists(FilePath))
-            {
-                FileAttributes fileAttr = File.GetAttributes(FilePath);
-                if ((fileAttr & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                try
                 {
-                    throw new Exception("SaveToFileException:  FilePath(" + FilePath + ") is read only");
+                    File.Create(FilePath).Close();
                 }
+                catch(Exception e)
+                {
+                    throw new ArgumentException("Can't create file: invalid file path");
+                }
+
             }
 
-            // ---------------------------------------------------------------
-            // valid file path
-            // ---------------------------------------------------------------
+            //Checks if it's possible to write on the file
+            FileAttributes fileAttr = File.GetAttributes(FilePath);
+            if ((fileAttr & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+            {
+                throw new Exception("SaveToFileException:  FilePath(" + FilePath + ") is read only");
+            }
+
             return FilePath;
-
         }
-
-
-
     }
 }

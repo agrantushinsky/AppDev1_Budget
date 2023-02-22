@@ -15,6 +15,7 @@ namespace Budget
     // ====================================================================
     public class Categories
     {
+
         private string _FileName;
         private string _DirName;
 

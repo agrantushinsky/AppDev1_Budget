@@ -183,6 +183,78 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
+        public void CategoriesMethod_WriteToFile()
+        {
+
+            // NOTE: Currently failing.  Added new test to try to track down source of 
+            //       problem
+            // CategoryTypeSavingsReadCorrectlyFromFile()
+            //  ... which also fails, so that is why the WriteToFile is not accurate...
+            //  ... fix above test, and then this one should pass as well.
+
+            // Arrange
+            String dir = GetSolutionDir();
+            Categories categories = new Categories();
+            categories.ReadFromFile(dir + "\\" + testInputFile);
+            string fileName = TestConstants.CategoriesOutputTestFile;
+            String outputFile = dir + "\\" + fileName;
+            File.Delete(outputFile);
+
+            // Act
+            categories.SaveToFile(outputFile);
+
+            // Assert
+            Assert.True(File.Exists(outputFile), "output file created");
+            Assert.True(FileEquals(dir + "\\" + testInputFile, outputFile), "Input /output files are the same");
+            String fileDir = Path.GetFullPath(Path.Combine(categories.DirName, ".\\"));
+            Assert.Equal(dir, fileDir);
+            Assert.Equal(fileName, categories.FileName);
+
+            // Cleanup
+            if (FileEquals(dir + "\\" + testInputFile, outputFile)) {
+                File.Delete(outputFile);
+            }
+
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void CategoriesMethod_WriteToFile_WriteToLastFileWrittenToByDefault()
+        {
+            // Arrange
+            String dir = GetSolutionDir();
+            Categories categories = new Categories();
+
+            //saving the categories data from file to property
+            categories.ReadFromFile(dir + "\\" + testInputFile);
+            string fileName = TestConstants.CategoriesOutputTestFile;
+            String outputFile = dir + "\\" + fileName;
+            File.Delete(outputFile);
+            categories.SaveToFile(outputFile); // output file is now last file that was written to.
+            File.Delete(outputFile);  // Delete the file
+
+            // Act
+            categories.SaveToFile(); // should write to same file as before
+
+            // Assert
+            Assert.True(File.Exists(outputFile), "output file created");
+            String fileDir = Path.GetFullPath(Path.Combine(categories.DirName, ".\\"));
+            Assert.Equal(dir, fileDir);
+            Assert.Equal(fileName, categories.FileName);
+
+            // Cleanup
+            if (FileEquals(dir + "\\" + testInputFile, outputFile))
+            {
+                File.Delete(outputFile);
+            }
+
+        }
+
+
+        // ========================================================================
+
+        [Fact]
         public void CategoriesMethod_GetCategoryFromId()
         {
             // Arrange
