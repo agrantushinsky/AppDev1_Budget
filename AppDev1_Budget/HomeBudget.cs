@@ -64,6 +64,26 @@ namespace Budget
             ReadFromFile(budgetFileName);
         }
 
+        //Used for tests
+        public HomeBudget(String databaseFile, string expenseFile, bool newDatabase=false) 
+        {
+            if (!newDatabase && File.Exists(databaseFile))
+            {
+                Database.existingDatabase(databaseFile);
+            }
+            else
+            {
+                Database.newDatabase(databaseFile);
+                newDatabase = true;
+
+            }
+            _categories = new Categories(Database.dbConnection, newDatabase);
+            _expenses = new Expenses();
+
+            //read the expense from the xml
+            _expenses.ReadFromFile(expenseFile);
+        }
+
         #region OpenNewAndSave
         // ---------------------------------------------------------------
         // Read
@@ -89,7 +109,7 @@ namespace Budget
                 _FileName = Path.GetFileName(budgetFileName);
 
                 // read the expenses and categories from their respective files
-                _categories.ReadFromFile(folder + "\\" + filenames[0]);
+                //_categories.ReadFromFile(folder + "\\" + filenames[0]);
                 _expenses.ReadFromFile(folder + "\\" + filenames[1]);
 
                 // Save information about budget file
@@ -144,7 +164,7 @@ namespace Budget
             // save the expenses and categories into their own files
             // ---------------------------------------------------------------
             _expenses.SaveToFile(expensepath);
-            _categories.SaveToFile(categorypath);
+            //_categories.SaveToFile(categorypath);
 
             // ---------------------------------------------------------------
             // save filenames of expenses and categories to budget file

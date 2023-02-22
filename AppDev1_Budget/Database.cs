@@ -40,27 +40,71 @@ namespace Budget
         // ===================================================================
         // create and open a new database
         // ===================================================================
+
+        /// <summary>
+        /// Creates a new database at the specified file path. Then adds the tables expenses,categories and categoryTypes to the databse.
+        /// </summary>
+        /// <param name="filename">The name of the file you want to create the new database in.</param>
+        /// <exception cref="FileNotFoundException">If file doesn't exist.</exception>
+
         public static void newDatabase(string filename)
         {
+            // Open connection to the database:
+            _OpenConnection(filename);
 
-            // If there was a database open before, close it and release the lock
-            CloseDatabaseAndReleaseFile();
+            // Next, create the tables:
+            const string CREATE_TABLES_COMMAND = @"
+                    DROP TABLE IF EXISTS expenses;
+                    DROP TABLE IF EXISTS categories;
+                    DROP TABLE IF EXISTS categoryTypes;
 
-            // Open connection to the database file:
-            string connectionSource = @$"URI=file:{filename}";
-            _connection = new SQLiteConnection(connectionSource);
-            _connection.Open();
+                    CREATE TABLE expenses (
+                        Id INTEGER PRIMARY KEY NOT NULL,
+                        Date TEXT NOT NULL,
+                        Description TEXT NOT NULL,
+                        Amount REAL NOT NULL,
+                        CategoryId INTEGER NOT NULL,
+
+                        FOREIGN KEY (CategoryId) REFERENCES categories(Id)
+                    );
+
+                    CREATE TABLE categories (
+                        Id INTEGER PRIMARY KEY NOT NULL,
+                        Description TEXT NOT NULL,
+                        TypeId INTEGER NOT NULL,
+
+                        FOREIGN KEY (TypeId) REFERENCES categoryTypes(Id)
+                    );
+
+                    CREATE TABLE categoryTypes (
+                        Id INTEGER PRIMARY KEY NOT NULL,
+                        Description TEXT NOT NULL
+                    );
+                ";
+
+            // Create, execute, and dispose of command for table creation:
+            var createTablesCmd = new SQLiteCommand(dbConnection);
+            createTablesCmd.CommandText = CREATE_TABLES_COMMAND;
+            createTablesCmd.ExecuteNonQuery();
+            createTablesCmd.Dispose();
         }
 
        // ===================================================================
        // open an existing database
        // ===================================================================
+       /// <summary>
+       /// Opens a connection to the passed filename
+       /// </summary>
+       /// <param name="filename">The name of the db file you want to open</param>
+       /// <exception cref="FileNotFoundException">If file doesn't exist.</exception>
        public static void existingDatabase(string filename)
         {
+            // If the file doesn't exist, throw an exception:
+            if (!File.Exists(filename))
+                throw new FileNotFoundException($"File \"{filename}\" does not exist.");
 
-            CloseDatabaseAndReleaseFile();
-
-            // your code
+            // Open the database connection
+            _OpenConnection(filename);
         }
 
        // ===================================================================
@@ -80,6 +124,17 @@ namespace Budget
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
             }
+        }
+
+        private static void _OpenConnection(string filename)
+        {
+            // If there was a database open before, close it and release the lock
+            CloseDatabaseAndReleaseFile();
+
+            // Open connection to the database file with foreign keys enabled:
+            string connectionSource = @$"URI=file:{filename}; Foreign Keys=1";
+            _connection = new SQLiteConnection(connectionSource);
+            _connection.Open();
         }
     }
 

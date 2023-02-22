@@ -23,13 +23,13 @@ namespace Budget
         // Properties
         // ====================================================================
 
-        //changed Id to be readonly
+        //changed to be readonly
         public int Id { get; }
         public String Description { get; }
         public CategoryType Type { get;  }
         public enum CategoryType
         {
-            Income,
+            Income=1,
             Expense,
             Credit,
             Savings
