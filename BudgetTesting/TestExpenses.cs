@@ -125,12 +125,12 @@ namespace BudgetCodeTests
             double amount = 98.1;
 
             // Act
-            expenses.Add(DateTime.Now, category, amount, "new expense");
+            expenses.Add(DateTime.Now,category,amount,"new expense");
             List<Expense> expensesList = expenses.List();
             int sizeOfList = expenses.List().Count;
 
             // Assert
-            Assert.Equal(numberOfExpensesInFile + 1, sizeOfList);
+            Assert.Equal(numberOfExpensesInFile+1, sizeOfList);
             Assert.Equal(maxIDInExpenseFile + 1, expensesList[sizeOfList - 1].Id);
             Assert.Equal(amount, expensesList[sizeOfList - 1].Amount);
 
