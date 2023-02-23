@@ -54,16 +54,6 @@ namespace Budget
         public Categories categories { get { return _categories; } }
         public Expenses expenses { get { return _expenses; } }
 
-        // -------------------------------------------------------------------
-        // Constructor (existing budget ... must specify file)
-        // -------------------------------------------------------------------
-        public HomeBudget(String budgetFileName)
-        {
-            _categories = new Categories();
-            _expenses = new Expenses();
-            ReadFromFile(budgetFileName);
-        }
-
         //Used for tests
         public HomeBudget(String databaseFile, string expenseFile, bool newDatabase=false) 
         {

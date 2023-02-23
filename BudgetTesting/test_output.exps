@@ -36,6 +36,7 @@
     <Category>14</Category>
   </Expense>
   <Expense ID="8">
+    <Date>2/22/2023 09:16:53 PM</Date>
     <Description>McDonalds</Description>
     <Amount>35.27</Amount>
     <Category>14</Category>
