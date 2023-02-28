@@ -268,12 +268,16 @@ namespace Budget
 
         private void _RemoveAll()
         {
-            _DeleteAllFromTable("categories");
-            _DeleteAllFromTable("categoryTypes");
+            _TruncateTable("categories");
+            _TruncateTable("categoryTypes");
         }
 
-        private void _DeleteAllFromTable(string table)
+        private void _TruncateTable(string table)
         {
+            // When using DELETE FROM <table>, sqlite will actually truncate the table.
+            // There is no truncate table in sqlite3.
+            // Source: https://www.tutorialspoint.com/sqlite/sqlite_truncate_table.htm
+
             // Create the delete command text
             string deleteCommandText = $"DELETE FROM {table}";
 
