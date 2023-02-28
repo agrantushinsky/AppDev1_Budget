@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Xml;
+using System.Data.SQLite;
+using System.Configuration.Internal;
 
 // ============================================================================
 // (c) Sandy Bultena 2018
@@ -110,46 +112,92 @@ namespace Budget
         }
 
 
-
-        // ====================================================================
-        // Add expense
-        // ====================================================================
-        private void Add(Expense exp)
-        {
-            _Expenses.Add(exp);
-        }
-
         public void Add(DateTime date, int category, Double amount, String description)
         {
-            int new_id = 1;
-
-            // if we already have expenses, set ID to max
-            if (_Expenses.Count > 0)
-            {
-                new_id = (from e in _Expenses select e.Id).Max();
-                new_id++;
-            }
-
-            _Expenses.Add(new Expense(new_id, date, category, amount, description));
+            _InsertExpense(date, category, amount, description);
 
         }
 
-        // ====================================================================
-        // Delete expense
-        // ====================================================================
+        private void _InsertExpense(DateTime date, int category, Double amount, String description)
+        {
+            const string insertCommandText = "INSERT INTO expenses(Date, CategoryId, Amount, Description) VALUE" +
+                "(@Date, @CategoryId, @Amount, @Description)";
+
+            using var insertCommand = new SQLiteCommand(insertCommandText, Database.dbConnection);
+
+            insertCommand.Parameters.Add(new SQLiteParameter("@Date", date));
+            insertCommand.Parameters.Add(new SQLiteParameter("@CategoryId", category));
+            insertCommand.Parameters.Add(new SQLiteParameter("@Amount", amount));
+            insertCommand.Parameters.Add(new SQLiteParameter("@Description", description));
+            insertCommand.Prepare();
+
+            insertCommand.ExecuteNonQuery();
+
+        }
+
         public void Delete(int Id)
         {
-            int i = _Expenses.FindIndex(x => x.Id == Id);
-            if ( i > -1 )   
-                _Expenses.RemoveAt(i);
+            _DeleteExpense(Id);
 
         }
 
-        // ====================================================================
-        // Return list of expenses
-        // Note:  make new copy of list, so user cannot modify what is part of
-        //        this instance
-        // ====================================================================
+        private void _DeleteExpense(int id)
+        {
+            const string deleteCommandText = "DELETE FROM expenses WHERE Id = @Id";
+
+            using var deleteCommand = new SQLiteCommand(deleteCommandText, Database.dbConnection);
+
+            deleteCommand.Parameters.Add(new SQLiteParameter("@Id", id));
+            deleteCommand.Prepare();
+
+            try
+            {
+                deleteCommand.ExecuteNonQuery();
+            }
+            catch(Exception ex)
+            {
+                throw new SQLiteException($"Error while deleting category of id: {id} from database: {ex.Message}");
+            }
+
+        }
+
+        private void _DeleteAllExpenses()
+        {
+            const string deleteCommandText = "DELETE FROM expenses";
+
+            using var deleteCommand = new SQLiteCommand(deleteCommandText, Database.dbConnection);
+
+            try
+            {
+                deleteCommand.ExecuteNonQuery();
+            }
+            catch(Exception ex)
+            {
+                throw new SQLiteException($"Error while deleting all values from the expenses table: {ex.Message}");
+            }
+        }
+
+        public void Update(int id, DateTime newDate, int newCategory, Double newAmount, String newDescription)
+        {
+            _UpdateExpense(id, newDate, newCategory, newAmount, newDescription);
+        }
+
+        private void _UpdateExpense(int id, DateTime newDate, int newCategory, Double newAmount, String newDesptiption)
+        {
+            const string updateCommandText = "UPDATE expenses SET date = @Date, category = @Category, Amount = @Amount, Description = @Description WHERE Id = @ID";
+
+            using var updateCommand = new SQLiteCommand(updateCommandText, Database.dbConnection);
+
+            updateCommand.Parameters.Add(new SQLiteParameter("@Id", id));
+            updateCommand.Parameters.Add(new SQLiteParameter("@Date", newDate));
+            updateCommand.Parameters.Add(new SQLiteParameter("@Category", newCategory));
+            updateCommand.Parameters.Add(new SQLiteParameter("@Amount", newAmount));
+            updateCommand.Parameters.Add(new SQLiteParameter("@Description", newDesptiption));
+            updateCommand.Prepare();
+
+            updateCommand.ExecuteNonQuery();
+        }
+
         public List<Expense> List()
         {
             List<Expense> newList = new List<Expense>();
@@ -158,6 +206,30 @@ namespace Budget
                 newList.Add(new Expense(expense));
             }
             return newList;
+        }
+
+        public List<Expense> _GetExpenses()
+        {
+            List<Expense> expenses = new List<Expense>();
+
+            const int IDX_ID = 0, IDX_DATE = 1, IDX_AMOUNT = 2, IDX_DESCRIPTION = 3, IDX_CATEGORY = 4;
+
+            const string selectCommandText = "SELECT Id, Date, Amount, Description, Category FROM expenses ORDERBY Id";
+            using var selectCommand = new SQLiteCommand(selectCommandText, Database.dbConnection);
+
+            using SQLiteDataReader reader = selectCommand.ExecuteReader();
+
+            while(reader.Read())
+            {
+                expenses.Add(new Expense(
+                    reader.GetInt32(IDX_ID),
+                    DateTime.Parse(reader.GetString(IDX_DATE)),
+                    reader.GetInt32(IDX_CATEGORY),
+                    reader.GetDouble(IDX_AMOUNT),
+                    reader.GetString(IDX_DESCRIPTION)));
+            }
+
+            return expenses;
         }
 
 
@@ -273,6 +345,8 @@ namespace Budget
                 throw new Exception("SaveToFileException: Reading XML " + e.Message);
             }
         }
+
+     
 
     }
 }
