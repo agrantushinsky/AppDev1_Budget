@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Dynamic;
+using System.Data.SQLite;
+using System.Globalization;
 
 // ============================================================================
 // (c) Sandy Bultena 2018
@@ -60,47 +62,57 @@ namespace Budget
         // NOTE: VERY IMPORTANT... budget amount is the negative of the expense amount
         // Reasoning: an expense of $15 is -$15 from your bank account.
         // ============================================================================
+
         public List<BudgetItem> GetBudgetItems(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
         {
-            // ------------------------------------------------------------------------
-            // return joined list within time frame
-            // ------------------------------------------------------------------------
-            Start = Start ?? new DateTime(1900, 1, 1);
-            End = End ?? new DateTime(2500, 1, 1);
+            const int IDX_EXPID = 0, IDX_DATE = 1, IDX_DESCRIPTION = 2, IDX_AMOUNT = 3, IDX_CATEGORYID = 4,
+                IDX_CATEGORYDESCRIPTION = 5;
 
-            var query =  from c in _categories.List()
-                        join e in _expenses.List() on c.Id equals e.Category
-                        where e.Date >= Start && e.Date <= End
-                        select new { CatId = c.Id, ExpId = e.Id, e.Date, Category = c.Description, e.Description, e.Amount };
+            //DateTime? doesnt have overload for toString cast to DateTime
+            string StartTime = ((DateTime)Start).ToString("yyyy-MM-dd") ?? new string("1900-1-1");
+            string EndTime = ((DateTime)End).ToString("yyyy-MM-dd") ?? new string("2500-1-1");
 
-            // ------------------------------------------------------------------------
-            // create a BudgetItem list with totals,
-            // ------------------------------------------------------------------------
+            // Create the select command
+            const string QUERY_BUDGET_ITEMS = @"
+                SELECT e.Id, e.Date, e.Description, e.Amount, e.CategoryId, c.Description as 'CategoryDescription'
+                FROM expenses as e
+                JOIN categories as c ON e.CategoryId = c.Id
+                WHERE e.Date >= @StartTime AND e.Date <= @EndTime 
+                AND (NOT @FilterFlag OR @CategoryId == e.CategoryId)
+                ORDER BY e.Date; 
+            ";
+
+            // Initialize the select command with the command text and connection.
+            using var queryCommand = new SQLiteCommand(QUERY_BUDGET_ITEMS, Database.dbConnection);
+
+            queryCommand.Parameters.Add(new SQLiteParameter("@StartTime", StartTime));
+            queryCommand.Parameters.Add(new SQLiteParameter("@EndTime", EndTime));
+            queryCommand.Parameters.Add(new SQLiteParameter("@CategoryId", CategoryID));
+            queryCommand.Parameters.Add(new SQLiteParameter("@FilterFlag", FilterFlag));
+
+            // Execute the reader
+            using SQLiteDataReader reader = queryCommand.ExecuteReader();
+
             List<BudgetItem> items = new List<BudgetItem>();
             Double total = 0;
 
-            foreach (var e in query.OrderBy(q => q.Date))
+            while (reader.Read())
             {
-                // filter out unwanted categories if filter flag is on
-                if (FilterFlag && CategoryID != e.CatId)
-                {
-                    continue;
-                }
-
-                // keep track of running totals
-                total = total + e.Amount;
+                total = total + reader.GetDouble(IDX_AMOUNT);
                 items.Add(new BudgetItem
                 {
-                    CategoryID = e.CatId,
-                    ExpenseID = e.ExpId,
-                    ShortDescription = e.Description,
-                    Date = e.Date,
-                    Amount = e.Amount,
-                    Category = e.Category,
+                    ExpenseID = reader.GetInt32(IDX_EXPID),
+                    Date = DateTime.ParseExact(
+                        reader.GetString(IDX_DATE),
+                        "yyyy-MM-dd",
+                        CultureInfo.InvariantCulture),
+                    ShortDescription = reader.GetString(IDX_DESCRIPTION),
+                    Amount = reader.GetDouble(IDX_AMOUNT),
+                    CategoryID = reader.GetInt32(IDX_CATEGORYID),
+                    Category = reader.GetString(IDX_CATEGORYDESCRIPTION),
                     Balance = total
                 });
             }
-
             return items;
         }
 
