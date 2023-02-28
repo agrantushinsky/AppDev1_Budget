@@ -7,6 +7,7 @@ using System.IO;
 using System.Xml;
 using System.Data.SQLite;
 using System.Configuration.Internal;
+using System.Net.Http.Headers;
 
 // ============================================================================
 // (c) Sandy Bultena 2018
@@ -115,7 +116,6 @@ namespace Budget
         public void Add(DateTime date, int category, Double amount, String description)
         {
             _InsertExpense(date, category, amount, description);
-
         }
 
         private void _InsertExpense(DateTime date, int category, Double amount, String description)
@@ -132,13 +132,11 @@ namespace Budget
             insertCommand.Prepare();
 
             insertCommand.ExecuteNonQuery();
-
         }
 
         public void Delete(int Id)
         {
             _DeleteExpense(Id);
-
         }
 
         private void _DeleteExpense(int id)
@@ -196,6 +194,44 @@ namespace Budget
             updateCommand.Prepare();
 
             updateCommand.ExecuteNonQuery();
+        }
+
+        public Expense GetExpenseFromId(int id)
+        {
+            Expense? e = _SelectExpense(id);
+            if(e == null)
+            {
+                throw new Exception($"Caanot find expense with id {id}.");
+            }
+
+            return e;
+        }
+
+        private Expense _SelectExpense(int id)
+        {
+            const int IDX_ID = 0, IDX_DATE = 1, IDX_AMOUNT = 2, IDX_DESCRIPTION = 3, IDX_CATEGORY = 4;
+
+            const string selectCommandText = "SELECT Id, Date, Amount, Description, Category FROM expenses WHERE Id = @Id";
+            
+            using var selectCommand = new SQLiteCommand(selectCommandText, Database.dbConnection);
+
+            selectCommand.Parameters.Add(new SQLiteParameter("@Id", id));
+            selectCommand.Prepare();
+
+            using SQLiteDataReader reader = selectCommand.ExecuteReader();
+
+            if (!reader.Read())
+            {
+                return null;
+            }
+
+            return new Expense(
+                    reader.GetInt32(IDX_ID),
+                    DateTime.Parse(reader.GetString(IDX_DATE)),
+                    reader.GetInt32(IDX_CATEGORY),
+                    reader.GetDouble(IDX_AMOUNT),
+                    reader.GetString(IDX_DESCRIPTION));
+                
         }
 
         public List<Expense> List()
