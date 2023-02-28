@@ -25,9 +25,9 @@ namespace Budget
         //Changed to be readonly
         public int Id { get; }
         public DateTime Date { get;  }
-        public Double Amount { get; set; }
-        public String Description { get; set; }
-        public int Category { get; set; }
+        public Double Amount { get; }
+        public String Description { get; }
+        public int Category { get; }
 
         // ====================================================================
         // Constructor
