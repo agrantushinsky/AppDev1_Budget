@@ -164,14 +164,12 @@ namespace Budget
         private void _InsertCategory(string description, Category.CategoryType type)
         {
             // Create the insert command text
-            const string insertCommandText = "INSERT INTO categories(Id, Description, TypeId) VALUES(@Id, @Description, @TypeId)";
+            const string insertCommandText = "INSERT INTO categories(Description, TypeId) VALUES(@Description, @TypeId)";
 
             // Initialize the insert command with the command text and connection.
             using var insertCommand = new SQLiteCommand(insertCommandText, Database.dbConnection);
 
             // Setup parameters:
-            int nextId = _GetNextID();
-            insertCommand.Parameters.Add(new SQLiteParameter("@Id", nextId));
             insertCommand.Parameters.Add(new SQLiteParameter("@Description", description));
             insertCommand.Parameters.Add(new SQLiteParameter("@TypeId", type));
             insertCommand.Prepare();
@@ -290,26 +288,6 @@ namespace Budget
             {
                 throw new SQLiteException($"Error while deleting all values from table: {table} Message: {ex.Message}");
             }
-        }
-
-        private int _GetNextID()
-        {
-            // Create the select command
-            const string selectCommandText = "SELECT MAX(Id) FROM categories";
-            using var selectCommand = new SQLiteCommand(selectCommandText, Database.dbConnection);
-
-            // Execute the reader
-            using SQLiteDataReader reader = selectCommand.ExecuteReader();
-
-            // Loop through all the reader information
-            if (!reader.Read())
-                return -1;
-
-            // If MAX aggregate function returned null, return a 0 ID.
-            if (reader[0].GetType() == typeof(DBNull))
-                return 0;
-
-            return reader.GetInt32(0) + 1;
         }
     }
 }
