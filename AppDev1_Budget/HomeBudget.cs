@@ -23,32 +23,9 @@ namespace Budget
 
     public class HomeBudget
     {
-        private string _FileName;
-        private string _DirName;
         private Categories _categories;
         private Expenses _expenses;
 
-        // ====================================================================
-        // Properties
-        // ===================================================================
-
-        // Properties (location of files etc)
-        public String FileName { get { return _FileName; } }
-        public String DirName { get { return _DirName; } }
-        public String PathName
-        {
-            get
-            {
-                if (_FileName != null && _DirName != null)
-                {
-                    return Path.GetFullPath(_DirName + "\\" + _FileName);
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
 
         // Properties (categories and expenses object)
         public Categories categories { get { return _categories; } }
@@ -73,102 +50,6 @@ namespace Budget
             //read the expense from the xml
             _expenses.ReadFromFile(expenseFile);
         }
-
-        #region OpenNewAndSave
-        // ---------------------------------------------------------------
-        // Read
-        // Throws Exception if any problem reading this file
-        // ---------------------------------------------------------------
-        public void ReadFromFile(String budgetFileName)
-        {
-            // ---------------------------------------------------------------
-            // read the budget file and process
-            // ---------------------------------------------------------------
-            try
-            {
-                // get filepath name (throws exception if it doesn't exist)
-                budgetFileName = BudgetFiles.VerifyReadFromFileName(budgetFileName);
-
-                // If file exists, read it
-                string[] filenames = System.IO.File.ReadAllLines(budgetFileName);
-
-                // ----------------------------------------------------------------
-                // Save information about budget file
-                // ----------------------------------------------------------------
-                string folder = Path.GetDirectoryName(budgetFileName);
-                _FileName = Path.GetFileName(budgetFileName);
-
-                // read the expenses and categories from their respective files
-                //_categories.ReadFromFile(folder + "\\" + filenames[0]);
-                _expenses.ReadFromFile(folder + "\\" + filenames[1]);
-
-                // Save information about budget file
-                _DirName = Path.GetDirectoryName(budgetFileName);
-                _FileName = Path.GetFileName(budgetFileName);
-
-            }
-
-            // ----------------------------------------------------------------
-            // throw new exception if we cannot get the info that we need
-            // ----------------------------------------------------------------
-            catch (Exception e)
-            {
-                throw new Exception("Could not read budget info: \n" + e.Message);
-            }
-
-        }
-
-        // ====================================================================
-        // save to a file
-        // saves the following files:
-        //  filepath_expenses.exps  # expenses file
-        //  filepath_categories.cats # categories files
-        //  filepath # a file containing the names of the expenses and categories files.
-        //  Throws exception if we cannot write to that file (ex: invalid dir, wrong permissions)
-        // ====================================================================
-        public void SaveToFile(String filepath)
-        {
-
-            // ---------------------------------------------------------------
-            // just in case filepath doesn't exist, reset path info
-            // ---------------------------------------------------------------
-            _DirName = null;
-            _FileName = null;
-
-            // ---------------------------------------------------------------
-            // get filepath name (throws exception if we can't write to the file)
-            // ---------------------------------------------------------------
-            filepath = BudgetFiles.VerifyWriteToFileName(filepath);
-
-            String path = Path.GetDirectoryName(Path.GetFullPath(filepath));
-            String file = Path.GetFileNameWithoutExtension(filepath);
-            String ext = Path.GetExtension(filepath);
-
-            // ---------------------------------------------------------------
-            // construct file names for expenses and categories
-            // ---------------------------------------------------------------
-            String expensepath = path + "\\" + file + "_expenses" + ".exps";
-            String categorypath = path + "\\" + file + "_categories" + ".cats";
-
-            // ---------------------------------------------------------------
-            // save the expenses and categories into their own files
-            // ---------------------------------------------------------------
-            _expenses.SaveToFile(expensepath);
-            //_categories.SaveToFile(categorypath);
-
-            // ---------------------------------------------------------------
-            // save filenames of expenses and categories to budget file
-            // ---------------------------------------------------------------
-            string[] files = { Path.GetFileName(categorypath), Path.GetFileName(expensepath) };
-            System.IO.File.WriteAllLines(filepath, files);
-
-            // ----------------------------------------------------------------
-            // save filename info for later use
-            // ----------------------------------------------------------------
-            _DirName = path;
-            _FileName = Path.GetFileName(filepath);
-        }
-        #endregion OpenNewAndSave
 
         #region GetList
 
