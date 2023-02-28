@@ -125,7 +125,7 @@ namespace Budget
 
             using var insertCommand = new SQLiteCommand(insertCommandText, Database.dbConnection);
 
-            insertCommand.Parameters.Add(new SQLiteParameter("@Date", date));
+            insertCommand.Parameters.Add(new SQLiteParameter("@Date", date.ToString("yyyy-MM-dd")));
             insertCommand.Parameters.Add(new SQLiteParameter("@CategoryId", category));
             insertCommand.Parameters.Add(new SQLiteParameter("@Amount", amount));
             insertCommand.Parameters.Add(new SQLiteParameter("@Description", description));
@@ -187,7 +187,7 @@ namespace Budget
             using var updateCommand = new SQLiteCommand(updateCommandText, Database.dbConnection);
 
             updateCommand.Parameters.Add(new SQLiteParameter("@Id", id));
-            updateCommand.Parameters.Add(new SQLiteParameter("@Date", newDate));
+            updateCommand.Parameters.Add(new SQLiteParameter("@Date", newDate.ToString("yyyy-MM-dd")));
             updateCommand.Parameters.Add(new SQLiteParameter("@Category", newCategory));
             updateCommand.Parameters.Add(new SQLiteParameter("@Amount", newAmount));
             updateCommand.Parameters.Add(new SQLiteParameter("@Description", newDesptiption));
