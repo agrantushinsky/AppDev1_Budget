@@ -59,7 +59,7 @@ namespace Budget
                     DROP TABLE IF EXISTS categoryTypes;
 
                     CREATE TABLE expenses (
-                        Id INTEGER PRIMARY KEY NOT NULL,
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                         Date TEXT NOT NULL,
                         Description TEXT NOT NULL,
                         Amount REAL NOT NULL,
@@ -69,7 +69,7 @@ namespace Budget
                     );
 
                     CREATE TABLE categories (
-                        Id INTEGER PRIMARY KEY NOT NULL,
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                         Description TEXT NOT NULL,
                         TypeId INTEGER NOT NULL,
 
