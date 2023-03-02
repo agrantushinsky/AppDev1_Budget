@@ -65,8 +65,8 @@ namespace Budget
 
         public List<BudgetItem> GetBudgetItems(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
         {
-            const int IDX_EXPID = 0, IDX_DATE = 1, IDX_DESCRIPTION = 2, IDX_AMOUNT = 3, IDX_CATEGORYID = 4,
-                IDX_CATEGORYDESCRIPTION = 5;
+            const int IDX_EXPENSE_ID = 0, IDX_DATE = 1, IDX_DESCRIPTION = 2, IDX_AMOUNT = 3, IDX_CATEGORY_ID = 4,
+                IDX_CATEGORY_DESCRIPTION = 5;
 
             //DateTime? doesnt have overload for toString cast to DateTime
             string StartTime = ((DateTime)Start).ToString("yyyy-MM-dd") ?? new string("1900-1-1");
@@ -94,24 +94,26 @@ namespace Budget
             using SQLiteDataReader reader = queryCommand.ExecuteReader();
 
             List<BudgetItem> items = new List<BudgetItem>();
-            Double total = 0;
+            double total = 0;
 
+            double amount;
             while (reader.Read())
             {
-                total = total + reader.GetDouble(IDX_AMOUNT);
+                amount = reader.GetDouble(IDX_AMOUNT);
+                total += amount;
                 items.Add(new BudgetItem
                 {
-                    ExpenseID = reader.GetInt32(IDX_EXPID),
+                    ExpenseID = reader.GetInt32(IDX_EXPENSE_ID),
                     Date = DateTime.ParseExact(
                         reader.GetString(IDX_DATE),
                         "yyyy-MM-dd",
                         CultureInfo.InvariantCulture),
                     ShortDescription = reader.GetString(IDX_DESCRIPTION),
-                    Amount = reader.GetDouble(IDX_AMOUNT),
-                    CategoryID = reader.GetInt32(IDX_CATEGORYID),
-                    Category = reader.GetString(IDX_CATEGORYDESCRIPTION),
+                    Amount = amount,
+                    CategoryID = reader.GetInt32(IDX_CATEGORY_ID),
+                    Category = reader.GetString(IDX_CATEGORY_DESCRIPTION),
                     Balance = total
-                });
+                }); 
             }
             return items;
         }
@@ -123,6 +125,9 @@ namespace Budget
         // ============================================================================
         public List<BudgetItemsByMonth> GetBudgetItemsByMonth(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
         {
+
+
+            /*
             // -----------------------------------------------------------------------
             // get all items first
             // -----------------------------------------------------------------------
@@ -157,7 +162,7 @@ namespace Budget
                 });
             }
 
-            return summary;
+            return summary;*/
         }
 
         // ============================================================================
