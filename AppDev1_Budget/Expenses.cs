@@ -116,7 +116,7 @@ namespace Budget
 
         public void Add(DateTime date, int category, Double amount, String description)
         {
-            if(ValidateCategoryId(category))
+            if (ValidateCategoryId(category))
             {
                 _InsertExpense(date, category, amount, description);
             }
@@ -278,7 +278,7 @@ namespace Budget
 
         private bool ValidateCategoryId(int catId)
         {
-            Categories category = new Categories();
+            Categories category = new Categories(Database.dbConnection, false);
             List<Category> categoriesList = category.List();
             return categoriesList.Exists(c => c.Id == catId);
         }
