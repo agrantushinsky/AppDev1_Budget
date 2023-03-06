@@ -15,10 +15,10 @@ namespace BudgetCodeTests
         public String testInputFile = TestConstants.testDBInputFile;
         public int maxIDInExpenseInFile = TestConstants.maxIDInExpenseFile;
         public int maxIDInCategoryInFile = TestConstants.maxIDInCategoryInFile;
-        Expense firstExpenseInFile = TestConstants.firstExpenseInFile;
+        public Expense firstExpenseInFile = TestConstants.firstExpenseInFile;
 
         [Fact]
-        public void ExpensesMethod_New()
+        public void ExpensesObject_New()
         {
             //Arrange
             String folder = TestConstants.GetSolutionDir();
@@ -187,7 +187,7 @@ namespace BudgetCodeTests
         }
 
         [Fact]
-        public void ExpensesMethod_List_ListIsInOrder()
+        public void ExpensesMethod_List_OrderByID()
         {
             //Arrange
             String folder = TestConstants.GetSolutionDir();
