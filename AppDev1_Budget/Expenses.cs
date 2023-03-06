@@ -8,6 +8,7 @@ using System.Xml;
 using System.Data.SQLite;
 using System.Configuration.Internal;
 using System.Net.Http.Headers;
+using System.CodeDom;
 
 // ============================================================================
 // (c) Sandy Bultena 2018
@@ -115,12 +116,19 @@ namespace Budget
 
         public void Add(DateTime date, int category, Double amount, String description)
         {
-            _InsertExpense(date, category, amount, description);
+            if(ValidateCategoryId(category))
+            {
+                _InsertExpense(date, category, amount, description);
+            }
+            else
+            {
+                throw new ArgumentException("Provided category ID does not exists.");
+            }
         }
 
         private void _InsertExpense(DateTime date, int category, Double amount, String description)
         {
-            const string insertCommandText = "INSERT INTO expenses(Date, CategoryId, Amount, Description) VALUE" +
+            const string insertCommandText = "INSERT INTO expenses(Date, CategoryId, Amount, Description) VALUES" +
                 "(@Date, @CategoryId, @Amount, @Description)";
 
             using var insertCommand = new SQLiteCommand(insertCommandText, Database.dbConnection);
@@ -182,7 +190,7 @@ namespace Budget
 
         private void _UpdateExpense(int id, DateTime newDate, int newCategory, Double newAmount, String newDesptiption)
         {
-            const string updateCommandText = "UPDATE expenses SET date = @Date, category = @Category, Amount = @Amount, Description = @Description WHERE Id = @ID";
+            const string updateCommandText = "UPDATE expenses SET Date = @Date, CategoryId = @Category, Amount = @Amount, Description = @Description WHERE Id = @Id";
 
             using var updateCommand = new SQLiteCommand(updateCommandText, Database.dbConnection);
 
@@ -201,7 +209,7 @@ namespace Budget
             Expense? e = _SelectExpense(id);
             if(e == null)
             {
-                throw new Exception($"Caanot find expense with id {id}.");
+                throw new Exception($"Cannot find expense with id {id}.");
             }
 
             return e;
@@ -211,7 +219,7 @@ namespace Budget
         {
             const int IDX_ID = 0, IDX_DATE = 1, IDX_AMOUNT = 2, IDX_DESCRIPTION = 3, IDX_CATEGORY = 4;
 
-            const string selectCommandText = "SELECT Id, Date, Amount, Description, Category FROM expenses WHERE Id = @Id";
+            const string selectCommandText = "SELECT Id, Date, Amount, Description, CategoryId FROM expenses WHERE Id = @Id";
             
             using var selectCommand = new SQLiteCommand(selectCommandText, Database.dbConnection);
 
@@ -236,12 +244,7 @@ namespace Budget
 
         public List<Expense> List()
         {
-            List<Expense> newList = new List<Expense>();
-            foreach (Expense expense in _Expenses)
-            {
-                newList.Add(new Expense(expense));
-            }
-            return newList;
+            return _GetExpenses();
         }
 
         public List<Expense> _GetExpenses()
@@ -250,7 +253,7 @@ namespace Budget
 
             const int IDX_ID = 0, IDX_DATE = 1, IDX_AMOUNT = 2, IDX_DESCRIPTION = 3, IDX_CATEGORY = 4;
 
-            const string selectCommandText = "SELECT Id, Date, Amount, Description, Category FROM expenses ORDERBY Id";
+            const string selectCommandText = "SELECT Id, Date, Amount, Description, CategoryId FROM expenses ORDER BY Id";
             using var selectCommand = new SQLiteCommand(selectCommandText, Database.dbConnection);
 
             using SQLiteDataReader reader = selectCommand.ExecuteReader();
@@ -266,6 +269,13 @@ namespace Budget
             }
 
             return expenses;
+        }
+
+        private bool ValidateCategoryId(int catId)
+        {
+            Categories category = new Categories();
+            List<Category> categoriesList = category.List();
+            return categoriesList.Exists(c => c.Id == catId);
         }
 
 
@@ -312,7 +322,7 @@ namespace Budget
                     }
 
                     // have all info for expense, so create new one
-                    this.Add(new Expense(id, date, category, amount, description));
+                    //this.Add(new Expense(id, date, category, amount, description));
 
                 }
 
