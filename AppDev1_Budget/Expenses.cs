@@ -147,6 +147,11 @@ namespace Budget
             _DeleteExpense(Id);
         }
 
+        public void DeleteAllExpenses()
+        {
+            _TruncateExpensesTable();
+        }
+
         private void _DeleteExpense(int id)
         {
             const string deleteCommandText = "DELETE FROM expenses WHERE Id = @Id";
@@ -167,7 +172,7 @@ namespace Budget
 
         }
 
-        private void _DeleteAllExpenses()
+        private void _TruncateExpensesTable()
         {
             const string deleteCommandText = "DELETE FROM expenses";
 
