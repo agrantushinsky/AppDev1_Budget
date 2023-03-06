@@ -121,6 +121,7 @@ namespace BudgetCodeTests
             Double amount = 10;
             string description = "Lunch";
 
+            //Act + Assert
             Assert.Throws<ArgumentException>(() =>
             {
                 expenses.Add(date, catId, amount, description);
@@ -145,6 +146,25 @@ namespace BudgetCodeTests
             
             //Assert
             Assert.Equal(expId, exp.Id);
+        }
+
+        [Fact]
+        public void ExpensesMethod_GetExpenseFromId_IDDoesNotExist()
+        {
+            //Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            Database.existingDatabase(messyDB);
+            SQLiteConnection conn = Database.dbConnection;
+            Expenses expenses = new Expenses();
+            int expId = maxIDInExpenseInFile + 1;
+
+            Assert.Throws<Exception>(() =>
+            {
+                Expense exp = expenses.GetExpenseFromId(expId);
+            });
         }
 
         [Fact]

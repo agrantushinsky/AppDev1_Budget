@@ -23,7 +23,7 @@ namespace Budget
     public class Expenses
     {
         /// <summary>
-        /// Adds an Expense object in the database using the arguments
+        /// Adds an Expense object in the database using the provided information
         /// </summary>
         /// <param name="date">Date of transaction</param>
         /// <param name="category">Category ID</param>
