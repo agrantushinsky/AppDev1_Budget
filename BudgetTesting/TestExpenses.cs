@@ -187,6 +187,35 @@ namespace BudgetCodeTests
         }
 
         [Fact]
+        public void ExpensesMethod_List_ListIsInOrder()
+        {
+            //Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            Database.existingDatabase(messyDB);
+            SQLiteConnection conn = Database.dbConnection;
+            Expenses expenses = new Expenses();
+            bool success = true;
+
+            //Act
+            List<Expense> list = expenses.List();
+            
+            for(int count = 0; count < list.Count - 1; count++)
+            {
+                if (list[count].Id > list[count + 1].Id)
+                {
+                    success = false; 
+                    break;
+                }
+            }
+
+            //Assert
+            Assert.True(success);
+        }
+
+        [Fact]
         public void ExpensesMethod_Update()
         {
             //Arrange
