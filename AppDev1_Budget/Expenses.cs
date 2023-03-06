@@ -38,7 +38,7 @@ namespace Budget
             }
             else
             {
-                throw new ArgumentException("Provided category ID does not exists.");
+                throw new ArgumentException($"Category ID {category} does not exists.");
             }
         }
 
@@ -78,7 +78,16 @@ namespace Budget
         /// <param name="newDescription">New Description</param>
         public void Update(int id, DateTime newDate, int newCategory, Double newAmount, String newDescription)
         {
-            _UpdateExpense(id, newDate, newCategory, newAmount, newDescription);
+            Expense? e = _SelectExpense(id);
+
+            if(e != null)
+            {
+                _UpdateExpense(id, newDate, newCategory, newAmount, newDescription);
+            }
+            else
+            {
+                throw new ArgumentException($"Expense ID {id} does not exist.");
+            }
         }
 
         /// <summary>
