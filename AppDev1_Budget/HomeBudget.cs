@@ -71,7 +71,7 @@ namespace Budget
             _expenses = new Expenses();
 
             //read the expense from the xml
-            //_expenses.ReadFromFile(expenseFile);
+            _expenses.ReadFromFile(expenseFile);
         }
 
         #region OpenNewAndSave
@@ -100,7 +100,7 @@ namespace Budget
 
                 // read the expenses and categories from their respective files
                 //_categories.ReadFromFile(folder + "\\" + filenames[0]);
-                //_expenses.ReadFromFile(folder + "\\" + filenames[1]);
+                _expenses.ReadFromFile(folder + "\\" + filenames[1]);
 
                 // Save information about budget file
                 _DirName = Path.GetDirectoryName(budgetFileName);
@@ -153,7 +153,7 @@ namespace Budget
             // ---------------------------------------------------------------
             // save the expenses and categories into their own files
             // ---------------------------------------------------------------
-            //_expenses.SaveToFile(expensepath);
+            _expenses.SaveToFile(expensepath);
             //_categories.SaveToFile(categorypath);
 
             // ---------------------------------------------------------------
