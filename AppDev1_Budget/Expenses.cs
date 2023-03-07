@@ -32,14 +32,11 @@ namespace Budget
         /// <exception cref="ArgumentException">If the category ID does not exist</exception>
         public void Add(DateTime date, int category, Double amount, String description)
         {
-            if (_ValidateCategoryId(category))
-            {
-                _InsertExpense(date, category, amount, description);
-            }
-            else
-            {
+            if (!_ValidateCategoryId(category))
                 throw new ArgumentException($"Category ID {category} does not exists.");
-            }
+
+            _InsertExpense(date, category, amount, description);
+
         }
 
         /// <summary>
@@ -79,15 +76,13 @@ namespace Budget
         public void Update(int id, DateTime newDate, int newCategory, Double newAmount, String newDescription)
         {
             Expense? e = _SelectExpense(id);
-
-            if(e != null)
-            {
-                _UpdateExpense(id, newDate, newCategory, newAmount, newDescription);
-            }
-            else
-            {
+            if(e == null)
                 throw new ArgumentException($"Expense ID {id} does not exist.");
-            }
+
+            if (!_ValidateCategoryId(newCategory))
+                throw new ArgumentException($"Category ID {newCategory} does not exists.");
+
+            _UpdateExpense(id, newDate, newCategory, newAmount, newDescription);
         }
 
         /// <summary>
