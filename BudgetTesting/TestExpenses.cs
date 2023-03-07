@@ -17,6 +17,8 @@ namespace BudgetCodeTests
         public int maxIDInCategoryInFile = TestConstants.maxIDInCategoryInFile;
         public Expense firstExpenseInFile = TestConstants.firstExpenseInFile;
 
+        // ========================================================================
+
         [Fact]
         public void ExpensesObject_New()
         {
@@ -32,6 +34,8 @@ namespace BudgetCodeTests
             //Assert
             Assert.IsType<Expenses>(expenses);
         }
+
+        // ========================================================================
 
         [Fact]
         public void ExpensesMethod_ReadFromNewDatabase_ListIsEmpty()
@@ -49,6 +53,8 @@ namespace BudgetCodeTests
             //Assert
             Assert.Empty(list);
         }
+
+        // ========================================================================
 
         [Fact]
         public void ExpensesMethod_ReadFromExistingDatabase_ValidateCorrectDataWasRead()
@@ -75,6 +81,7 @@ namespace BudgetCodeTests
             Assert.Equal(firstExpenseInFile.Description, firstExpense.Description);
         }
 
+        // ========================================================================
 
         [Fact]
         public void ExpensesMethod_Add()
@@ -105,6 +112,8 @@ namespace BudgetCodeTests
             Assert.Equal(description, expensesList[sizeOfList - 1].Description);
         }
 
+        // ========================================================================
+
         [Fact]
         public void ExpensesMethod_Add_InvalidCategoryID()
         {
@@ -128,6 +137,8 @@ namespace BudgetCodeTests
             });
         }
 
+        // ========================================================================
+
         [Fact]
         public void ExpensesMethod_GetExpenseFromId()
         {
@@ -148,6 +159,8 @@ namespace BudgetCodeTests
             Assert.Equal(expId, exp.Id);
         }
 
+        // ========================================================================
+
         [Fact]
         public void ExpensesMethod_GetExpenseFromId_IDDoesNotExist()
         {
@@ -167,6 +180,8 @@ namespace BudgetCodeTests
             });
         }
 
+        // ========================================================================
+
         [Fact]
         public void ExpensesMethod_List_ReturnListOfExpenses()
         {
@@ -185,6 +200,8 @@ namespace BudgetCodeTests
             //Assert
             Assert.Equal(numberOfExpensesInFile, list.Count);
         }
+
+        // ========================================================================
 
         [Fact]
         public void ExpensesMethod_List_OrderByID()
@@ -215,6 +232,8 @@ namespace BudgetCodeTests
             Assert.True(success);
         }
 
+        // ========================================================================
+
         [Fact]
         public void ExpensesMethod_Update()
         {
@@ -244,6 +263,8 @@ namespace BudgetCodeTests
 
         }
 
+        // ========================================================================
+
         [Fact]
         public void ExpensesMethod_Update_InvalidCategoryID()
         {
@@ -268,6 +289,8 @@ namespace BudgetCodeTests
             });
         }
 
+        // ========================================================================
+
         [Fact]
         public void ExpensesMethod_Delete()
         {
@@ -290,6 +313,8 @@ namespace BudgetCodeTests
             Assert.Equal(sizeList, numberOfExpensesInFile - 1);
             Assert.False(list.Exists(e => e.Id == idToDelete), "Correct expense item deleted");
         }
+
+        // ========================================================================
 
         [Fact]
         public void ExpensesMethod_Delete_InvalidIDDoesntCrash()
@@ -319,6 +344,8 @@ namespace BudgetCodeTests
 
             }
         }
+
+        // ========================================================================
 
         [Fact]
         public void ExpensesMethod_DeleteAllExpenses()
