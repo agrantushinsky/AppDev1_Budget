@@ -32,11 +32,7 @@ namespace Budget
         /// <exception cref="ArgumentException">If the category ID does not exist</exception>
         public void Add(DateTime date, int category, Double amount, String description)
         {
-            if (!_ValidateCategoryId(category))
-                throw new ArgumentException($"Category ID {category} does not exists.");
-
             _InsertExpense(date, category, amount, description);
-
         }
 
         /// <summary>
@@ -75,13 +71,6 @@ namespace Budget
         /// <param name="newDescription">New Description</param>
         public void Update(int id, DateTime newDate, int newCategory, Double newAmount, String newDescription)
         {
-            Expense? e = _SelectExpense(id);
-            if(e == null)
-                throw new ArgumentException($"Expense ID {id} does not exist.");
-
-            if (!_ValidateCategoryId(newCategory))
-                throw new ArgumentException($"Category ID {newCategory} does not exists.");
-
             _UpdateExpense(id, newDate, newCategory, newAmount, newDescription);
         }
 
@@ -118,18 +107,17 @@ namespace Budget
             insertCommand.Parameters.Add(new SQLiteParameter("@Description", description));
             insertCommand.Prepare();
 
-            //Execute the command
-            insertCommand.ExecuteNonQuery();
-        }
+            try
+            {
+                //Execute the command
+                insertCommand.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                //throws exception if not allowed to add in database
+                throw new SQLiteException($"Error while adding an expense from database: {ex.Message}");
+            }
 
-        private bool _ValidateCategoryId(int catId)
-        {
-            Categories category = new Categories(Database.dbConnection, false);
-            List<Category> categoriesList = category.List();
-
-            //Returns true if the provided category ID exists in the categories table
-            //Otherwise, false
-            return categoriesList.Exists(c => c.Id == catId);
         }
 
         private Expense _SelectExpense(int id)
@@ -211,8 +199,17 @@ namespace Budget
             updateCommand.Parameters.Add(new SQLiteParameter("@Description", newDesptiption));
             updateCommand.Prepare();
 
-            //Execute the command
-            updateCommand.ExecuteNonQuery();
+            try
+            {
+                //Execute the command
+                updateCommand.ExecuteNonQuery();
+            }
+            catch(Exception ex)
+            {
+                //throws exception if not allowed to update in database
+                throw new SQLiteException($"Error while updating expense of id ({id}) from database: {ex.Message}");
+            }
+
         }
 
         private void _DeleteExpense(int id)
@@ -235,7 +232,7 @@ namespace Budget
             catch(Exception ex)
             {
                 //throws exception if not allowed to delete in database
-                throw new SQLiteException($"Error while deleting category of id: {id} from database: {ex.Message}");
+                throw new SQLiteException($"Error while deleting expense of id ({id}) from database: {ex.Message}");
             }
 
         }
@@ -256,7 +253,7 @@ namespace Budget
             catch(Exception ex)
             {
                 //throws exception if not allowed to delete in database
-                throw new SQLiteException($"Error while deleting all values from the expenses table: {ex.Message}");
+                throw new SQLiteException($"Error while deleting all values from the expenses table in the database: {ex.Message}");
             }
         }
 

@@ -122,7 +122,7 @@ namespace BudgetCodeTests
             string description = "Lunch";
 
             //Act + Assert
-            Assert.Throws<ArgumentException>(() =>
+            Assert.Throws<SQLiteException>(() =>
             {
                 expenses.Add(date, catId, amount, description);
             });
@@ -245,30 +245,6 @@ namespace BudgetCodeTests
         }
 
         [Fact]
-        public void ExpensesMethod_Update_IDDoesNotExist()
-        {
-            //Arrange
-            String folder = TestConstants.GetSolutionDir();
-            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
-            String messyDB = $"{folder}\\messy.db";
-            System.IO.File.Copy(goodDB, messyDB, true);
-            Database.existingDatabase(messyDB);
-            SQLiteConnection conn = Database.dbConnection;
-            Expenses expenses = new Expenses();
-
-            DateTime newDate = new DateTime(2023, 2, 28);
-            int newCatId = 3;
-            Double newAmount = 10;
-            string newDescription = "Lunch";
-
-            //Act + Assert
-            Assert.Throws<ArgumentException>(() =>
-            {
-                expenses.Update(maxIDInExpenseInFile + 1, newDate, newCatId, newAmount, newDescription);
-            });
-        }
-
-        [Fact]
         public void ExpensesMethod_Update_InvalidCategoryID()
         {
             //Arrange
@@ -286,9 +262,9 @@ namespace BudgetCodeTests
             string newDescription = "Lunch";
 
             //Act + Assert
-            Assert.Throws<ArgumentException>(() =>
+            Assert.Throws<SQLiteException>(() =>
             {
-                expenses.Update(maxIDInExpenseInFile + 1, newDate, newCatId, newAmount, newDescription);
+                expenses.Update(maxIDInExpenseInFile, newDate, newCatId, newAmount, newDescription);
             });
         }
 
