@@ -78,7 +78,7 @@ namespace Budget
                 FROM expenses as e
                 JOIN categories as c ON e.CategoryId = c.Id
                 WHERE e.Date >= @StartTime AND e.Date <= @EndTime 
-                AND (NOT @FilterFlag OR @CategoryId == e.CategoryId)
+                    AND (NOT @FilterFlag OR @CategoryId == e.CategoryId)
                 ORDER BY e.Date; 
             ";
 
@@ -125,44 +125,72 @@ namespace Budget
         // ============================================================================
         public List<BudgetItemsByMonth> GetBudgetItemsByMonth(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
         {
+            const int IDX_EXPENSE_DATECODE = 0, IDX_EXPENSE_ID = 1, IDX_DATE = 2, IDX_DESCRIPTION = 3, IDX_AMOUNT = 4, IDX_CATEGORY_ID = 5,
+                IDX_CATEGORY_DESCRIPTION = 6;
 
+            //DateTime? doesnt have overload for toString cast to DateTime
+            string StartTime = ((DateTime)Start).ToString("yyyy-MM-dd") ?? new string("1900-1-1");
+            string EndTime = ((DateTime)End).ToString("yyyy-MM-dd") ?? new string("2500-1-1");
 
-            /*
-            // -----------------------------------------------------------------------
-            // get all items first
-            // -----------------------------------------------------------------------
-            List<BudgetItem> items = GetBudgetItems(Start, End, FilterFlag, CategoryID);
+            // Create the select command
+            const string QUERY_BUDGET_ITEMS = @"
+                SELECT SUBSTR(e.Date, 1, 7) AS 'DateCode', e.Id, e.Date, e.Description, e.Amount, e.CategoryId, c.Description as 'CategoryDescription'
+                FROM expenses as e
+                JOIN categories as c ON e.CategoryId = c.Id
+                WHERE e.Date >= @StartTime AND e.Date <= @EndTime 
+                    AND (NOT @FilterFlag OR @CategoryId == e.CategoryId)
+                ORDER BY SUBSTR(e.Date, 1, 7), e.Date;
+            ";
+            // TODO: Maybe not sort by the Date twice? Not sure.
 
-            // -----------------------------------------------------------------------
-            // Group by year/month
-            // -----------------------------------------------------------------------
-            var GroupedByMonth = items.GroupBy(c => c.Date.Year.ToString("D4") + "/" + c.Date.Month.ToString("D2"));
+            // Initialize the select command with the command text and connection.
+            using var queryCommand = new SQLiteCommand(QUERY_BUDGET_ITEMS, Database.dbConnection);
 
-            // -----------------------------------------------------------------------
-            // create new list
-            // -----------------------------------------------------------------------
-            var summary = new List<BudgetItemsByMonth>();
-            foreach (var MonthGroup in GroupedByMonth)
+            queryCommand.Parameters.Add(new SQLiteParameter("@StartTime", StartTime));
+            queryCommand.Parameters.Add(new SQLiteParameter("@EndTime", EndTime));
+            queryCommand.Parameters.Add(new SQLiteParameter("@CategoryId", CategoryID));
+            queryCommand.Parameters.Add(new SQLiteParameter("@FilterFlag", FilterFlag));
+
+            // Execute the reader
+            using SQLiteDataReader reader = queryCommand.ExecuteReader();
+
+            List<BudgetItemsByMonth> items = new List<BudgetItemsByMonth>();
+            double total = 0;
+
+            double amount;
+            string? lastDateCode = null;
+            BudgetItemsByMonth? currentMonth = null;
+
+            while (reader.Read())
             {
-                // calculate total for this month, and create list of details
-                double total = 0;
-                var details = new List<BudgetItem>();
-                foreach (var item in MonthGroup)
+                string dateCode = reader.GetString(IDX_EXPENSE_DATECODE);
+                if(dateCode != lastDateCode)
                 {
-                    total = total + item.Amount;
-                    details.Add(item);
+                    if(currentMonth != null)
+                        items.Add(currentMonth);
+
+                    currentMonth = new BudgetItemsByMonth();
+                    currentMonth.Month = dateCode;
                 }
 
-                // Add new BudgetItemsByMonth to our list
-                summary.Add(new BudgetItemsByMonth
+                amount = reader.GetDouble(IDX_AMOUNT);
+                total += amount;
+                currentMonth.Details.Add(new BudgetItem
                 {
-                    Month = MonthGroup.Key,
-                    Details = details,
-                    Total = total
+                    ExpenseID = reader.GetInt32(IDX_EXPENSE_ID),
+                    Date = DateTime.ParseExact(
+                        reader.GetString(IDX_DATE),
+                        "yyyy-MM-dd",
+                        CultureInfo.InvariantCulture),
+                    ShortDescription = reader.GetString(IDX_DESCRIPTION),
+                    Amount = amount,
+                    CategoryID = reader.GetInt32(IDX_CATEGORY_ID),
+                    Category = reader.GetString(IDX_CATEGORY_DESCRIPTION),
+                    Balance = total
                 });
+                currentMonth.Total += amount;
             }
-
-            return summary;*/
+            return items;
         }
 
         // ============================================================================
