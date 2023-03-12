@@ -29,7 +29,7 @@ namespace BudgetCodeTests
             BudgetItemsByCategory firstRecord = TestConstants.budgetItemsByCategory_FirstRecord;
 
             // Act
-            List<BudgetItemsByCategory> budgetItemsByCategory = homeBudget.GeBudgetItemsByCategory(null, null, false, 9);
+            List<BudgetItemsByCategory> budgetItemsByCategory = homeBudget.GetBudgetItemsByCategory(null, null, false, 9);
             BudgetItemsByCategory firstRecordTest = budgetItemsByCategory[0];
 
             // Assert
@@ -95,7 +95,7 @@ namespace BudgetCodeTests
             BudgetItemsByCategory firstRecord = validBudgetItemsByCategory[0];
 
             // Act
-            List<BudgetItemsByCategory> budgetItemsByCategory = homeBudget.GeBudgetItemsByCategory(new DateTime(2018, 1, 1), new DateTime(2018, 12, 31), true, 9);
+            List<BudgetItemsByCategory> budgetItemsByCategory = homeBudget.GetBudgetItemsByCategory(new DateTime(2018, 1, 1), new DateTime(2018, 12, 31), true, 9);
             BudgetItemsByCategory firstRecordTest = budgetItemsByCategory[0];
 
             // Assert
@@ -134,7 +134,7 @@ namespace BudgetCodeTests
 
 
             // Act
-            List<BudgetItemsByCategory> budgetItemsByCategory = homeBudget.GeBudgetItemsByCategory(new DateTime(2018, 1, 1), new DateTime(2018, 12, 31), false, 9);
+            List<BudgetItemsByCategory> budgetItemsByCategory = homeBudget.GetBudgetItemsByCategory(new DateTime(2018, 1, 1), new DateTime(2018, 12, 31), false, 9);
             BudgetItemsByCategory firstRecordTest = budgetItemsByCategory[0];
 
             // Assert
