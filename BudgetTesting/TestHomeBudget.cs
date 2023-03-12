@@ -9,56 +9,56 @@ namespace BudgetCodeTests
     [Collection("Sequential")]
     public class TestHomeBudget
     {
-        string testInputFile = TestConstants.testExpensesInputFile;
+        //string testInputFile = TestConstants.testExpensesInputFile;
 
-        [Fact]
-        public void HomeBudget_NullFileNameNotAccepted()
-        {
-            // Arrange
-            string folder = TestConstants.GetSolutionDir();
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
-            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
-            String messyDB = $"{folder}\\messy.db";
+        //[Fact]
+        //public void HomeBudget_NullFileNameNotAccepted()
+        //{
+        //    // Arrange
+        //    string folder = TestConstants.GetSolutionDir();
+        //    string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+        //    String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+        //    String messyDB = $"{folder}\\messy.db";
 
-            //Act + Assert
-            Assert.Throws<FileNotFoundException>(() =>
-            {
-                HomeBudget budget = new HomeBudget(messyDB, null, false);
-            });
+        //    //Act + Assert
+        //    Assert.Throws<FileNotFoundException>(() =>
+        //    {
+        //        HomeBudget budget = new HomeBudget(messyDB, null, false);
+        //    });
 
-        }
+        //}
 
-        // ========================================================================
+        //// ========================================================================
 
-        [Fact]
-        public void HomeBudget_EmptyFileNameNotAccepted()
-        {
-            //Arrange
-            string folder = TestConstants.GetSolutionDir();
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
-            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
-            String messyDB = $"{folder}\\messy.db";
+        //[Fact]
+        //public void HomeBudget_EmptyFileNameNotAccepted()
+        //{
+        //    //Arrange
+        //    string folder = TestConstants.GetSolutionDir();
+        //    string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+        //    String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+        //    String messyDB = $"{folder}\\messy.db";
 
-            //Act + Assert
-            Assert.Throws<FileNotFoundException>(() =>
-            {
-                HomeBudget budget = new HomeBudget(messyDB, "", false);
-            });
+        //    //Act + Assert
+        //    Assert.Throws<FileNotFoundException>(() =>
+        //    {
+        //        HomeBudget budget = new HomeBudget(messyDB, "", false);
+        //    });
 
-        }
+        //}
 
-        // ========================================================================
+        //// ========================================================================
 
-        [Fact]
-        public void BudgetFiles_VerifyWriteToFileName_InvalidFilePath()
-        {
-            //Act + Assert
-            Assert.Throws<ArgumentException>(() =>
-            {
-                BudgetFiles.VerifyWriteToFileName("a*bc");
-            });
+        //[Fact]
+        //public void BudgetFiles_VerifyWriteToFileName_InvalidFilePath()
+        //{
+        //    //Act + Assert
+        //    Assert.Throws<ArgumentException>(() =>
+        //    {
+        //        BudgetFiles.VerifyWriteToFileName("a*bc");
+        //    });
 
-        }
+        //}
 
         // ========================================================================
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -51,7 +51,7 @@ namespace Budget
             _expenses = new Expenses();
 
             //read the expense from the xml
-            _expenses.ReadFromFile(expenseFile);
+            //_expenses.ReadFromFile(expenseFile);
         }
 
         public HomeBudget(string databaseFile)
