@@ -205,43 +205,101 @@ namespace Budget
         // ============================================================================
         // Group all expenses by category (ordered by category name)
         // ============================================================================
+
+        /// <summary>
+        /// Gets a list of budget items by category, including the category name, total amount, and number of expenses.
+        /// </summary>
+        /// <param name="Start">Optional start date of the expenses to retrieve,default is 1-1-1900</param>
+        /// <param name="End">Optional end date of the expenses to retrieve, default is 1-1-2500</param>
+        /// <param name="FilterFlag">A flag to indicate whether to filter by category ID or not.</param>
+        /// <param name="CategoryID">The ID of the category to filter by, if filter flag is true.</param>
+        /// <returns>A list of budget items by category.</returns>
         public List<BudgetItemsByCategory> GetBudgetItemsByCategory(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
         {
-            // -----------------------------------------------------------------------
-            // get all items first
-            // -----------------------------------------------------------------------
-            List<BudgetItem> items = GetBudgetItems(Start, End, FilterFlag, CategoryID);
+            const int IDX_EXPENSE_ID = 0, IDX_DATE = 1, IDX_DESCRIPTION = 2, IDX_AMOUNT = 3, IDX_CATEGORY_ID = 4,
+          IDX_CATEGORY_DESCRIPTION = 5;
 
-            // -----------------------------------------------------------------------
-            // Group by Category
-            // -----------------------------------------------------------------------
-            var GroupedByCategory = items.GroupBy(c => c.Category);
+            //DateTime? doesnt have overload for toString cast to DateTime
+            string startTime = (Start ?? new DateTime(1900, 1, 1)).ToString();
+            string endTime = (End ?? new DateTime(2500, 1, 1)).ToString();
 
-            // -----------------------------------------------------------------------
-            // create new list
-            // -----------------------------------------------------------------------
-            var summary = new List<BudgetItemsByCategory>();
-            foreach (var CategoryGroup in GroupedByCategory.OrderBy(g => g.Key))
+            // Create the select command
+            const string query = @"
+            SELECT e.Id, e.Date, e.Description, e.Amount, e.CategoryId, c.Description as 'CategoryDescription'
+            FROM expenses as e
+            JOIN categories as c ON e.CategoryId = c.Id
+            WHERE e.Date >= @StartTime AND e.Date <= @EndTime 
+            AND (NOT @FilterFlag OR @CategoryId == e.CategoryId)
+            ORDER BY c.Description, e.Date;";
+
+            // Initialize the select command with the command text and connection.
+            using var command = new SQLiteCommand(query, Database.dbConnection);
+
+            command.Parameters.Add(new SQLiteParameter("@StartTime", startTime));
+            command.Parameters.Add(new SQLiteParameter("@EndTime", endTime));
+            command.Parameters.Add(new SQLiteParameter("@CategoryId", CategoryID));
+            command.Parameters.Add(new SQLiteParameter("@FilterFlag", FilterFlag));
+
+            // Execute the reader
+            using SQLiteDataReader reader = command.ExecuteReader();
+
+            List<BudgetItemsByCategory> items = new List<BudgetItemsByCategory>();
+            double total = 0;
+            string currentCategory = null;
+            List<BudgetItem> currentCategoryItems = null;
+
+            double amount;
+            while (reader.Read())
             {
-                // calculate total for this category, and create list of details
-                double total = 0;
-                var details = new List<BudgetItem>();
-                foreach (var item in CategoryGroup)
+                var category = reader.GetString(IDX_CATEGORY_DESCRIPTION);
+                if (category != currentCategory)
                 {
-                    total = total + item.Amount;
-                    details.Add(item);
+                    if (currentCategory != null)
+                    {
+                        items.Add(new BudgetItemsByCategory
+                        {
+                            Category = currentCategory,
+                            Details = currentCategoryItems.OrderBy(item => item.Date).ToList(),
+                            Total = total
+                        });
+                        total = 0;
+                    }
+                    currentCategory = category;
+                    currentCategoryItems = new List<BudgetItem>();
                 }
 
-                // Add new BudgetItemsByCategory to our list
-                summary.Add(new BudgetItemsByCategory
+                amount = reader.GetDouble(IDX_AMOUNT);
+                total += amount;
+                currentCategoryItems.Add(new BudgetItem
                 {
-                    Category = CategoryGroup.Key,
-                    Details = details,
+                    ExpenseID = reader.GetInt32(IDX_EXPENSE_ID),
+                    Date = DateTime.ParseExact(
+                        reader.GetString(IDX_DATE),
+                        "yyyy-MM-dd",
+                        CultureInfo.InvariantCulture),
+                    ShortDescription = reader.GetString(IDX_DESCRIPTION),
+                    Amount = amount,
+                    CategoryID = reader.GetInt32(IDX_CATEGORY_ID),
+                    Category = category,
+                    Balance = total
+                });
+            }
+
+            // Add the last category
+            if (currentCategory != null)
+            {
+                items.Add(new BudgetItemsByCategory
+                {
+                    Category = currentCategory,
+                    Details = currentCategoryItems.OrderBy(item => item.Date).ToList(),
                     Total = total
                 });
             }
 
-            return summary;
+            // Sort the items by descriptions alphabetically
+            items = items.OrderBy(item => item.Category).ToList();
+
+            return items;
         }
 
 
