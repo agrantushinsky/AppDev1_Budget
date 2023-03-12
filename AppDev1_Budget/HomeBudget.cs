@@ -54,9 +54,10 @@ namespace Budget
             _expenses.ReadFromFile(expenseFile);
         }
 
-        public HomeBudget(String databaseFile)
+        public HomeBudget(string databaseFile)
         {
             Database.existingDatabase(databaseFile);
+            _categories = new Categories(Database.dbConnection, false);
         }
 
         #region GetList
@@ -216,88 +217,56 @@ namespace Budget
         /// <returns>A list of budget items by category.</returns>
         public List<BudgetItemsByCategory> GetBudgetItemsByCategory(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
         {
-            const int IDX_EXPENSE_ID = 0, IDX_DATE = 1, IDX_DESCRIPTION = 2, IDX_AMOUNT = 3, IDX_CATEGORY_ID = 4,
-          IDX_CATEGORY_DESCRIPTION = 5;
+            // Indices for the reader
+            const int IDX_CATEGORY = 0, IDX_CATEGORY_ID = 1, IDX_CATEGORY_TOTAL = 2;
 
-            //DateTime? doesnt have overload for toString cast to DateTime
-            string startTime = (Start ?? new DateTime(1900, 1, 1)).ToString();
-            string endTime = (End ?? new DateTime(2500, 1, 1)).ToString();
+            DateTime startDate = Start ?? new DateTime(1900, 1, 1);
+            DateTime endDate = End ?? new DateTime(2500, 1, 1);
+
+            string startTime = startDate.ToString();
+            string endTime = endDate.ToString();
 
             // Create the select command
-            const string query = @"
-            SELECT e.Id, e.Date, e.Description, e.Amount, e.CategoryId, c.Description as 'CategoryDescription'
-            FROM expenses as e
-            JOIN categories as c ON e.CategoryId = c.Id
-            WHERE e.Date >= @StartTime AND e.Date <= @EndTime 
-            AND (NOT @FilterFlag OR @CategoryId == e.CategoryId)
-            ORDER BY c.Description, e.Date;";
+            const string QUERY_BUDGET_ITEMS = @"
+                SELECT c.Description, c.Id, SUM(e.Amount)
+                FROM expenses as e
+                JOIN categories as c ON e.CategoryId = c.Id   
+                WHERE e.Date >= @StartTime AND e.Date <= @EndTime 
+                    AND (NOT @FilterFlag OR @CategoryId == e.CategoryId)
+                GROUP BY c.Description
+                ORDER BY e.Date;
+            ";
 
             // Initialize the select command with the command text and connection.
-            using var command = new SQLiteCommand(query, Database.dbConnection);
+            using var queryCommand = new SQLiteCommand(QUERY_BUDGET_ITEMS, Database.dbConnection);
 
-            command.Parameters.Add(new SQLiteParameter("@StartTime", startTime));
-            command.Parameters.Add(new SQLiteParameter("@EndTime", endTime));
-            command.Parameters.Add(new SQLiteParameter("@CategoryId", CategoryID));
-            command.Parameters.Add(new SQLiteParameter("@FilterFlag", FilterFlag));
+            queryCommand.Parameters.Add(new SQLiteParameter("@StartTime", startTime));
+            queryCommand.Parameters.Add(new SQLiteParameter("@EndTime", endTime));
+            queryCommand.Parameters.Add(new SQLiteParameter("@CategoryId", CategoryID));
+            queryCommand.Parameters.Add(new SQLiteParameter("@FilterFlag", FilterFlag));
 
             // Execute the reader
-            using SQLiteDataReader reader = command.ExecuteReader();
+            using SQLiteDataReader reader = queryCommand.ExecuteReader();
 
             List<BudgetItemsByCategory> items = new List<BudgetItemsByCategory>();
-            double total = 0;
-            string currentCategory = null;
-            List<BudgetItem> currentCategoryItems = null;
 
-            double amount;
             while (reader.Read())
             {
-                var category = reader.GetString(IDX_CATEGORY_DESCRIPTION);
-                if (category != currentCategory)
-                {
-                    if (currentCategory != null)
-                    {
-                        items.Add(new BudgetItemsByCategory
-                        {
-                            Category = currentCategory,
-                            Details = currentCategoryItems.OrderBy(item => item.Date).ToList(),
-                            Total = total
-                        });
-                        total = 0;
-                    }
-                    currentCategory = category;
-                    currentCategoryItems = new List<BudgetItem>();
-                }
+                string category = reader.GetString(IDX_CATEGORY);
+                int categoryId = reader.GetInt32(IDX_CATEGORY_ID);
+                double categoryTotal = reader.GetDouble(IDX_CATEGORY_TOTAL);
 
-                amount = reader.GetDouble(IDX_AMOUNT);
-                total += amount;
-                currentCategoryItems.Add(new BudgetItem
+                List<BudgetItem> categoryBudgetItems = GetBudgetItems(Start, End, true, categoryId);
+
+                BudgetItemsByCategory categoryBudget = new BudgetItemsByCategory()
                 {
-                    ExpenseID = reader.GetInt32(IDX_EXPENSE_ID),
-                    Date = DateTime.ParseExact(
-                        reader.GetString(IDX_DATE),
-                        "yyyy-MM-dd",
-                        CultureInfo.InvariantCulture),
-                    ShortDescription = reader.GetString(IDX_DESCRIPTION),
-                    Amount = amount,
-                    CategoryID = reader.GetInt32(IDX_CATEGORY_ID),
                     Category = category,
-                    Balance = total
-                });
-            }
+                    Details = categoryBudgetItems,
+                    Total = categoryTotal
+                };
 
-            // Add the last category
-            if (currentCategory != null)
-            {
-                items.Add(new BudgetItemsByCategory
-                {
-                    Category = currentCategory,
-                    Details = currentCategoryItems.OrderBy(item => item.Date).ToList(),
-                    Total = total
-                });
+                items.Add(categoryBudget);
             }
-
-            // Sort the items by descriptions alphabetically
-            items = items.OrderBy(item => item.Category).ToList();
 
             return items;
         }
