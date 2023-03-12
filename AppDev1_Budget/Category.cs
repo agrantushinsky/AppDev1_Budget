@@ -48,6 +48,8 @@ namespace Budget
         // ====================================================================
         // Copy Constructor
         // ====================================================================
+
+        //TODO: Check for removal
         public Category(Category category)
         {
             this.Id = category.Id;;
