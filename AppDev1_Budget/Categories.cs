@@ -16,24 +16,10 @@ namespace Budget
     public class Categories
     {
 
-        private string _FileName;
-        private string _DirName;
-
-        // ====================================================================
-        // Properties
-        // ====================================================================
-        public String FileName { get { return _FileName; } }
-        public String DirName { get { return _DirName; } }
-
         // ====================================================================
         // Constructor
         // ====================================================================
-        public Categories()
-        {
-            SetCategoriesToDefaults();
-        }
 
-        //Used for testing
         public Categories(SQLiteConnection conn, bool newDatabase)
         {
             if (newDatabase)
