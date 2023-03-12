@@ -221,7 +221,7 @@ namespace Budget
         public List<BudgetItemsByCategory> GetBudgetItemsByCategory(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
         {
             const int IDX_EXPENSE_ID = 0, IDX_DATE = 1, IDX_DESCRIPTION = 2, IDX_AMOUNT = 3, IDX_CATEGORY_ID = 4,
-                          IDX_CATEGORY_DESCRIPTION = 5;
+          IDX_CATEGORY_DESCRIPTION = 5;
 
             //DateTime? doesnt have overload for toString cast to DateTime
             string startTime = (Start ?? new DateTime(1900, 1, 1)).ToString();
@@ -233,7 +233,7 @@ namespace Budget
             FROM expenses as e
             JOIN categories as c ON e.CategoryId = c.Id
             WHERE e.Date >= @StartTime AND e.Date <= @EndTime 
-                AND (NOT @FilterFlag OR @CategoryId == e.CategoryId)
+            AND (NOT @FilterFlag OR @CategoryId == e.CategoryId)
             ORDER BY c.Description, e.Date;";
 
             // Initialize the select command with the command text and connection.
@@ -263,7 +263,7 @@ namespace Budget
                         items.Add(new BudgetItemsByCategory
                         {
                             Category = currentCategory,
-                            Details = new List<BudgetItem>(),
+                            Details = currentCategoryItems.OrderBy(item => item.Date).ToList(),
                             Total = total
                         });
                         total = 0;
@@ -295,10 +295,13 @@ namespace Budget
                 items.Add(new BudgetItemsByCategory
                 {
                     Category = currentCategory,
-                    Details = new List<BudgetItem>(),
+                    Details = currentCategoryItems.OrderBy(item => item.Date).ToList(),
                     Total = total
                 });
             }
+
+            // Sort the items by descriptions alphabetically
+            items = items.OrderBy(item => item.Category).ToList();
 
             return items;
         }
