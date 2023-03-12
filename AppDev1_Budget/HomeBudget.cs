@@ -53,6 +53,11 @@ namespace Budget
             _expenses.ReadFromFile(expenseFile);
         }
 
+        public HomeBudget(String databaseFile)
+        {
+            Database.existingDatabase(databaseFile);
+        }
+
         #region GetList
 
 
@@ -69,8 +74,8 @@ namespace Budget
                 IDX_CATEGORY_DESCRIPTION = 5;
 
             //DateTime? doesnt have overload for toString cast to DateTime
-            string StartTime = ((DateTime)Start).ToString("yyyy-MM-dd") ?? new string("1900-1-1");
-            string EndTime = ((DateTime)End).ToString("yyyy-MM-dd") ?? new string("2500-1-1");
+            string StartTime = (Start ?? new DateTime(1900, 1, 1)).ToString();
+            string EndTime = (End ?? new DateTime(2500, 1, 1)).ToString();
 
             // Create the select command
             const string QUERY_BUDGET_ITEMS = @"
@@ -129,8 +134,8 @@ namespace Budget
                 IDX_CATEGORY_DESCRIPTION = 6;
 
             //DateTime? doesnt have overload for toString cast to DateTime
-            string StartTime = ((DateTime)Start).ToString("yyyy-MM-dd") ?? new string("1900-1-1");
-            string EndTime = ((DateTime)End).ToString("yyyy-MM-dd") ?? new string("2500-1-1");
+            string StartTime = (Start ?? new DateTime(1900, 1, 1)).ToString();
+            string EndTime = (End ?? new DateTime(2500, 1, 1)).ToString();
 
             // Create the select command
             const string QUERY_BUDGET_ITEMS = @"
@@ -169,8 +174,11 @@ namespace Budget
                     if(currentMonth != null)
                         items.Add(currentMonth);
 
-                    currentMonth = new BudgetItemsByMonth();
-                    currentMonth.Month = dateCode;
+                    currentMonth = new BudgetItemsByMonth
+                    {
+                        Details = new List<BudgetItem>(),
+                        Month = dateCode
+                    };
                 }
 
                 amount = reader.GetDouble(IDX_AMOUNT);
@@ -189,14 +197,19 @@ namespace Budget
                     Balance = total
                 });
                 currentMonth.Total += amount;
+                lastDateCode = dateCode;
             }
+            // Add the final month to the List
+            if(currentMonth != null)
+                items.Add(currentMonth);
+
             return items;
         }
 
         // ============================================================================
         // Group all expenses by category (ordered by category name)
         // ============================================================================
-        public List<BudgetItemsByCategory> GeBudgetItemsByCategory(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
+        public List<BudgetItemsByCategory> GetBudgetItemsByCategory(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
         {
             // -----------------------------------------------------------------------
             // get all items first
