@@ -34,8 +34,7 @@ namespace Budget
         public Categories categories { get { return _categories; } }
         public Expenses expenses { get { return _expenses; } }
 
-        //Used for tests
-        public HomeBudget(String databaseFile, string expenseFile, bool newDatabase=false) 
+        public HomeBudget(string databaseFile, bool newDatabase = false)
         {
             if (!newDatabase && File.Exists(databaseFile))
             {
@@ -44,20 +43,10 @@ namespace Budget
             else
             {
                 Database.newDatabase(databaseFile);
-                newDatabase = true;
-
             }
-            _categories = new Categories(Database.dbConnection, newDatabase);
+            
+            _categories = new Categories();
             _expenses = new Expenses();
-
-            //read the expense from the xml
-            //_expenses.ReadFromFile(expenseFile);
-        }
-
-        public HomeBudget(string databaseFile)
-        {
-            Database.existingDatabase(databaseFile);
-            _categories = new Categories(Database.dbConnection, false);
         }
 
         #region GetList

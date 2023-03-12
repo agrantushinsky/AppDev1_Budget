@@ -20,6 +20,11 @@ namespace Budget
         // Constructor
         // ====================================================================
 
+        public Categories()
+        {
+
+        }
+
         public Categories(SQLiteConnection conn, bool newDatabase)
         {
             if (newDatabase)
