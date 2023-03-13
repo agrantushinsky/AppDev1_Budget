@@ -153,7 +153,7 @@ namespace Budget
 
         }
 
-        public List<Expense> _GetExpenses()
+        private List<Expense> _GetExpenses()
         {
             List<Expense> expenses = new List<Expense>();
 
