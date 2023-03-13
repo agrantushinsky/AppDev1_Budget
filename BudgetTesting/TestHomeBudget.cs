@@ -3,62 +3,131 @@ using Xunit;
 using System.IO;
 using System.Collections.Generic;
 using Budget;
+using System.Data.SQLite;
 
 namespace BudgetCodeTests
 {
     [Collection("Sequential")]
     public class TestHomeBudget
     {
-        string testInputFile = TestConstants.testExpensesInputFile;
+        public int numberOfCategoriesInFile = TestConstants.numberOfCategoriesInFile;
+        public int numberOfExpensesInFile = TestConstants.numberOfExpensesInFile;
+        public String testInputFile = TestConstants.testDBInputFile;
+        public Category firstCategoryInFile = TestConstants.firstCategoryInFile;
+        public Expense firstExpenseInFile = TestConstants.firstExpenseInFile;
 
         [Fact]
-        public void HomeBudget_NullFileNameNotAccepted()
-        {
-            // Arrange
-            string folder = TestConstants.GetSolutionDir();
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
-            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
-            String messyDB = $"{folder}\\messy.db";
-
-            //Act + Assert
-            Assert.Throws<FileNotFoundException>(() =>
-            {
-                HomeBudget budget = new HomeBudget(messyDB, null, false);
-            });
-
-        }
-
-        // ========================================================================
-
-        [Fact]
-        public void HomeBudget_EmptyFileNameNotAccepted()
+        public void HomebudgetObject_New()
         {
             //Arrange
-            string folder = TestConstants.GetSolutionDir();
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            String folder = TestConstants.GetSolutionDir();
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
 
-            //Act + Assert
-            Assert.Throws<FileNotFoundException>(() =>
-            {
-                HomeBudget budget = new HomeBudget(messyDB, "", false);
-            });
+            //Act
+            HomeBudget budget = new HomeBudget(messyDB);
 
+            //Assert
+            Assert.IsType<HomeBudget>(budget);
         }
-
-        // ========================================================================
 
         [Fact]
-        public void BudgetFiles_VerifyWriteToFileName_InvalidFilePath()
+        public void HomebudgetProperties_NewDatabase()
         {
-            //Act + Assert
-            Assert.Throws<ArgumentException>(() =>
-            {
-                BudgetFiles.VerifyWriteToFileName("a*bc");
-            });
+            //Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String newDB = $"{folder}\\newDB.db";
+
+            //Act
+            HomeBudget budget = new HomeBudget(newDB, true);
+
+            //Assert
+            Assert.True(budget.expenses.List().Count == 0);
+            Assert.False(budget.categories.List().Count == 0);
+        }
+
+        [Fact]
+        public void HomebudgetProperties_ExistingDatabase()
+        {
+            // Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+
+            //Act
+            HomeBudget budget = new HomeBudget(messyDB);
+            List<Category> catList = budget.categories.List();
+            Category firstCategory = catList[0];
+            List<Expense> expList = budget.expenses.List();
+            Expense firstExpense = expList[0];
+
+
+            // Assert
+            Assert.Equal(numberOfCategoriesInFile, catList.Count);
+            Assert.Equal(firstCategoryInFile.Id, firstCategory.Id);
+            Assert.Equal(firstCategoryInFile.Description, firstCategory.Description);
+
+            Assert.Equal(numberOfExpensesInFile, expList.Count);
+            Assert.Equal(firstExpenseInFile.Id, firstExpense.Id);
+            Assert.Equal(firstExpenseInFile.Date, firstExpense.Date);
+            Assert.Equal(firstExpenseInFile.Category, firstExpense.Category);
+            Assert.Equal(firstExpenseInFile.Amount, firstExpense.Amount);
+            Assert.Equal(firstExpenseInFile.Description, firstExpense.Description);
 
         }
+
+        //string testInputFile = TestConstants.testExpensesInputFile;
+
+        //[Fact]
+        //public void HomeBudget_NullFileNameNotAccepted()
+        //{
+        //    // Arrange
+        //    string folder = TestConstants.GetSolutionDir();
+        //    string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+        //    String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+        //    String messyDB = $"{folder}\\messy.db";
+
+        //    //Act + Assert
+        //    Assert.Throws<FileNotFoundException>(() =>
+        //    {
+        //        HomeBudget budget = new HomeBudget(messyDB, null, false);
+        //    });
+
+        //}
+
+        //// ========================================================================
+
+        //[Fact]
+        //public void HomeBudget_EmptyFileNameNotAccepted()
+        //{
+        //    //Arrange
+        //    string folder = TestConstants.GetSolutionDir();
+        //    string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+        //    String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+        //    String messyDB = $"{folder}\\messy.db";
+
+        //    //Act + Assert
+        //    Assert.Throws<FileNotFoundException>(() =>
+        //    {
+        //        HomeBudget budget = new HomeBudget(messyDB, "", false);
+        //    });
+
+        //}
+
+        //// ========================================================================
+
+        //[Fact]
+        //public void BudgetFiles_VerifyWriteToFileName_InvalidFilePath()
+        //{
+        //    //Act + Assert
+        //    Assert.Throws<ArgumentException>(() =>
+        //    {
+        //        BudgetFiles.VerifyWriteToFileName("a*bc");
+        //    });
+
+        //}
 
         // ========================================================================
 

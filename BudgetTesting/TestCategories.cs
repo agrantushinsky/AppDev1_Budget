@@ -25,10 +25,9 @@ namespace BudgetCodeTests
             String folder = TestConstants.GetSolutionDir();
             String newDB = $"{folder}\\newDB.db";
             Database.newDatabase(newDB);
-            SQLiteConnection conn = Database.dbConnection;
 
             // Act
-            Categories categories = new Categories(conn, true);
+            Categories categories = new Categories(true);
 
             // Assert 
             Assert.IsType<Categories>(categories);
@@ -43,10 +42,9 @@ namespace BudgetCodeTests
             String folder = TestConstants.GetSolutionDir();
             String newDB = $"{folder}\\newDB.db";
             Database.newDatabase(newDB);
-            SQLiteConnection conn = Database.dbConnection;
 
             // Act
-            Categories categories = new Categories(conn, true);
+            Categories categories = new Categories(true);
 
             // Assert 
             Assert.False(categories.List().Count == 0, "Non zero categories");
@@ -62,10 +60,9 @@ namespace BudgetCodeTests
             String folder = TestConstants.GetSolutionDir();
             String existingDB = $"{folder}\\{TestConstants.testDBInputFile}";
             Database.existingDatabase(existingDB);
-            SQLiteConnection conn = Database.dbConnection;
 
             // Act
-            Categories categories = new Categories(conn, false);
+            Categories categories = new Categories(false);
             List<Category> list = categories.List();
             Category firstCategory = list[0];
 
@@ -85,8 +82,7 @@ namespace BudgetCodeTests
             String folder = TestConstants.GetSolutionDir();
             String newDB = $"{folder}\\{TestConstants.testDBInputFile}";
             Database.existingDatabase(newDB);
-            SQLiteConnection conn = Database.dbConnection;
-            Categories categories = new Categories(conn, false);
+            Categories categories = new Categories(false);
 
             // Act
             List<Category> list = categories.List();
@@ -108,8 +104,7 @@ namespace BudgetCodeTests
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
             Database.existingDatabase(messyDB);
-            SQLiteConnection conn = Database.dbConnection;
-            Categories categories = new Categories(conn, false);
+            Categories categories = new Categories(false);
             string descr = "New Category";
             Category.CategoryType type = Category.CategoryType.Income;
 
@@ -135,8 +130,7 @@ namespace BudgetCodeTests
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
             Database.existingDatabase(messyDB);
-            SQLiteConnection conn = Database.dbConnection;
-            Categories categories = new Categories(conn, false);
+            Categories categories = new Categories(false);
             int IdToDelete = 3;
 
             // Act
@@ -162,8 +156,7 @@ namespace BudgetCodeTests
             String messyDB = $"{folder}\\messyDB";
             System.IO.File.Copy(goodDB, messyDB, true);
             Database.existingDatabase(messyDB);
-            SQLiteConnection conn = Database.dbConnection;
-            Categories categories = new Categories(conn, false);
+            Categories categories = new Categories(false);
             int IdToDelete = 9999;
             int sizeOfList = categories.List().Count;
 
@@ -190,8 +183,7 @@ namespace BudgetCodeTests
             String folder = TestConstants.GetSolutionDir();
             String newDB = $"{folder}\\{TestConstants.testDBInputFile}";
             Database.existingDatabase(newDB);
-            SQLiteConnection conn = Database.dbConnection;
-            Categories categories = new Categories(conn, false);
+            Categories categories = new Categories(false);
             int catID = 15;
 
             // Act
@@ -212,10 +204,9 @@ namespace BudgetCodeTests
             String folder = TestConstants.GetSolutionDir();
             String newDB = $"{folder}\\newDB.db";
             Database.newDatabase(newDB);
-            SQLiteConnection conn = Database.dbConnection;
 
             // Act
-            Categories categories = new Categories(conn, true);
+            Categories categories = new Categories(true);
             List<Category> originalList = categories.List();
 
             // modify list of categories
@@ -248,8 +239,7 @@ namespace BudgetCodeTests
             String folder = TestConstants.GetSolutionDir();
             String newDB = $"{folder}\\newDB.db";
             Database.newDatabase(newDB);
-            SQLiteConnection conn = Database.dbConnection;
-            Categories categories = new Categories(conn, true);
+            Categories categories = new Categories(true);
             String newDescr = "Presents";
             int id = 11;
 

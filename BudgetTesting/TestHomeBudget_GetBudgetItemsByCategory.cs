@@ -9,8 +9,6 @@ namespace BudgetCodeTests
     [Collection("Sequential")]
     public class TestHomeBudget_GetBudgetItemsByCategory
     {
-        string testInputFile = TestConstants.testExpensesInputFile;
-        
         // ========================================================================
         // Get Expenses By Month Method tests
         // ========================================================================
@@ -20,16 +18,15 @@ namespace BudgetCodeTests
         {
             // Arrange
             string folder = TestConstants.GetSolutionDir();
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
-            HomeBudget homeBudget = new HomeBudget(messyDB, inFile, false);
+            HomeBudget homeBudget = new HomeBudget(messyDB, false);
             int maxRecords = TestConstants.budgetItemsByCategory_MaxRecords; 
             BudgetItemsByCategory firstRecord = TestConstants.budgetItemsByCategory_FirstRecord;
 
             // Act
-            List<BudgetItemsByCategory> budgetItemsByCategory = homeBudget.GeBudgetItemsByCategory(null, null, false, 9);
+            List<BudgetItemsByCategory> budgetItemsByCategory = homeBudget.GetBudgetItemsByCategory(null, null, false, 9);
             BudgetItemsByCategory firstRecordTest = budgetItemsByCategory[0];
 
             // Assert
@@ -57,11 +54,10 @@ namespace BudgetCodeTests
         {
             // Arrange
             string folder = TestConstants.GetSolutionDir();
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
-            HomeBudget homeBudget = new HomeBudget(messyDB, inFile, false);
+            HomeBudget homeBudget = new HomeBudget(messyDB, false);
             int maxRecords14 = TestConstants.budgetItemsByCategory14;
             int maxRecords20 = TestConstants.budgetItemsByCategory20;
 
@@ -86,16 +82,15 @@ namespace BudgetCodeTests
         {
             // Arrange
             string folder = TestConstants.GetSolutionDir();
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
-            HomeBudget homeBudget = new HomeBudget(messyDB, inFile, false);
+            HomeBudget homeBudget = new HomeBudget(messyDB, false);
             List<BudgetItemsByCategory> validBudgetItemsByCategory = TestConstants.getBudgetItemsByCategory2018_Cat9();
             BudgetItemsByCategory firstRecord = validBudgetItemsByCategory[0];
 
             // Act
-            List<BudgetItemsByCategory> budgetItemsByCategory = homeBudget.GeBudgetItemsByCategory(new DateTime(2018, 1, 1), new DateTime(2018, 12, 31), true, 9);
+            List<BudgetItemsByCategory> budgetItemsByCategory = homeBudget.GetBudgetItemsByCategory(new DateTime(2018, 1, 1), new DateTime(2018, 12, 31), true, 9);
             BudgetItemsByCategory firstRecordTest = budgetItemsByCategory[0];
 
             // Assert
@@ -124,17 +119,16 @@ namespace BudgetCodeTests
         {
             // Arrange
             string folder = TestConstants.GetSolutionDir();
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
-            HomeBudget homeBudget = new HomeBudget(messyDB, inFile, false);
+            HomeBudget homeBudget = new HomeBudget(messyDB, false);
             List<BudgetItemsByCategory> validBudgetItemsByCategory = TestConstants.getBudgetItemsByCategory2018();
             BudgetItemsByCategory firstRecord = validBudgetItemsByCategory[0];
 
 
             // Act
-            List<BudgetItemsByCategory> budgetItemsByCategory = homeBudget.GeBudgetItemsByCategory(new DateTime(2018, 1, 1), new DateTime(2018, 12, 31), false, 9);
+            List<BudgetItemsByCategory> budgetItemsByCategory = homeBudget.GetBudgetItemsByCategory(new DateTime(2018, 1, 1), new DateTime(2018, 12, 31), false, 9);
             BudgetItemsByCategory firstRecordTest = budgetItemsByCategory[0];
 
             // Assert
