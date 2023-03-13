@@ -19,12 +19,21 @@ namespace Budget
         // ====================================================================
         // Constructor
         // ====================================================================
-
+        /// <summary>
+        /// Creates an instance of Categories
+        /// </summary>
         public Categories()
         {
 
         }
 
+        /// <summary>
+        /// Creates an instance of Categories and sets the categories to default is newDatabase is true.
+        /// This constructor is mainly used for testing.
+        /// </summary>
+        /// <param name="conn">Connection to database.</param>
+        /// <param name="newDatabase">Boolean whether to reset categories to defaults or not.</param>
+        /// <exception cref="SQLiteException">Thrown when the connection has not been initialized.</exception>
         public Categories(SQLiteConnection conn, bool newDatabase)
         {
             if (newDatabase)
@@ -35,6 +44,13 @@ namespace Budget
         // ====================================================================
         // get a specific category from the list where the id is the one specified
         // ====================================================================
+        /// <summary>
+        /// Gets the Category object with the provided ID
+        /// </summary>
+        /// <param name="id">ID of the Category item to get</param>
+        /// <returns>Category object</returns>
+        /// <exception cref="Exception">If the ID does not exist</exception>
+        /// <exception cref="SQLiteException">Thrown when an SQLite error occurs.</exception>
         public Category GetCategoryFromId(int i)
         {
             Category? c = _SelectCategory(i);
@@ -48,6 +64,40 @@ namespace Budget
         // ====================================================================
         // set categories to default
         // ====================================================================
+        /// <summary>
+        /// Clears the stored categories and categoryTypes, then, adds the defaults. Refer to examples for defaults.
+        /// </summary>
+        /// <exception cref="SQLiteException">Thrown when the database connection has not been initialized yet or an SQLite error occured.</exception>
+        /// <example>
+        /// <code>
+        /// <![CDATA[
+        /// Categories categories = new Categories();
+        /// 
+        /// // Set defaults (it is worth noting that the default constructor calls this method)
+        /// categories.SetCategoriesToDefaults();
+        ///
+        /// foreach (Category category in categories.List())
+        ///     Console.WriteLine($"{category.Description}: {category.Type}");
+        /// // Output:
+        /// // Utilities: Expense
+        /// // Rent: Expense
+        /// // Food: Expense
+        /// // Entertainment: Expense
+        /// // Education: Expense
+        /// // Miscellaneous: Expense
+        /// // Medical Expenses: Expense
+        /// // Vacation: Expense
+        /// // Credit Card: Credit
+        /// // Clothes: Expense
+        /// // Gifts: Expense
+        /// // Insurance: Expense
+        /// // Transportation: Expense
+        /// // Eating Out: Expense
+        /// // Savings: Savings
+        /// // Income: Income
+        /// ]]>
+        /// </code>
+        /// </example>
         public void SetCategoriesToDefaults()
         {
             _RemoveAll();
@@ -83,6 +133,28 @@ namespace Budget
         // ====================================================================
         // Add category
         // ====================================================================
+        /// <summary>
+        /// Stores the category using the information provided by the user.
+        /// </summary>
+        /// <param name="desc">The new Category's description.</param>
+        /// <param name="type">The new Category's type.</param>
+        /// <exception cref="SQLiteException">Thrown when an SQLite error occurs.</exception>
+        /// <example>
+        /// <code>
+        /// <![CDATA[
+        /// // New instance of Categories. Defaults will be loaded as well.
+        /// Categories categories = new Categories();
+        ///
+        /// // Add new a categories
+        /// categories.Add("Streaming Services", Category.CategoryType.Expense);
+        /// categories.Add("Fitness", Category.CategoryType.Expense);
+        ///
+        /// // View new categories
+        /// foreach (Category category in categories.List())
+        ///     Console.WriteLine(category.Description);
+        /// ]]>
+        /// </code>
+        /// </example>
         public void Add(String desc, Category.CategoryType type)
         {
             _InsertCategory(desc, type);
@@ -92,9 +164,29 @@ namespace Budget
         // Delete category
         // ====================================================================
         /// <summary>
-        /// Deletes the category with the specified id from the database.
+        /// Deletes a Category using the Id provided.
         /// </summary>
-        /// <param name="Id">The id of the category you want to delete</param>
+        /// <param name="Id">The Id of the category to remove from the database.</param>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when the provided Id is negative or is greater than or equal to the count.</exception>
+        /// <exception cref="SQLiteException">Thrown when an SQLite error occurs.</exception>
+        /// <example>
+        /// <code>
+        /// <![CDATA[
+        /// // New instance of Categories. Defaults will be loaded as well.
+        /// Categories categories = new Categories();
+        ///
+        /// // Add new a category
+        /// categories.Add("Streaming Services", Category.CategoryType.Expense);
+        ///
+        /// // Remove at Id 1
+        /// categories.Delete(1);
+        ///
+        /// // Attempt to remove again:
+        /// categories.Delete(1);
+        /// // Exception ArgumentOutOfRangeException is thrown.
+        /// ]]>
+        /// </code>
+        /// </example>
         public void Delete(int Id)
         {
             // Delete from database
@@ -108,20 +200,37 @@ namespace Budget
         // ====================================================================
 
         /// <summary>
-        /// Gets all the categories from the database.
+        /// Gets a list of Categories from the database.
         /// </summary>
-        /// <returns>A list of all of the categories in the database table.</returns>
+        /// <returns>A new List containing the stored categories.</returns>
+        /// <exception cref="SQLiteException">Thrown when an SQLite error occurs.</exception>
+        /// <example>
+        /// <code>
+        /// <![CDATA[
+        /// Categories categories = new Categories();
+        ///
+        /// // Add new a category
+        /// categories.Add("Online Subscription", Category.CategoryType.Expense);
+        ///
+        /// // Print categories using List()
+        /// List<Expense> list = categories.List();
+        /// foreach (Category category in list)
+        ///     Console.WriteLine(category.Description);
+        /// ]]>
+        /// </code>
+        /// </example>
         public List<Category> List()
         {
             return _GetCategories();
         }
 
         /// <summary>
-        /// Finds the category in the list and replaces it with the passed category data.
+        /// Finds the category in the database and replaces it with the passed category data.
         /// </summary>
         /// <param name="id">The id of the category to replace.</param>
         /// <param name="newDescr">The description of the new category.</param>
         /// <param name="type">The CategoryType of the new category.</param>
+        /// <exception cref="SQLiteException">Thrown when an SQLite error occurs.</exception>
         public void UpdateProperties(int id, string newDescr, Category.CategoryType type)
         {
             _UpdateCategory(new Category(id, newDescr, type));
