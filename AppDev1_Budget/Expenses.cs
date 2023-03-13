@@ -134,26 +134,34 @@ namespace Budget
             selectCommand.Parameters.Add(new SQLiteParameter("@Id", id));
             selectCommand.Prepare();
 
-            //Execute reader
-            using SQLiteDataReader reader = selectCommand.ExecuteReader();
-
-            //If expense not found, return null
-            if (!reader.Read())
+            try
             {
-                return null;
-            }
+                //Execute reader
+                using SQLiteDataReader reader = selectCommand.ExecuteReader();
 
-            //Return Expense object
-            return new Expense(
-                    reader.GetInt32(IDX_ID),
-                    DateTime.Parse(reader.GetString(IDX_DATE)),
-                    reader.GetInt32(IDX_CATEGORY),
-                    reader.GetDouble(IDX_AMOUNT),
-                    reader.GetString(IDX_DESCRIPTION));
+                //If expense not found, return null
+                if (!reader.Read())
+                {
+                    return null;
+                }
+
+                //Return Expense object
+                return new Expense(
+                        reader.GetInt32(IDX_ID),
+                        DateTime.Parse(reader.GetString(IDX_DATE)),
+                        reader.GetInt32(IDX_CATEGORY),
+                        reader.GetDouble(IDX_AMOUNT),
+                        reader.GetString(IDX_DESCRIPTION));
+            }
+            catch(Exception ex)
+            {
+                //throws exception if not allowed to read in database
+                throw new SQLiteException($"Error while reading expense of id ({id}) from database: {ex.Message}");
+            }
 
         }
 
-        public List<Expense> _GetExpenses()
+        private List<Expense> _GetExpenses()
         {
             List<Expense> expenses = new List<Expense>();
 
@@ -166,21 +174,31 @@ namespace Budget
             //Initialize the select command with the command text and connection
             using var selectCommand = new SQLiteCommand(selectCommandText, Database.dbConnection);
 
-            //Execute reader
-            using SQLiteDataReader reader = selectCommand.ExecuteReader();
-
-            //Adds each Expense item into the list
-            while (reader.Read())
+            try
             {
-                expenses.Add(new Expense(
-                    reader.GetInt32(IDX_ID),
-                    DateTime.Parse(reader.GetString(IDX_DATE)),
-                    reader.GetInt32(IDX_CATEGORY),
-                    reader.GetDouble(IDX_AMOUNT),
-                    reader.GetString(IDX_DESCRIPTION)));
+                //Execute reader
+                using SQLiteDataReader reader = selectCommand.ExecuteReader();
+
+                //Adds each Expense item into the list
+                while (reader.Read())
+                {
+                    expenses.Add(new Expense(
+                        reader.GetInt32(IDX_ID),
+                        DateTime.Parse(reader.GetString(IDX_DATE)),
+                        reader.GetInt32(IDX_CATEGORY),
+                        reader.GetDouble(IDX_AMOUNT),
+                        reader.GetString(IDX_DESCRIPTION)));
+                }
+
+                return expenses;
+            }
+            catch (Exception ex)
+            {
+                //throws exception if not allowed to read in database
+                throw new SQLiteException($"Error while reading expenses from database: {ex.Message}");
             }
 
-            return expenses;
+
         }
 
         private void _UpdateExpense(int id, DateTime newDate, int newCategory, Double newAmount, String newDesptiption)
