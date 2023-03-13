@@ -43,7 +43,8 @@ namespace Budget
         /// <exception cref="SQLiteException">Thrown when an SQLite error occurs.</exception>
         public Category GetCategoryFromId(int i)
         {
-            Category? c = _SelectCategory(i);
+            Category? c = _SelectCategory(i); 
+
             if (c == null)
             {
                 throw new Exception("Cannot find category with id " + i.ToString());
@@ -90,6 +91,7 @@ namespace Budget
         /// </example>
         public void SetCategoriesToDefaults()
         {
+            // Truncate all data in categories and categoryTypes tables.
             _RemoveAll();
 
             // Add default categoryTypes
@@ -98,9 +100,7 @@ namespace Budget
             _InsertCategoryType((int)Category.CategoryType.Credit, "Credit");
             _InsertCategoryType((int)Category.CategoryType.Savings, "Savings");
 
-            // ---------------------------------------------------------------
             // Add Defaults
-            // ---------------------------------------------------------------
             _InsertCategory("Utilities", Category.CategoryType.Expense);
             _InsertCategory("Rent", Category.CategoryType.Expense);
             _InsertCategory("Food", Category.CategoryType.Expense);
@@ -117,7 +117,6 @@ namespace Budget
             _InsertCategory("Eating Out", Category.CategoryType.Expense);
             _InsertCategory("Savings", Category.CategoryType.Savings);
             _InsertCategory("Income", Category.CategoryType.Income);
-
         }
 
         // ====================================================================
@@ -237,18 +236,26 @@ namespace Budget
             using var selectCommand = new SQLiteCommand(selectCommandText, Database.dbConnection);
 
             // Execute the reader
-            using SQLiteDataReader reader = selectCommand.ExecuteReader();
-
-            // Loop through all the reader information
-            while (reader.Read())
+            try
             {
-                // Add the category to the list from the database
-                categories.Add(new Category(
-                    reader.GetInt32(IDX_ID),
-                    reader.GetString(IDX_DESCRIPTION),
-                    (Category.CategoryType)reader.GetInt32(IDX_CATEGORY)));
+                using SQLiteDataReader reader = selectCommand.ExecuteReader();
+
+                // Loop through all the reader information
+                while (reader.Read())
+                {
+                    // Add the category to the list from the database
+                    categories.Add(new Category(
+                        reader.GetInt32(IDX_ID),
+                        reader.GetString(IDX_DESCRIPTION),
+                        (Category.CategoryType)reader.GetInt32(IDX_CATEGORY)));
+                }
+                return categories;
             }
-            return categories;
+            catch(Exception e)
+            {
+                throw new SQLiteException($"Failed to get all categories from the database. Error: {e.Message}");
+
+            }
         }
 
         private void _InsertCategory(string description, Category.CategoryType type)
@@ -265,7 +272,14 @@ namespace Budget
             insertCommand.Prepare();
 
             // Finally, execute the command
-            insertCommand.ExecuteNonQuery();
+            try
+            {
+                insertCommand.ExecuteNonQuery();
+            }
+            catch(Exception e)
+            {
+                throw new SQLiteException($"Failed to insert category into database. Error: {e.Message}");
+            }
         }
 
         private void _InsertCategoryType(int typeId, string description)
@@ -282,7 +296,14 @@ namespace Budget
             insertCommand.Prepare();
 
             // Finally, execute the command
-            insertCommand.ExecuteNonQuery();
+            try
+            {
+                insertCommand.ExecuteNonQuery();
+            }
+            catch(Exception e)
+            {
+                throw new SQLiteException($"Failed to insert categoryType into database. Error: {e.Message}");
+            }
         }
 
         private void _DeleteCategory(int id)
@@ -297,13 +318,12 @@ namespace Budget
             deleteCommand.Parameters.Add(new SQLiteParameter("@Id", id));
             deleteCommand.Prepare();
 
-            // Execute the delete operation
-
-            //Throw excetion if not allowed to delete in database
             try
             {
+                // Execute the delete operation
                 deleteCommand.ExecuteNonQuery();
             }
+            //Throw excetion if not allowed to delete in database
             catch (Exception ex)
             {
                 throw new SQLiteException($"Error while deleting category of id: {id} from database: {ex.Message}");
@@ -325,17 +345,23 @@ namespace Budget
             selectCommand.Prepare();
 
             // Execute the reader
-            using SQLiteDataReader reader = selectCommand.ExecuteReader();
+            try
+            {
+                using SQLiteDataReader reader = selectCommand.ExecuteReader();
+                // If the category was not found, just return null
+                if (!reader.Read())
+                    return null;
 
-            // If the category was not found, just return null
-            if (!reader.Read())
-                return null;
-
-            // Return the Category object
-            return new Category(
-                reader.GetInt32(IDX_ID),
-                reader.GetString(IDX_DESCRIPTION),
-                (Category.CategoryType)reader.GetInt32(IDX_CATEGORY));
+                // Return the Category object
+                return new Category(
+                    reader.GetInt32(IDX_ID),
+                    reader.GetString(IDX_DESCRIPTION),
+                    (Category.CategoryType)reader.GetInt32(IDX_CATEGORY));
+            }
+            catch(Exception e)
+            {
+                throw new SQLiteException($"An SQLite error occured when getting by id. Error: {e.Message}");
+            }
         }
 
         private void _UpdateCategory(Category newCategory)
@@ -353,7 +379,14 @@ namespace Budget
             updateCommand.Prepare();
 
             // Finally, execute the command
-            updateCommand.ExecuteNonQuery();
+            try
+            {
+                updateCommand.ExecuteNonQuery();
+            }
+            catch(Exception e)
+            {
+                throw new SQLiteException($"Failed to update category in database. Error: {e.Message}");
+            }
         }
 
         private void _RemoveAll()
@@ -378,7 +411,8 @@ namespace Budget
             try
             {
                 deleteCommand.ExecuteNonQuery();
-            } catch (Exception ex)
+            } 
+            catch (Exception ex)
             {
                 throw new SQLiteException($"Error while deleting all values from table: {table} Message: {ex.Message}");
             }
