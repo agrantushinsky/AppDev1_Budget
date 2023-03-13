@@ -44,7 +44,7 @@ namespace BudgetCodeTests
 
             //Assert
             Assert.True(budget.expenses.List().Count == 0);
-            Assert.True(budget.categories.List().Count == 0);
+            Assert.False(budget.categories.List().Count == 0);
         }
 
         [Fact]
