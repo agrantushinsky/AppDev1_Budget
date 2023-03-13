@@ -134,7 +134,15 @@ namespace Budget
             // Open connection to the database file with foreign keys enabled:
             string connectionSource = @$"URI=file:{filename}; Foreign Keys=1";
             _connection = new SQLiteConnection(connectionSource);
-            _connection.Open();
+
+            try
+            {
+                _connection.Open();
+            }
+            catch(Exception e)
+            {
+                throw new SQLiteException($"Failed to connect to database: '{filename}'. Error: {e.Message}");
+            }
         }
     }
 

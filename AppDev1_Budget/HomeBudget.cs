@@ -86,31 +86,38 @@ namespace Budget
             queryCommand.Parameters.Add(new SQLiteParameter("@CategoryId", CategoryID));
             queryCommand.Parameters.Add(new SQLiteParameter("@FilterFlag", FilterFlag));
 
-            // Execute the reader
-            using SQLiteDataReader reader = queryCommand.ExecuteReader();
-
             List<BudgetItem> items = new List<BudgetItem>();
-            double total = 0;
 
-            double amount;
-            while (reader.Read())
+            try
             {
-                amount = reader.GetDouble(IDX_AMOUNT);
-                total += amount;
-                items.Add(new BudgetItem
+                using SQLiteDataReader reader = queryCommand.ExecuteReader();
+                double total = 0;
+
+                double amount;
+                while (reader.Read())
                 {
-                    ExpenseID = reader.GetInt32(IDX_EXPENSE_ID),
-                    Date = DateTime.ParseExact(
-                        reader.GetString(IDX_DATE),
-                        "yyyy-MM-dd",
-                        CultureInfo.InvariantCulture),
-                    ShortDescription = reader.GetString(IDX_DESCRIPTION),
-                    Amount = amount,
-                    CategoryID = reader.GetInt32(IDX_CATEGORY_ID),
-                    Category = reader.GetString(IDX_CATEGORY_DESCRIPTION),
-                    Balance = total
-                }); 
+                    amount = reader.GetDouble(IDX_AMOUNT);
+                    total += amount;
+                    items.Add(new BudgetItem
+                    {
+                        ExpenseID = reader.GetInt32(IDX_EXPENSE_ID),
+                        Date = DateTime.ParseExact(
+                            reader.GetString(IDX_DATE),
+                            "yyyy-MM-dd",
+                            CultureInfo.InvariantCulture),
+                        ShortDescription = reader.GetString(IDX_DESCRIPTION),
+                        Amount = amount,
+                        CategoryID = reader.GetInt32(IDX_CATEGORY_ID),
+                        Category = reader.GetString(IDX_CATEGORY_DESCRIPTION),
+                        Balance = total
+                    }); 
+                }
+            } 
+            catch(Exception err)
+            {
+                throw new SQLiteException($"Failed to query budget items. Message: {err.Message}");
             }
+
             return items;
         }
 
@@ -149,44 +156,49 @@ namespace Budget
             queryCommand.Parameters.Add(new SQLiteParameter("@CategoryId", CategoryID));
             queryCommand.Parameters.Add(new SQLiteParameter("@FilterFlag", FilterFlag));
 
-            // Execute the reader
-            using SQLiteDataReader reader = queryCommand.ExecuteReader();
-
             List<BudgetItemsByMonth> items = new List<BudgetItemsByMonth>();
 
-            const int DATE_YEAR = 0, DATE_MONTH = 1;
-
-            while (reader.Read())
+            try
             {
-                string dateCode = reader.GetString(IDX_DATE_CODE);
-                double monthlyTotal = reader.GetDouble(IDX_MONTHLY_TOTAL);
+                using SQLiteDataReader reader = queryCommand.ExecuteReader();
+                const int DATE_YEAR = 0, DATE_MONTH = 1;
 
-                string[] dateCodeSplit = dateCode.Split('-');
-
-                int year = int.Parse(dateCodeSplit[DATE_YEAR]);
-                int month = int.Parse(dateCodeSplit[DATE_MONTH]);
-                int startDay = 1;
-                int endDay = DateTime.DaysInMonth(year, month);
-
-                if (startDate.Year == year && startDate.Month == month)
-                    startDay = startDate.Day;
-
-                if (endDate.Year == year && endDate.Month == month)
-                    endDay = endDate.Day;
-
-                DateTime start = new DateTime(year, month, startDay);
-                DateTime end = new DateTime(year, month, endDay);
-
-                List<BudgetItem> monthlyBudgetItems = GetBudgetItems(start, end, FilterFlag, CategoryID);
-
-                BudgetItemsByMonth monthlyBudget = new BudgetItemsByMonth()
+                while (reader.Read())
                 {
-                    Month = dateCode,
-                    Details = monthlyBudgetItems,
-                    Total = monthlyTotal
-                };
+                    string dateCode = reader.GetString(IDX_DATE_CODE);
+                    double monthlyTotal = reader.GetDouble(IDX_MONTHLY_TOTAL);
 
-                items.Add(monthlyBudget);
+                    string[] dateCodeSplit = dateCode.Split('-');
+
+                    int year = int.Parse(dateCodeSplit[DATE_YEAR]);
+                    int month = int.Parse(dateCodeSplit[DATE_MONTH]);
+                    int startDay = 1;
+                    int endDay = DateTime.DaysInMonth(year, month);
+
+                    if (startDate.Year == year && startDate.Month == month)
+                        startDay = startDate.Day;
+
+                    if (endDate.Year == year && endDate.Month == month)
+                        endDay = endDate.Day;
+
+                    DateTime start = new DateTime(year, month, startDay);
+                    DateTime end = new DateTime(year, month, endDay);
+
+                    List<BudgetItem> monthlyBudgetItems = GetBudgetItems(start, end, FilterFlag, CategoryID);
+
+                    BudgetItemsByMonth monthlyBudget = new BudgetItemsByMonth()
+                    {
+                        Month = dateCode,
+                        Details = monthlyBudgetItems,
+                        Total = monthlyTotal
+                    };
+
+                    items.Add(monthlyBudget);
+                }
+            }
+            catch (Exception err)
+            {
+                throw new SQLiteException($"Failed to query budget items. Message: {err.Message}");
             }
 
             return items;
@@ -235,26 +247,33 @@ namespace Budget
             queryCommand.Parameters.Add(new SQLiteParameter("@FilterFlag", FilterFlag));
 
             // Execute the reader
-            using SQLiteDataReader reader = queryCommand.ExecuteReader();
 
             List<BudgetItemsByCategory> items = new List<BudgetItemsByCategory>();
 
-            while (reader.Read())
+            try
             {
-                string category = reader.GetString(IDX_CATEGORY);
-                int categoryId = reader.GetInt32(IDX_CATEGORY_ID);
-                double categoryTotal = reader.GetDouble(IDX_CATEGORY_TOTAL);
-
-                List<BudgetItem> categoryBudgetItems = GetBudgetItems(Start, End, true, categoryId);
-
-                BudgetItemsByCategory categoryBudget = new BudgetItemsByCategory()
+                using SQLiteDataReader reader = queryCommand.ExecuteReader();
+                while (reader.Read())
                 {
-                    Category = category,
-                    Details = categoryBudgetItems,
-                    Total = categoryTotal
-                };
+                    string category = reader.GetString(IDX_CATEGORY);
+                    int categoryId = reader.GetInt32(IDX_CATEGORY_ID);
+                    double categoryTotal = reader.GetDouble(IDX_CATEGORY_TOTAL);
 
-                items.Add(categoryBudget);
+                    List<BudgetItem> categoryBudgetItems = GetBudgetItems(Start, End, true, categoryId);
+
+                    BudgetItemsByCategory categoryBudget = new BudgetItemsByCategory()
+                    {
+                        Category = category,
+                        Details = categoryBudgetItems,
+                        Total = categoryTotal
+                    };
+
+                    items.Add(categoryBudget);
+                }
+            }
+            catch (Exception err)
+            {
+                throw new SQLiteException($"Failed to query budget items. Message: {err.Message}");
             }
 
             return items;
