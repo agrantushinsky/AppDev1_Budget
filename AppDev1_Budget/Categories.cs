@@ -20,21 +20,11 @@ namespace Budget
         // Constructor
         // ====================================================================
         /// <summary>
-        /// Creates an instance of Categories
+        /// Creates an instance of Categories and sets the categories to default if newDatabase is true.
         /// </summary>
-        public Categories()
-        {
-
-        }
-
-        /// <summary>
-        /// Creates an instance of Categories and sets the categories to default is newDatabase is true.
-        /// This constructor is mainly used for testing.
-        /// </summary>
-        /// <param name="conn">Connection to database.</param>
-        /// <param name="newDatabase">Boolean whether to reset categories to defaults or not.</param>
+        /// <param name="newDatabase">Boolean whether to reset categories to defaults or not. Default value is false.</param>
         /// <exception cref="SQLiteException">Thrown when the connection has not been initialized.</exception>
-        public Categories(SQLiteConnection conn, bool newDatabase)
+        public Categories(bool newDatabase = false)
         {
             if (newDatabase)
             {

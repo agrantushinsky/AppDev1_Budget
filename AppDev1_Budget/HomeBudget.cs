@@ -44,8 +44,7 @@ namespace Budget
             {
                 Database.newDatabase(databaseFile);
             }
-            
-            _categories = new Categories();
+            _categories = new Categories(newDatabase);
             _expenses = new Expenses();
         }
 
