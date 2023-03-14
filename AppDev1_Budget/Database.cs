@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Data.SQLite;
 using System.Threading;
 using System.Data.Entity.Infrastructure;
+using System.Runtime.CompilerServices;
+[assembly: InternalsVisibleToAttribute("DatabaseTesting")]
 
 // ===================================================================
 // Very important notes:
@@ -31,7 +33,7 @@ using System.Data.Entity.Infrastructure;
 
 namespace Budget
 {
-    public class Database
+    internal class Database
     {
 
         public static SQLiteConnection dbConnection { get { return _connection; } }

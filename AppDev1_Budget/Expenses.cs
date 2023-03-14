@@ -22,6 +22,12 @@ namespace Budget
     /// </summary>
     public class Expenses
     {
+
+        //Default constructor
+        internal Expenses()
+        {
+
+        }
         /// <summary>
         /// Adds an Expense object in the database using the provided information
         /// </summary>

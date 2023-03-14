@@ -8,6 +8,9 @@ using System.Dynamic;
 using System.Data.SQLite;
 using System.Globalization;
 using System.CodeDom;
+using System.Runtime.CompilerServices;
+[assembly: InternalsVisibleToAttribute("BudgetTesting")]
+
 
 // ============================================================================
 // (c) Sandy Bultena 2018
