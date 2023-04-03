@@ -7,4 +7,8 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AppDev1_Budget\AppDev1_Budget.csproj" />
+  </ItemGroup>
+
 </Project>

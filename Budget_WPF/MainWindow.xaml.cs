@@ -24,5 +24,30 @@ namespace Budget_WPF
         {
             InitializeComponent();
         }
+
+        public void AddCategory()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddExpense()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Refresh()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ShowCategoriesWindow()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ShowExpensesWindow()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
