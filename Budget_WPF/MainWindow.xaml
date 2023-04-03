@@ -14,8 +14,7 @@
 
         <TextBlock Text="Category"
                    Margin="0,20,0,0"/>
-        <ComboBox>
-            
+        <ComboBox x:Name="cmbCategories" IsEnabled="True" IsTextSearchEnabled="True" IsEditable="True" Text="Search for an existing Category or add a new one" FontSize="11">
         </ComboBox>
 
         <TextBlock Text="Date"
