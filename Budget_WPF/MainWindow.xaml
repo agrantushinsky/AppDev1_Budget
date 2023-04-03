@@ -5,8 +5,51 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Budget_WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Add Expense" Height="450" Width="300">
+    <StackPanel Margin="10">
+        <TextBlock Text="Enter Expense"
+                   HorizontalAlignment="Center"
+                   FontWeight="Bold"
+                   FontSize="14"/>
 
-    </Grid>
+        <TextBlock Text="Category"
+                   Margin="0,20,0,0"/>
+        <ComboBox>
+            
+        </ComboBox>
+
+        <TextBlock Text="Date"
+                   Margin="0,20,0,0"/>
+        <DatePicker/>
+
+        <TextBlock Text="Description"
+                   Margin="0,20,0,0"/>
+        <TextBox Padding="0,2"
+                 AcceptsReturn="True"/>
+
+        <TextBlock Text="Amount"
+                   Margin="0,20,0,0"/>
+        <TextBox/>
+
+        <CheckBox>Credit?</CheckBox>
+
+        <Grid ShowGridLines="False"
+              Background="Beige"
+              Margin="0,20,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button Content="Save"
+                    Grid.Column="0"
+                    Margin="0,0,5,0"/>
+            <Button Content="Cancel"
+                    Grid.Column="1"
+                    Margin="5,0,0,0"/>
+        </Grid>
+
+        <TextBlock Text="Last Action"
+                   Margin="0,20,0,0"/>
+        <TextBlock Text="-none"/>
+    </StackPanel>
 </Window>
