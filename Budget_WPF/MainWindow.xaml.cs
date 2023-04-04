@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using Budget;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,7 @@ namespace Budget_WPF
         {
             InitializeComponent();
             _presenter = new Presenter(this);
+            dp_Date.SelectedDate = DateTime.Now;
         }
 
         private void Menu_NewFile_Click(object sender, RoutedEventArgs e)
@@ -83,7 +85,44 @@ namespace Budget_WPF
 
         public void AddExpense()
         {
-            throw new NotImplementedException();
+            // TODO: make sure a category is selected
+            string errMsg = string.Empty;
+            DateTime date = dp_Date.SelectedDate ?? new DateTime();
+            string desc = string.Empty;
+            double amount;
+            int catID;
+
+            if(txb_CurrentFile.Text.ToLower() == "none" || txb_CurrentFile.Text == "")
+            {
+                ShowError("No file is currently opened.");
+                return;
+            }
+
+            if(cmbCategories.SelectedItem == null)
+            {
+                errMsg += "A category must be selected.\n";
+            }
+
+            if(string.IsNullOrEmpty(tbx_Description.Text))
+            {
+                errMsg += "A description must be added\n";
+            }
+
+            if (!(double.TryParse(tbx_Amount.Text, out amount)))
+            {
+                errMsg += "The amount is invalid.\n";
+            }
+
+            if(string.IsNullOrEmpty(errMsg))
+            {
+                catID = (cmbCategories.SelectedItem as Category).Id;
+                _presenter.AddExpense(date, catID, amount, desc);
+            }
+            else
+            {
+                ShowError(errMsg);
+            }
+
         }
 
         public void Refresh()
@@ -104,6 +143,15 @@ namespace Budget_WPF
 
             //Set the selected index to the newly made category
             cmbCategories.SelectedIndex = cmbCategories.Items.Count - 1;
+        }
+
+        public void ClearInputs()
+        {
+            dp_Date.SelectedDate = DateTime.Now;
+            tbx_Amount.Text = "";
+            tbx_Description.Text = "";
+            // TODO: Probably keep the current category selected.
+            //cmbCategories.SelectedIndex = -1;
         }
     }
 }
