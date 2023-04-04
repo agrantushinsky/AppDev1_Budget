@@ -86,7 +86,43 @@ namespace Budget_WPF
         public void AddExpense()
         {
             // TODO: make sure a category is selected
-            _presenter.AddExpense(dp_Date.SelectedDate ?? new DateTime(1,1,1), (cmbCategories.SelectedItem as Category).Id, double.Parse(tbx_Amount.Text), tbx_Description.Text);
+            string errMsg = string.Empty;
+            DateTime date = dp_Date.SelectedDate ?? new DateTime();
+            string desc = string.Empty;
+            double amount;
+            int catID;
+
+            if(txb_CurrentFile.Text.ToLower() == "none" || txb_CurrentFile.Text == "")
+            {
+                ShowError("No file is currently opened.");
+                return;
+            }
+
+            if(cmbCategories.SelectedItem == null)
+            {
+                errMsg += "A category must be selected.\n";
+            }
+
+            if(string.IsNullOrEmpty(tbx_Description.Text))
+            {
+                errMsg += "A description must be added\n";
+            }
+
+            if (!(double.TryParse(tbx_Amount.Text, out amount)))
+            {
+                errMsg += "The amount is invalid.\n";
+            }
+
+            if(string.IsNullOrEmpty(errMsg))
+            {
+                catID = (cmbCategories.SelectedItem as Category).Id;
+                _presenter.AddExpense(date, catID, amount, desc);
+            }
+            else
+            {
+                ShowError(errMsg);
+            }
+
         }
 
         public void Refresh()
