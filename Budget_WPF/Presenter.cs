@@ -48,6 +48,7 @@ namespace Budget_WPF
             {
 
             }
+            _view.ClearInputs();
         }
 
         public List<Category> GetCategories()

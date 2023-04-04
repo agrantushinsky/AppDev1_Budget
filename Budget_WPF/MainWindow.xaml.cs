@@ -29,6 +29,7 @@ namespace Budget_WPF
         {
             InitializeComponent();
             _presenter = new Presenter(this);
+            dp_Date.SelectedDate = DateTime.Now;
         }
 
         private void Menu_NewFile_Click(object sender, RoutedEventArgs e)
@@ -107,6 +108,15 @@ namespace Budget_WPF
         public void ShowError(string message)
         {
             MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        public void ClearInputs()
+        {
+            dp_Date.SelectedDate = DateTime.Now;
+            tbx_Amount.Text = "";
+            tbx_Description.Text = "";
+            // TODO: Probably keep the current category selected.
+            //cmbCategories.SelectedIndex = -1;
         }
     }
 }

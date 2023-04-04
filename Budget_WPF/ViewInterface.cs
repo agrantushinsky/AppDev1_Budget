@@ -23,5 +23,6 @@ namespace Budget_WPF
         void OpenExistingFile();
         void ShowCurrentFile(string filename);
         void ShowError(string message);
+        void ClearInputs();
     }
 }
