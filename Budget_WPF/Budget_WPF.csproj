@@ -7,4 +7,10 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="AppDev1_Budget">
+      <HintPath>..\AppDev1_Budget\bin\Debug\net6.0\AppDev1_Budget.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
