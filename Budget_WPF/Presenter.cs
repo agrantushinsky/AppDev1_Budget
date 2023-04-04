@@ -24,5 +24,34 @@ namespace Budget_WPF
             _model = new HomeBudget(filename, newDatabase);
             _view.ShowCurrentFile(filename);
         }
+
+        public void AddCategory(string description, Category.CategoryType type)
+        {
+            try
+            {
+                _model.categories.Add(description, type);
+            }
+            catch(Exception ex)
+            {
+
+            }
+        }
+
+        public void AddExpense(DateTime date, int category, double amount, string description)
+        {
+            try
+            {
+                _model.expenses.Add(date, category, amount, description);
+            }
+            catch(Exception ex)
+            {
+
+            }
+        }
+
+        public List<Category> GetCategories()
+        {
+            return _model.categories.List();
+        }
     }
 }

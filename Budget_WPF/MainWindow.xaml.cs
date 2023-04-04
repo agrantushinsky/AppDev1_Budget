@@ -40,6 +40,12 @@ namespace Budget_WPF
             OpenExistingFile();
         }
 
+        private void btn_Save_Click(object sender, RoutedEventArgs e)
+        {
+            AddExpense();
+        }
+
+
         public void OpenExistingFile()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -91,6 +97,11 @@ namespace Budget_WPF
         }
 
         public void ShowExpensesWindow()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ShowError()
         {
             throw new NotImplementedException();
         }
