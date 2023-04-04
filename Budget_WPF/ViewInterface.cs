@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace Budget_WPF
 {
-    interface ViewInterface
+    public interface ViewInterface
     {
+        void OpenNewFile();
+        void OpenExistingFile();
+        void ShowCurrentFile(string filename);
     }
 }
