@@ -46,17 +46,42 @@ namespace Budget_WPF
             }
         }
 
-        public void AddExpense(DateTime date, int category, double amount, string description)
+        public void AddExpense(DateTime date, int category, string amountStr, string description)
         {
-            try
-            {
-                _model.expenses.Add(date, category, amount, description);
-            }
-            catch(Exception ex)
-            {
+            string errMsg = string.Empty;
+            double amount;
 
+            if (category == -1)
+            {
+                errMsg += "An existing catgory must be selected.\n";
             }
-            _view.ClearInputs();
+
+            if (string.IsNullOrEmpty(description))
+            {
+                errMsg += "A description must be added.\n";
+            }
+
+            if(!double.TryParse(amountStr, out amount))
+            {
+                errMsg += "The amount is invalid.\n";
+            }
+        
+            if(!string.IsNullOrEmpty(errMsg))
+            {
+                _view.ShowError(errMsg);
+            }
+            else
+            {
+                try
+                {
+                    _model.expenses.Add(date, category, amount, description);
+                }
+                catch (Exception ex)
+                {
+
+                }
+                _view.ClearInputs();
+            }
         }
 
         public List<Category> GetCategories()
