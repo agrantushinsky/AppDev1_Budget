@@ -80,7 +80,12 @@ namespace Budget_WPF
 
         public void AddCategory()
         {
-            throw new NotImplementedException();
+            NewCategory newCat = new NewCategory(_presenter,cmbCategories.Text);
+            newCat.ShowDialog();
+            Refresh();
+
+            //Set the selected index to the newly made category
+            cmbCategories.SelectedIndex = cmbCategories.Items.Count - 1;
         }
 
         public void AddExpense()
@@ -98,9 +103,17 @@ namespace Budget_WPF
                 return;
             }
 
-            if(cmbCategories.SelectedItem == null)
+            if(cmbCategories.SelectedItem == null && cmbCategories.Text.Length == 0)
             {
                 errMsg += "A category must be selected.\n";
+            }
+            else if(cmbCategories.SelectedItem == null)
+            {
+                MessageBoxResult result = MessageBox.Show($"Category \"{cmbCategories.Text}\" does not exist. Would you like to create a new category?", "Info", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                if (result == MessageBoxResult.Yes)
+                    AddCategory();
+                else
+                    errMsg += "Select an existing";
             }
 
             if(string.IsNullOrEmpty(tbx_Description.Text))
@@ -137,12 +150,7 @@ namespace Budget_WPF
 
         private void btnAddCategory_Click(object sender, RoutedEventArgs e)
         {
-            NewCategory newCat = new NewCategory(_presenter,cmbCategories.Text);
-            newCat.ShowDialog();
-            Refresh();
-
-            //Set the selected index to the newly made category
-            cmbCategories.SelectedIndex = cmbCategories.Items.Count - 1;
+            AddCategory();
         }
 
         public void ClearInputs()
