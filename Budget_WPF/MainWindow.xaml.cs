@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using Budget;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -83,7 +84,8 @@ namespace Budget_WPF
 
         public void AddExpense()
         {
-            throw new NotImplementedException();
+            // TODO: make sure a category is selected
+            _presenter.AddExpense(dp_Date.SelectedDate ?? new DateTime(1,1,1), (cmbCategories.SelectedItem as Category).Id, double.Parse(tbx_Amount.Text), tbx_Description.Text);
         }
 
         public void Refresh()
