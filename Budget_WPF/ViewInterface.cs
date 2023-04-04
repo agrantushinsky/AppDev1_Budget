@@ -8,6 +8,17 @@ namespace Budget_WPF
 {
     public interface ViewInterface
     {
+        //Rough Idea of what is needed
+        void ShowExpensesWindow();
+
+        void ShowCategoriesWindow();
+
+        void AddCategory();
+        
+        void AddExpense();
+
+        void Refresh();
+
         void OpenNewFile();
         void OpenExistingFile();
         void ShowCurrentFile(string filename);
