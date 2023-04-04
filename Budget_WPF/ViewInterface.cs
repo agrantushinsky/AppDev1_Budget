@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Budget_WPF
 {
-    interface ViewInterface
+    public interface ViewInterface
     {
         //Rough Idea of what is needed
         void ShowExpensesWindow();
@@ -18,5 +18,9 @@ namespace Budget_WPF
         void AddExpense();
 
         void Refresh();
+
+        void OpenNewFile();
+        void OpenExistingFile();
+        void ShowCurrentFile(string filename);
     }
 }

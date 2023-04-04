@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,53 @@ namespace Budget_WPF
     /// </summary>
     public partial class MainWindow : Window, ViewInterface
     {
+        private Presenter _presenter;
+        private string _filename;
+
         public MainWindow()
         {
             InitializeComponent();
+            _presenter = new Presenter(this);
+        }
+
+        private void Menu_NewFile_Click(object sender, RoutedEventArgs e)
+        {
+            OpenNewFile();
+        }
+
+        private void Menu_OpenFile_Click(object sender, RoutedEventArgs e)
+        {
+            OpenExistingFile();
+        }
+
+        public void OpenExistingFile()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Data Base File | *.db";
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                _filename = openFileDialog.FileName;
+                _presenter.ConnectToDatabase(_filename, false);
+            }
+        }
+
+        public void OpenNewFile()
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Data Base File | *.db";
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                _filename = saveFileDialog.FileName;
+                _presenter.ConnectToDatabase(_filename, true);
+            }
+        }
+
+        public void ShowCurrentFile(string filename)
+        {
+            txb_LastAction.Text = $"Opened {filename}";
+            txb_CurrentFile.Text = filename;
         }
 
         public void AddCategory()

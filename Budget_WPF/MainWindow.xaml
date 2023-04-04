@@ -5,35 +5,55 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Budget_WPF"
         mc:Ignorable="d"
-        Title="Add Expense" Height="450" Width="300">
-    <StackPanel Margin="10">
+        Title="Add Expense" Height="550" Width="300">
+    <StackPanel Margin="5">
+        
+        <!--Menu-->
+        <Menu>
+            <MenuItem Header="File">
+                <MenuItem Header="New File..."
+                          Click="Menu_NewFile_Click"/>
+                <MenuItem Header="Open File..."
+                          Click="Menu_OpenFile_Click"/>
+                <MenuItem Header="Open Recent"/>
+            </MenuItem>
+        </Menu>
+        
+        <!--Title-->
         <TextBlock Text="Enter Expense"
                    HorizontalAlignment="Center"
                    FontWeight="Bold"
-                   FontSize="14"/>
+                   FontSize="14"
+                   Margin="0,5,0,0"/>
 
+        <!--Category-->
         <TextBlock Text="Category"
                    Margin="0,20,0,0"/>
+                   
         <ComboBox x:Name="cmbCategories" IsEnabled="True" IsTextSearchEnabled="True" IsEditable="True" Text="Search for an existing Category or add a new one" FontSize="11">
         </ComboBox>
 
+        <!--Date-->
         <TextBlock Text="Date"
                    Margin="0,20,0,0"/>
-        <DatePicker/>
+        <DatePicker x:Name="dp_Date"/>
 
+        <!--Description-->
         <TextBlock Text="Description"
                    Margin="0,20,0,0"/>
         <TextBox Padding="0,2"
-                 AcceptsReturn="True"/>
+                 AcceptsReturn="True"
+                 x:Name="tbx_Description"/>
 
+        <!--Amount-->
         <TextBlock Text="Amount"
                    Margin="0,20,0,0"/>
-        <TextBox/>
+        <TextBox x:Name="tbx_Amount"/>
 
-        <CheckBox>Credit?</CheckBox>
+        <CheckBox x:Name="cbCredit">Credit?</CheckBox>
 
+        <!--Action Buttons-->
         <Grid ShowGridLines="False"
-              Background="Beige"
               Margin="0,20,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -41,14 +61,28 @@
             </Grid.ColumnDefinitions>
             <Button Content="Save"
                     Grid.Column="0"
-                    Margin="0,0,5,0"/>
+                    Margin="0,0,5,0"
+                    x:Name="btn_Save"/>
             <Button Content="Cancel"
                     Grid.Column="1"
-                    Margin="5,0,0,0"/>
+                    Margin="5,0,0,0"
+                    x:Name="btn_Cancel"/>
         </Grid>
 
+        <!--Current File-->
+        <TextBlock Text="Current File"
+                   Margin="0,20,0,0"
+                   FontWeight="Bold"/>
+        <TextBlock Text="None"
+                   x:Name="txb_CurrentFile"
+                   TextWrapping="Wrap"/>
+
+        <!--Last Action-->
         <TextBlock Text="Last Action"
-                   Margin="0,20,0,0"/>
-        <TextBlock Text="-none"/>
+                   Margin="0,20,0,0"
+                   FontWeight="Bold"/>
+        <TextBlock Text="-None"
+                   x:Name="txb_LastAction"
+                   TextWrapping="Wrap"/>
     </StackPanel>
 </Window>
