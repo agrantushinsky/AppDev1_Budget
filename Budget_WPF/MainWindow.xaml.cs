@@ -94,9 +94,9 @@ namespace Budget_WPF
             // TODO: make sure a category is selected
             string errMsg = string.Empty;
             DateTime date = dp_Date.SelectedDate ?? new DateTime();
-            string desc = string.Empty;
-            double amount;
-            int catID;
+            string desc = tbx_Description.Text;
+            string amount = tbx_Amount.Text;
+            int catID = -1;
 
             if(txb_CurrentFile.Text.ToLower() == "none" || txb_CurrentFile.Text == "")
             {
@@ -104,38 +104,16 @@ namespace Budget_WPF
                 return;
             }
 
-            if(cmbCategories.SelectedItem == null && cmbCategories.Text.Length == 0)
-            {
-                errMsg += "A category must be selected.\n";
-            }
-            else if(cmbCategories.SelectedItem == null)
+            if (cmbCategories.SelectedItem == null && 
+                cmbCategories.Text.Length != 0 && 
+                cmbCategories.Text != "Search for a category/Add new ones")
             {
                 MessageBoxResult result = MessageBox.Show($"Category \"{cmbCategories.Text}\" does not exist. Would you like to create a new category?", "Info", MessageBoxButton.YesNo, MessageBoxImage.Information);
                 if (result == MessageBoxResult.Yes)
-                    AddCategory();
-                else
-                    errMsg += "Select an existing";
+                    AddCategory();                    
             }
 
-            if(string.IsNullOrEmpty(tbx_Description.Text))
-            {
-                errMsg += "A description must be added\n";
-            }
-
-            if (!(double.TryParse(tbx_Amount.Text, out amount)))
-            {
-                errMsg += "The amount is invalid.\n";
-            }
-
-            if(string.IsNullOrEmpty(errMsg))
-            {
-                catID = (cmbCategories.SelectedItem as Category).Id;
-                _presenter.AddExpense(date, catID, amount, desc);
-            }
-            else
-            {
-                ShowError(errMsg);
-            }
+            _presenter.AddExpense(date, catID, amount, desc);
 
         }
 
