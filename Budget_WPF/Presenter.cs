@@ -59,6 +59,17 @@ namespace Budget_WPF
             _view.ClearInputs();
         }
 
+        public bool UnsavedChangesCheck(string description, string amount)
+        {
+            if(!string.IsNullOrEmpty(description) ||
+                !string.IsNullOrEmpty(amount))
+            {
+                return _view.ShowMessageWithConfirmation("You have unsaved changes, are you sure you wanted to exit?");
+            }
+
+            return false;
+        }
+
         public List<Category> GetCategories()
         {
             return _model.categories.List();

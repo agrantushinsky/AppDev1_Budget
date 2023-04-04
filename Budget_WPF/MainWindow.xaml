@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Budget_WPF"
         mc:Ignorable="d"
-        Title="Add Expense" Height="550" Width="300">
+        Title="Add Expense" Height="550" Width="300" Closing="Window_Closing">
     <StackPanel Margin="5">
         
         <!--Menu-->

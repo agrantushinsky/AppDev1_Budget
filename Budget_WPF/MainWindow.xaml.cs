@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -146,7 +147,13 @@ namespace Budget_WPF
         public void ShowError(string message)
         {
             MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }        
+
+        public void ShowWarning(string message)
+        {
+            MessageBox.Show(message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
+
 
         private void btnAddCategory_Click(object sender, RoutedEventArgs e)
         {
@@ -160,6 +167,16 @@ namespace Budget_WPF
             tbx_Description.Text = "";
             // TODO: Probably keep the current category selected.
             //cmbCategories.SelectedIndex = -1;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = !_presenter.UnsavedChangesCheck(tbx_Description.Text, tbx_Amount.Text);
+        }
+
+        public bool ShowMessageWithConfirmation(string message)
+        {
+            return MessageBox.Show(message, "Info", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes;
         }
     }
 }
