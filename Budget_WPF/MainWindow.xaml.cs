@@ -91,20 +91,19 @@ namespace Budget_WPF
             cmbCategories.DisplayMemberPath = "Description";
             cmbCategories.ItemsSource = _presenter.GetCategories();
         }
-
-        public void ShowCategoriesWindow()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ShowExpensesWindow()
-        {
-            throw new NotImplementedException();
-        }
-
         public void ShowError(string message)
         {
             MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private void btnAddCategory_Click(object sender, RoutedEventArgs e)
+        {
+            NewCategory newCat = new NewCategory(_presenter,cmbCategories.Text);
+            newCat.ShowDialog();
+            Refresh();
+
+            //Set the selected index to the newly made category
+            cmbCategories.SelectedIndex = cmbCategories.Items.Count - 1;
         }
     }
 }

@@ -27,11 +27,18 @@
                    Margin="0,5,0,0"/>
 
         <!--Category-->
-        <TextBlock Text="Category"
+
+            <TextBlock Text="Category"
                    Margin="0,20,0,0"/>
-                   
-        <ComboBox x:Name="cmbCategories" IsEnabled="True" IsTextSearchEnabled="True" IsEditable="True" Text="Search for an existing Category or add a new one" FontSize="11">
-        </ComboBox>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <ComboBox x:Name="cmbCategories" IsEnabled="True" IsTextSearchEnabled="True" IsEditable="True" Text="Search for a category/Add new ones" FontSize="11" Grid.Column="0">
+            </ComboBox>
+            <Button x:Name="btnAddCategory" Click="btnAddCategory_Click" Content="New" Grid.Column="1"></Button>
+        </Grid>
 
         <!--Date-->
         <TextBlock Text="Date"

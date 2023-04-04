@@ -26,15 +26,23 @@ namespace Budget_WPF
             _view.Refresh();
         }
 
-        public void AddCategory(string description, Category.CategoryType type)
+        public void AddCategory(string description, Category.CategoryType? type)
         {
-            try
+            if (string.IsNullOrEmpty(description))
+                _view.ShowError("Invalid description, please try again.");
+            else if (type is null)
+                _view.ShowError("Please select a type.");
+            else
             {
-                _model.categories.Add(description, type);
-            }
-            catch(Exception ex)
-            {
+                try
+                {
+                    //Change type to non-nullable
+                    _model.categories.Add(description, (Category.CategoryType)type);
+                }
+                catch (Exception ex)
+                {
 
+                }
             }
         }
 
