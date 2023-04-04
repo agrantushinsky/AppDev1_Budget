@@ -24,5 +24,15 @@ namespace Budget_WPF
         {
             InitializeComponent();
         }
+
+        private void Menu_NewFile_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_OpenFile_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
