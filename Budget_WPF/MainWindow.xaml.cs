@@ -49,7 +49,7 @@ namespace Budget_WPF
         public void OpenExistingFile()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Data Base File | *.db";
+            openFileDialog.Filter = "Database File | *.db";
 
             if (openFileDialog.ShowDialog() == true)
             {
@@ -61,7 +61,7 @@ namespace Budget_WPF
         public void OpenNewFile()
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "Data Base File | *.db";
+            saveFileDialog.Filter = "Database File | *.db";
 
             if (saveFileDialog.ShowDialog() == true)
             {
@@ -88,7 +88,8 @@ namespace Budget_WPF
 
         public void Refresh()
         {
-            throw new NotImplementedException();
+            cmbCategories.DisplayMemberPath = "Description";
+            cmbCategories.ItemsSource = _presenter.GetCategories();
         }
 
         public void ShowCategoriesWindow()
@@ -101,9 +102,9 @@ namespace Budget_WPF
             throw new NotImplementedException();
         }
 
-        public void ShowError()
+        public void ShowError(string message)
         {
-            throw new NotImplementedException();
+            MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }

@@ -23,6 +23,7 @@ namespace Budget_WPF
         {
             _model = new HomeBudget(filename, newDatabase);
             _view.ShowCurrentFile(filename);
+            _view.Refresh();
         }
 
         public void AddCategory(string description, Category.CategoryType type)

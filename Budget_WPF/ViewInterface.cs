@@ -22,6 +22,6 @@ namespace Budget_WPF
         void OpenNewFile();
         void OpenExistingFile();
         void ShowCurrentFile(string filename);
-        void ShowError();
+        void ShowError(string message);
     }
 }
