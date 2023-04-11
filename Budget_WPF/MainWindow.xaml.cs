@@ -96,7 +96,8 @@ namespace Budget_WPF
             DateTime date = dp_Date.SelectedDate ?? new DateTime();
             string desc = tbx_Description.Text;
             string amount = tbx_Amount.Text;
-            int catID = -1;
+            Category? selectedCat = cmbCategories.SelectedValue as Category;
+            int catID = (selectedCat) is null ? -1 : selectedCat.Id;
 
             if(txb_CurrentFile.Text.ToLower() == "none" || txb_CurrentFile.Text == "")
             {
