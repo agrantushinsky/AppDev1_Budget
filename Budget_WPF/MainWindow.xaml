@@ -15,7 +15,8 @@
                           Click="Menu_NewFile_Click"/>
                 <MenuItem Header="Open File..."
                           Click="Menu_OpenFile_Click"/>
-                <MenuItem Header="Open Recent"/>
+                <MenuItem Header="Open Recent"
+                          Click="Menu_OpenRecent_Click"/>
             </MenuItem>
         </Menu>
         

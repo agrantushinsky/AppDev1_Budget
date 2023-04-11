@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Budget;
 using System.Data.SQLite;
 using System.Data.Entity.Infrastructure;
+using Microsoft.Win32;
+using System.CodeDom;
 
 namespace Budget_WPF
 {
@@ -14,16 +16,28 @@ namespace Budget_WPF
         private ViewInterface _view;
         private HomeBudget _model;
 
+        const string USER_ROOT = "HKEY_CURRENT_USER";
+        const string SUB_KEY = "AppDevBudget";
+        const string KEY_NAME = USER_ROOT + "\\" + SUB_KEY;
+        const string RECENT_FILE_VALUE = "recentFile";
+
         public Presenter(ViewInterface view)
         {
             _view = view;
         }
 
-        public void ConnectToDatabase(string filename, bool newDatabase)
+        public void ConnectToDatabase(string? filename, bool newDatabase)
         {
+            if (string.IsNullOrEmpty(filename))
+            {
+                _view.ShowError("You must open a file before you may use Open Recent");
+                return;
+            }
+
             _model = new HomeBudget(filename, newDatabase);
             _view.ShowCurrentFile(filename);
             _view.Refresh();
+            SetRecentFile(filename);
         }
 
         public void AddCategory(string description, Category.CategoryType? type)
@@ -98,6 +112,16 @@ namespace Budget_WPF
         public List<Category> GetCategories()
         {
             return _model.categories.List();
+        }
+
+        public string? GetRecentFile()
+        {
+            return (string?)Registry.GetValue(KEY_NAME, RECENT_FILE_VALUE, "");
+        }
+
+        public void SetRecentFile(string newRecent)
+        {
+            Registry.SetValue(KEY_NAME, RECENT_FILE_VALUE, newRecent);
         }
     }
 }
