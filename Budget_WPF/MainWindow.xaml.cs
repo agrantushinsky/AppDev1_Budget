@@ -108,7 +108,7 @@ namespace Budget_WPF
                     AddCategory();                    
             }
 
-            _presenter.AddExpense(date, catID, amount, desc);
+            _presenter.AddExpense(date, catID, amount, desc, cbCredit.IsChecked == true);
 
         }
 

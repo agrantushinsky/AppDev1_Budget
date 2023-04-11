@@ -20,7 +20,9 @@ namespace Budget_WPF
         const string SUB_KEY = "AppDevBudget";
         const string KEY_NAME = USER_ROOT + "\\" + SUB_KEY;
         const string RECENT_FILE_VALUE = "recentFile";
+
         private bool _isConnected = false;
+        private int _creditCardCategoryId;
 
         public Presenter(ViewInterface view)
         {
@@ -40,6 +42,11 @@ namespace Budget_WPF
             _view.ShowCurrentFile(filename);
             _view.Refresh();
             SetRecentFile(filename);
+
+            // Find the credit card category id
+            List<Category> categories = _model.categories.List();
+            Category? credit = categories.Find((category) => category.Type == Category.CategoryType.Credit);
+            _creditCardCategoryId = credit.Id;
         }
 
         public void AddCategory(string description, Category.CategoryType? type)
@@ -62,15 +69,14 @@ namespace Budget_WPF
             }
         }
 
-        public void AddExpense(DateTime date, int category, string amountStr, string description)
+        public void AddExpense(DateTime date, int category, string amountStr, string description, bool credit)
         {
             string errMsg = string.Empty;
             double amount;
 
-            if (_isConnected)
+            if (!_isConnected)
             {
-                    errMsg+=("No file is currently opened.");
-
+                errMsg+=("No file is currently opened.");
             }
             if (category == -1)
             {
@@ -96,6 +102,9 @@ namespace Budget_WPF
                 try
                 {
                     _model.expenses.Add(date, category, amount, description);
+
+                    if(credit)
+                        _model.expenses.Add(date, _creditCardCategoryId, -amount, $"{description} (on credit)");
                 }
                 catch (Exception ex)
                 {
