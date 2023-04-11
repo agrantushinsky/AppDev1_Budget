@@ -75,7 +75,6 @@ namespace Budget_WPF
 
         public void ShowCurrentFile(string filename)
         {
-            txb_LastAction.Text = $"Opened {filename}";
             txb_CurrentFile.Text = filename;
         }
 
@@ -156,6 +155,10 @@ namespace Budget_WPF
         private void Menu_OpenRecent_Click(object sender, RoutedEventArgs e)
         {
             _presenter.ConnectToDatabase(_presenter.GetRecentFile(), false);
+        }
+        public void SetLastAction(string message)
+        {
+            txb_LastAction.Text = message;
         }
     }
 }

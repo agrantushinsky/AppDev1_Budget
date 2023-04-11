@@ -40,6 +40,7 @@ namespace Budget_WPF
             _model = new HomeBudget(filename, newDatabase);
             _isConnected = true;
             _view.ShowCurrentFile(filename);
+            _view.SetLastAction($"Opened {filename}");
             _view.Refresh();
             SetRecentFile(filename);
 

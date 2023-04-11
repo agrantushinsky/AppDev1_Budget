@@ -21,5 +21,6 @@ namespace Budget_WPF
         void ShowError(string message);
         bool ShowMessageWithConfirmation(string message);
         void ClearInputs();
+        void SetLastAction(string message);
     }
 }
