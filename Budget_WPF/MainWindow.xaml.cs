@@ -158,7 +158,7 @@ namespace Budget_WPF
         }
         public void SetLastAction(string message)
         {
-            txb_LastAction.Text = message;
+            txb_LastAction.Text = $"[{DateTime.Now.ToShortTimeString()}] {message}";
         }
     }
 }

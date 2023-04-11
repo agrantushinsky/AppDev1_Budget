@@ -62,6 +62,8 @@ namespace Budget_WPF
                 {
                     //Change type to non-nullable
                     _model.categories.Add(description, (Category.CategoryType)type);
+                    _view.SetLastAction($"Successfully added category: {description}");
+
                 }
                 catch (Exception ex)
                 {
@@ -106,6 +108,9 @@ namespace Budget_WPF
 
                     if(credit)
                         _model.expenses.Add(date, _creditCardCategoryId, -amount, $"{description} (on credit)");
+
+                    _view.SetLastAction($"Successfully added expense: {description}");
+
                 }
                 catch (Exception ex)
                 {
