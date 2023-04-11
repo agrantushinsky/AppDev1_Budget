@@ -92,7 +92,7 @@ namespace Budget_WPF
                 return _view.ShowMessageWithConfirmation("You have unsaved changes, are you sure you wanted to exit?");
             }
 
-            return false;
+            return true;
         }
 
         public List<Category> GetCategories()
