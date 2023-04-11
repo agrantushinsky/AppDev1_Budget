@@ -156,5 +156,10 @@ namespace Budget_WPF
         {
             return MessageBox.Show(message, "Info", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes;
         }
+
+        private void Menu_OpenRecent_Click(object sender, RoutedEventArgs e)
+        {
+            _presenter.ConnectToDatabase(_presenter.GetRecentFile(), false);
+        }
     }
 }
