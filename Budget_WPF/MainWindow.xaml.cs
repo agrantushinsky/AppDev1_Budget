@@ -99,12 +99,6 @@ namespace Budget_WPF
             Category? selectedCat = cmbCategories.SelectedValue as Category;
             int catID = (selectedCat) is null ? -1 : selectedCat.Id;
 
-            if(txb_CurrentFile.Text.ToLower() == "none" || txb_CurrentFile.Text == "")
-            {
-                ShowError("No file is currently opened.");
-                return;
-            }
-
             if (cmbCategories.SelectedItem == null && 
                 cmbCategories.Text.Length != 0 && 
                 cmbCategories.Text != "Search for a category/Add new ones")
@@ -136,7 +130,8 @@ namespace Budget_WPF
 
         private void btnAddCategory_Click(object sender, RoutedEventArgs e)
         {
-            AddCategory();
+            if(_presenter.IsFileSelected())    
+                AddCategory();
         }
 
         public void ClearInputs()

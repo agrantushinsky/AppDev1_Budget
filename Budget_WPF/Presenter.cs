@@ -20,6 +20,7 @@ namespace Budget_WPF
         const string SUB_KEY = "AppDevBudget";
         const string KEY_NAME = USER_ROOT + "\\" + SUB_KEY;
         const string RECENT_FILE_VALUE = "recentFile";
+        private bool _isConnected = false;
 
         public Presenter(ViewInterface view)
         {
@@ -35,6 +36,7 @@ namespace Budget_WPF
             }
 
             _model = new HomeBudget(filename, newDatabase);
+            _isConnected = true;
             _view.ShowCurrentFile(filename);
             _view.Refresh();
             SetRecentFile(filename);
@@ -65,9 +67,14 @@ namespace Budget_WPF
             string errMsg = string.Empty;
             double amount;
 
+            if (_isConnected)
+            {
+                    errMsg+=("No file is currently opened.");
+
+            }
             if (category == -1)
             {
-                errMsg += "An existing catgory must be selected.\n";
+                errMsg += "An existing category must be selected.\n";
             }
 
             if (string.IsNullOrEmpty(description))
@@ -122,6 +129,15 @@ namespace Budget_WPF
         public void SetRecentFile(string newRecent)
         {
             Registry.SetValue(KEY_NAME, RECENT_FILE_VALUE, newRecent);
+        }
+
+        public bool IsFileSelected()
+        {
+            if (!_isConnected)
+            {
+                _view.ShowError("Please select a file before continuing.");
+            }
+            return _isConnected;
         }
     }
 }
