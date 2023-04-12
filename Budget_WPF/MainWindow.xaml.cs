@@ -75,7 +75,6 @@ namespace Budget_WPF
 
         public void ShowCurrentFile(string filename)
         {
-            txb_LastAction.Text = $"Opened {filename}";
             txb_CurrentFile.Text = filename;
         }
 
@@ -96,13 +95,8 @@ namespace Budget_WPF
             DateTime date = dp_Date.SelectedDate ?? new DateTime();
             string desc = tbx_Description.Text;
             string amount = tbx_Amount.Text;
-            int catID = -1;
-
-            if(txb_CurrentFile.Text.ToLower() == "none" || txb_CurrentFile.Text == "")
-            {
-                ShowError("No file is currently opened.");
-                return;
-            }
+            Category? selectedCat = cmbCategories.SelectedValue as Category;
+            int catID = (selectedCat) is null ? -1 : selectedCat.Id;
 
             if (cmbCategories.SelectedItem == null && 
                 cmbCategories.Text.Length != 0 && 
@@ -113,7 +107,7 @@ namespace Budget_WPF
                     AddCategory();                    
             }
 
-            _presenter.AddExpense(date, catID, amount, desc);
+            _presenter.AddExpense(date, catID, amount, desc, cbCredit.IsChecked == true);
 
         }
 
@@ -135,7 +129,8 @@ namespace Budget_WPF
 
         private void btnAddCategory_Click(object sender, RoutedEventArgs e)
         {
-            AddCategory();
+            if(_presenter.IsFileSelected())    
+                AddCategory();
         }
 
         public void ClearInputs()
@@ -155,6 +150,15 @@ namespace Budget_WPF
         public bool ShowMessageWithConfirmation(string message)
         {
             return MessageBox.Show(message, "Info", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes;
+        }
+
+        private void Menu_OpenRecent_Click(object sender, RoutedEventArgs e)
+        {
+            _presenter.ConnectToDatabase(_presenter.GetRecentFile(), false);
+        }
+        public void SetLastAction(string message)
+        {
+            txb_LastAction.Text = $"[{DateTime.Now.ToShortTimeString()}] {message}";
         }
     }
 }
