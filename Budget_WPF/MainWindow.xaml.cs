@@ -135,7 +135,6 @@ namespace Budget_WPF
 
         public void ClearInputs()
         {
-            dp_Date.SelectedDate = DateTime.Now;
             tbx_Amount.Text = "";
             tbx_Description.Text = "";
             // TODO: Probably keep the current category selected.
