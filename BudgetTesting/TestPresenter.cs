@@ -167,7 +167,7 @@ namespace BudgetCodeTests
 
             //Act
             p.AddCategory(desc, type);
-            Category cat = p.GetCategories()[maxIDInCategoryInFile + 1];
+            Category cat = p.GetCategories()[maxIDInCategoryInFile];
 
             //Assert
             Assert.True(v.calledSetLastAction);
