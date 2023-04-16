@@ -202,6 +202,9 @@ namespace Budget_WPF
             return _isConnected;
         }
 
+        /// <summary>
+        /// Shows welcome message for first time users
+        /// </summary>
         public void ShowFirstTimeUserSetup()
         {
             if(string.IsNullOrEmpty(GetRecentFile()))
