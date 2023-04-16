@@ -31,6 +31,7 @@ namespace Budget_WPF
             InitializeComponent();
             _presenter = new Presenter(this);
             dp_Date.SelectedDate = DateTime.Now;
+            _presenter.ShowFirstTimeUserSetup();
         }
 
         private void Menu_NewFile_Click(object sender, RoutedEventArgs e)
@@ -155,6 +156,11 @@ namespace Budget_WPF
         public void SetLastAction(string message)
         {
             txb_LastAction.Text = $"[{DateTime.Now.ToShortTimeString()}] {message}";
+        }
+
+        private void btn_Discard_Click(object sender, RoutedEventArgs e)
+        {
+            ClearInputs();
         }
     }
 }

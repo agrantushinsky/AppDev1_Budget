@@ -16,9 +16,9 @@ namespace Budget_WPF
         private ViewInterface _view;
         private HomeBudget _model;
 
-        const string USER_ROOT = "HKEY_CURRENT_USER";
+        const string SOFTWATRE_ROOT = "HKEY_CURRENT_USER\\SOFTWARE";
         const string SUB_KEY = "AppDevBudget";
-        const string KEY_NAME = USER_ROOT + "\\" + SUB_KEY;
+        const string KEY_NAME = SOFTWATRE_ROOT + "\\" + SUB_KEY;
         const string RECENT_FILE_VALUE = "recentFile";
 
         private bool _isConnected = false;
@@ -106,7 +106,7 @@ namespace Budget_WPF
             {
                 errMsg+=("No file is currently opened.");
             }
-            if (category == -1)
+            if (category <= 0 || category > GetCategories().Count)
             {
                 errMsg += "An existing category must be selected.\n";
             }
@@ -200,6 +200,13 @@ namespace Budget_WPF
                 _view.ShowError("Please select a file before continuing.");
             }
             return _isConnected;
+        }
+
+        public void ShowFirstTimeUserSetup()
+        {
+            if(string.IsNullOrEmpty(GetRecentFile()))
+                if (_view.ShowMessageWithConfirmation("Hello first time user, would you like to browse to create a new budget?"))
+                    _view.OpenNewFile();
         }
     }
 }
