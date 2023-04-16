@@ -160,5 +160,10 @@ namespace Budget_WPF
         {
             txb_LastAction.Text = $"[{DateTime.Now.ToShortTimeString()}] {message}";
         }
+
+        private void btn_Discard_Click(object sender, RoutedEventArgs e)
+        {
+            ClearInputs();
+        }
     }
 }
