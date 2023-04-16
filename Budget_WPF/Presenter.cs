@@ -130,7 +130,7 @@ namespace Budget_WPF
                 return;
             }
 
-            // Attempt to add the category
+            // Attempt to add the expense
             try
             {
                 _model.expenses.Add(date, category, amount, description);

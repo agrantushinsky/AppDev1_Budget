@@ -32,7 +32,7 @@ namespace BudgetCodeTests
 
         public void AddExpense()
         {
-            calledAddExpense |= true;
+            calledAddExpense = true;
         }
 
         public void ClearInputs()
