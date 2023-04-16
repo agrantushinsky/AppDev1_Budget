@@ -24,11 +24,21 @@ namespace Budget_WPF
         private bool _isConnected = false;
         private int _creditCardCategoryId;
 
+        /// <summary>
+        /// Creates a Presenter object and saves the view object
+        /// </summary>
+        /// <param name="view">Object that represents the UI</param>
         public Presenter(ViewInterface view)
         {
             _view = view;
         }
 
+        /// <summary>
+        /// Opens a connection to the database using the provided filename and sets up the UI. 
+        /// An error message is shown if the filename is invalid.
+        /// </summary>
+        /// <param name="filename">Path to the budget database file.</param>
+        /// <param name="newDatabase">If a new database will be created.</param>
         public void ConnectToDatabase(string? filename, bool newDatabase)
         {
             if (string.IsNullOrEmpty(filename))
@@ -50,6 +60,12 @@ namespace Budget_WPF
             _creditCardCategoryId = credit.Id;
         }
 
+        /// <summary>
+        /// Adds the new category to the database. 
+        /// If the description or type is invalid, an error message will be shown.
+        /// </summary>
+        /// <param name="description">Category description</param>
+        /// <param name="type">Category type</param>
         public void AddCategory(string description, Category.CategoryType? type)
         {
             if (string.IsNullOrEmpty(description))
@@ -72,6 +88,15 @@ namespace Budget_WPF
             }
         }
 
+        /// <summary>
+        /// Adds the new expense to the database. If any of the arguments is invalid, an error message will be shown. 
+        /// If credit is used to pay, an additonal expense is created. 
+        /// </summary>
+        /// <param name="date">Date of the transaction</param>
+        /// <param name="category">Category ID</param>
+        /// <param name="amountStr">Expense amount</param>
+        /// <param name="description">Short description</param>
+        /// <param name="credit">If credit was used to pay</param>
         public void AddExpense(DateTime date, int category, string amountStr, string description, bool credit)
         {
             string errMsg = string.Empty;
@@ -120,6 +145,12 @@ namespace Budget_WPF
             }
         }
 
+        /// <summary>
+        /// Checks if there are any unsaved changes.
+        /// </summary>
+        /// <param name="description">Content of the description field</param>
+        /// <param name="amount">Content of the amount field</param>
+        /// <returns>True if description and amount are empty. Otherwise, shows pop up with confirmation message to exit</returns>
         public bool UnsavedChangesCheck(string description, string amount)
         {
             if(!string.IsNullOrEmpty(description) ||
@@ -131,21 +162,37 @@ namespace Budget_WPF
             return true;
         }
 
+        /// <summary>
+        /// Gets the list of categories
+        /// </summary>
+        /// <returns>List of categories</returns>
         public List<Category> GetCategories()
         {
             return _model.categories.List();
         }
 
+        /// <summary>
+        /// Gets the path of recent file opened
+        /// </summary>
+        /// <returns>Path to recent file</returns>
         public string? GetRecentFile()
         {
             return (string?)Registry.GetValue(KEY_NAME, RECENT_FILE_VALUE, "");
         }
 
+        /// <summary>
+        /// Sets the recent file
+        /// </summary>
+        /// <param name="newRecent">File path to recent file</param>
         public void SetRecentFile(string newRecent)
         {
             Registry.SetValue(KEY_NAME, RECENT_FILE_VALUE, newRecent);
         }
 
+        /// <summary>
+        /// Checks if there is a file opened
+        /// </summary>
+        /// <returns>True if there is a file. False otherwise.</returns>
         public bool IsFileSelected()
         {
             if (!_isConnected)

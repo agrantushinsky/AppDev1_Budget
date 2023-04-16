@@ -90,7 +90,6 @@ namespace Budget_WPF
 
         public void AddExpense()
         {
-            // TODO: make sure a category is selected
             string errMsg = string.Empty;
             DateTime date = dp_Date.SelectedDate ?? new DateTime();
             string desc = tbx_Description.Text;
@@ -137,8 +136,6 @@ namespace Budget_WPF
         {
             tbx_Amount.Text = "";
             tbx_Description.Text = "";
-            // TODO: Probably keep the current category selected.
-            //cmbCategories.SelectedIndex = -1;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
