@@ -85,7 +85,7 @@ namespace Budget_WPF
             newCat.ShowDialog();
             Refresh();
 
-            //Set the selected index to the newly made category
+            // Set the selected index to the newly made category
             cmbCategories.SelectedIndex = cmbCategories.Items.Count - 1;
         }
 
@@ -96,20 +96,17 @@ namespace Budget_WPF
             string desc = tbx_Description.Text;
             string amount = tbx_Amount.Text;
 
-            if (cmbCategories.SelectedItem == null && 
-                cmbCategories.Text.Length != 0 && 
-                cmbCategories.Text != "Search for a category/Add new ones")
+            if (!string.IsNullOrEmpty(desc) &&
+                cmbCategories.SelectedIndex == -1)
             {
-                MessageBoxResult result = MessageBox.Show($"Category \"{cmbCategories.Text}\" does not exist. Would you like to create a new category?", "Info", MessageBoxButton.YesNo, MessageBoxImage.Information);
-                if (result == MessageBoxResult.Yes)
-                    AddCategory();                    
+                if(ShowMessageWithConfirmation($"Category \"{cmbCategories.Text}\",does not exist. Would you like to create a new category?"))
+                    AddCategory();
             }
 
             Category? selectedCat = cmbCategories.SelectedValue as Category;
             int catID = (selectedCat) is null ? -1 : selectedCat.Id;
 
             _presenter.AddExpense(date, catID, amount, desc, cbCredit.IsChecked == true);
-
         }
 
         public void Refresh()

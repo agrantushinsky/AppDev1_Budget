@@ -8,6 +8,7 @@ using System.Data.SQLite;
 using System.Data.Entity.Infrastructure;
 using Microsoft.Win32;
 using System.CodeDom;
+using System.Windows;
 
 namespace Budget_WPF
 {
@@ -99,50 +100,52 @@ namespace Budget_WPF
         /// <param name="credit">If credit was used to pay</param>
         public void AddExpense(DateTime date, int category, string amountStr, string description, bool credit)
         {
-            string errMsg = string.Empty;
+            StringBuilder errorMessage = new();
             double amount;
 
             if (!_isConnected)
             {
-                errMsg+=("No file is currently opened.");
+                errorMessage.AppendLine("No file is currently opened.");
             }
             if (category <= 0 || category > GetCategories().Count)
             {
-                errMsg += "An existing category must be selected.\n";
+                errorMessage.AppendLine("An existing category must be selected.");
             }
 
             if (string.IsNullOrEmpty(description))
             {
-                errMsg += "A description must be added.\n";
+                errorMessage.AppendLine("A description must be added.");
             }
 
             if(!double.TryParse(amountStr, out amount))
             {
-                errMsg += "The amount is invalid.\n";
+                errorMessage.AppendLine("The amount is invalid.");
             }
-        
-            if(!string.IsNullOrEmpty(errMsg))
+
+
+            // If an error occurred, show the error and return this method.
+            if (errorMessage.Length > 0)
             {
-                _view.ShowError(errMsg);
+                _view.ShowError(errorMessage.ToString());
+                return;
             }
-            else
+
+            // Attempt to add the category
+            try
             {
-                try
-                {
-                    _model.expenses.Add(date, category, amount, description);
+                _model.expenses.Add(date, category, amount, description);
 
-                    if(credit)
-                        _model.expenses.Add(date, _creditCardCategoryId, -amount, $"{description} (on credit)");
+                if (credit)
+                    _model.expenses.Add(date, _creditCardCategoryId, -amount, $"{description} (on credit)");
 
-                    _view.SetLastAction($"Successfully added expense: {description}");
+                _view.SetLastAction($"Successfully added expense: {description}");
 
-                }
-                catch (Exception ex)
-                {
-
-                }
-                _view.ClearInputs();
             }
+            catch (Exception ex)
+            {
+
+            }
+            _view.ClearInputs();
         }
 
         /// <summary>
