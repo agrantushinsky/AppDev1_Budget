@@ -67,8 +67,8 @@ namespace Budget
                 IDX_CATEGORY_DESCRIPTION = 5;
 
             //DateTime? doesnt have overload for toString cast to DateTime
-            string StartTime = (Start ?? new DateTime(1900, 1, 1)).ToString();
-            string EndTime = (End ?? new DateTime(2500, 1, 1)).ToString();
+            string StartTime = (Start ?? new DateTime(1900, 1, 1)).ToString("yyyy-MM-dd");
+            string EndTime = (End ?? new DateTime(2500, 1, 1)).ToString("yyyy-MM-dd");
 
             // Create the select command
             const string QUERY_BUDGET_ITEMS = @"
@@ -136,8 +136,8 @@ namespace Budget
             DateTime startDate = Start ?? new DateTime(1900, 1, 1);
             DateTime endDate = End ?? new DateTime(2500, 1, 1);
 
-            string startTime = startDate.ToString();
-            string endTime = endDate.ToString();
+            string startTime = startDate.ToString("yyyy-MM-dd");
+            string endTime = endDate.ToString("yyyy-MM-dd");
 
             // Create the select command
             const string QUERY_BUDGET_ITEMS = @"
@@ -226,8 +226,8 @@ namespace Budget
             DateTime startDate = Start ?? new DateTime(1900, 1, 1);
             DateTime endDate = End ?? new DateTime(2500, 1, 1);
 
-            string startTime = startDate.ToString();
-            string endTime = endDate.ToString();
+            string startTime = startDate.ToString("yyyy-MM-dd");
+            string endTime = endDate.ToString("yyyy-MM-dd");
 
             // Create the select command
             const string QUERY_BUDGET_ITEMS = @"
