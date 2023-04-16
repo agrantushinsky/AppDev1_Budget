@@ -95,8 +95,6 @@ namespace Budget_WPF
             DateTime date = dp_Date.SelectedDate ?? new DateTime();
             string desc = tbx_Description.Text;
             string amount = tbx_Amount.Text;
-            Category? selectedCat = cmbCategories.SelectedValue as Category;
-            int catID = (selectedCat) is null ? -1 : selectedCat.Id;
 
             if (cmbCategories.SelectedItem == null && 
                 cmbCategories.Text.Length != 0 && 
@@ -106,6 +104,9 @@ namespace Budget_WPF
                 if (result == MessageBoxResult.Yes)
                     AddCategory();                    
             }
+
+            Category? selectedCat = cmbCategories.SelectedValue as Category;
+            int catID = (selectedCat) is null ? -1 : selectedCat.Id;
 
             _presenter.AddExpense(date, catID, amount, desc, cbCredit.IsChecked == true);
 
