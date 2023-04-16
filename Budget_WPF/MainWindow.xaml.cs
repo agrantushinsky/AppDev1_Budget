@@ -31,6 +31,7 @@ namespace Budget_WPF
             InitializeComponent();
             _presenter = new Presenter(this);
             dp_Date.SelectedDate = DateTime.Now;
+            _presenter.ShowFirstTimeUserSetup();
         }
 
         private void Menu_NewFile_Click(object sender, RoutedEventArgs e)

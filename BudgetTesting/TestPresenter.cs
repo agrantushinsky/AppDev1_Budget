@@ -1,5 +1,6 @@
 ﻿using Budget;
 using Budget_WPF;
+using Microsoft.Win32;
 using NuGet.Frameworks;
 using System;
 using System.Collections.Generic;
@@ -385,6 +386,64 @@ namespace BudgetCodeTests
 
             //Assert
             Assert.Equal(messyDB, p.GetRecentFile());
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void PresenterMethods_ShowFirstTimeUserSetup_FirstTimeUser()
+        {
+            const string FULL_REGISTER_PATH = "SOFTWARE\\AppDevBudget\\";
+            const string KEYNAME = "recentFile";
+
+            //Arrange
+            TestView v = new TestView();
+            Presenter p = new Presenter(v);
+
+            // Delete the existing key if it exists
+            try
+            {
+                RegistryKey? key = Registry.CurrentUser.OpenSubKey(FULL_REGISTER_PATH, true);
+                key.DeleteValue(KEYNAME);
+            } catch { }
+
+            v.calledShowMessageWithConfirmation = false;
+            v.calledOpenNewFile = false;
+
+            //Act
+            p.ShowFirstTimeUserSetup();
+
+            //Assert
+            Assert.True(v.calledShowMessageWithConfirmation);
+            Assert.True(v.calledOpenNewFile);
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void PresenterMethods_ShowFirstTimeUserSetup_ReturningUser()
+        {
+            const string FULL_REGISTER_PATH = "SOFTWARE\\AppDevBudget\\";
+            const string KEYNAME = "recentFile";
+
+            //Arrange
+            TestView v = new TestView();
+            Presenter p = new Presenter(v);
+            // Wipe recent file register
+            RegistryKey? key = Registry.CurrentUser.OpenSubKey(FULL_REGISTER_PATH, true);
+            key.SetValue(KEYNAME, "C:\\");
+            v.calledShowMessageWithConfirmation = false;
+            v.calledOpenNewFile = false;
+
+            //Act
+            p.ShowFirstTimeUserSetup();
+
+            //Assert
+            Assert.False(v.calledShowMessageWithConfirmation);
+            Assert.False(v.calledOpenNewFile);
+
+            // Cleanup (delete bad key)
+            key.DeleteValue(KEYNAME);
         }
     }
 }
