@@ -91,12 +91,12 @@ namespace Budget_WPF
 
         public void AddExpense()
         {
-            string errMsg = string.Empty;
-            DateTime date = dp_Date.SelectedDate ?? new DateTime();
+            // Impossible to be null, but SelectedDate is nullabe.
+            DateTime date = dp_Date.SelectedDate ?? DateTime.Now;
             string desc = tbx_Description.Text;
             string amount = tbx_Amount.Text;
 
-            if (!string.IsNullOrEmpty(desc) &&
+            if (!string.IsNullOrEmpty(cmbCategories.Text) &&
                 cmbCategories.SelectedIndex == -1)
             {
                 if(ShowMessageWithConfirmation($"Category \"{cmbCategories.Text}\",does not exist. Would you like to create a new category?"))
