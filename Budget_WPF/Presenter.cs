@@ -108,19 +108,22 @@ namespace Budget_WPF
                 errorMessage.AppendLine("No file is currently opened.");
             }
 
-            try
-            {
-                // Throws when the ID is not found.
-                _ = _model.categories.GetCategoryFromId(category);
-            }
-            catch
-            {
-                errorMessage.AppendLine("An existing category must be selected.");
-            }
-
+            
             if (category < 0)
             {
                 errorMessage.AppendLine("An existing category must be selected.");
+            }
+            else
+            {
+                try
+                {
+                    // Throws when the ID is not found.
+                    _ = _model.categories.GetCategoryFromId(category);
+                }
+                catch
+                {
+                    errorMessage.AppendLine("An existing category must be selected.");
+                }
             }
 
             if (string.IsNullOrEmpty(description))

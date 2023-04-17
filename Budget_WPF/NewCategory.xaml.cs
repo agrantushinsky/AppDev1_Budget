@@ -21,11 +21,19 @@ namespace Budget_WPF
     public partial class NewCategory : Window
     {
         private Presenter _presenter;
+
+        private static bool _success = false;
+        public static bool Success
+        {
+            get => _success;
+        }
+
         public NewCategory(Presenter presenter, string description)
         {
             _presenter = presenter;
             InitializeComponent();
             viewRefresh(description);
+            _success = false;
         }
 
         private void viewRefresh(string description)
@@ -42,6 +50,7 @@ namespace Budget_WPF
             string description = txtboxCatDesc.Text;
             Category.CategoryType? type = cmbCatType.SelectedItem as Category.CategoryType?;
             _presenter.AddCategory(description, type);
+            _success = true;
             this.Close();
         }
     }
