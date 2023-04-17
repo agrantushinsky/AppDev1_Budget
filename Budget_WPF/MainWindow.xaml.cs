@@ -81,6 +81,9 @@ namespace Budget_WPF
 
         public void AddCategory()
         {
+            if (!_presenter.IsFileSelected())
+                return;
+
             NewCategory newCat = new NewCategory(_presenter,cmbCategories.Text);
             newCat.ShowDialog();
             Refresh();
