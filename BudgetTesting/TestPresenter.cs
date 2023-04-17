@@ -252,6 +252,33 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
+        public void PresenterMethods_AddExpense_Credit()
+        {
+            //Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            TestView v = new TestView();
+            Presenter p = new Presenter(v);
+            p.ConnectToDatabase(messyDB, false);
+            v.calledSetLastAction = false;
+            v.calledClearInputs = false;
+
+            //Act
+            p.AddExpense(new DateTime(), 1, "10", "Lunch", true);
+
+            //Assert
+            Assert.True(v.calledSetLastAction);
+            Assert.True(v.calledClearInputs);
+
+            // TODO: Currently there is no way of checking that the credit expense was added.
+            // It will be possible once we have the code to display expenses to the user.
+        }
+
+        // ========================================================================
+
+        [Fact]
         public void PresenterMethods_AddExpense_InexistantCategory()
         {
             //Arrange
