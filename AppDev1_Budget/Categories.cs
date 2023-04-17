@@ -24,7 +24,7 @@ namespace Budget
         /// </summary>
         /// <param name="newDatabase">Boolean whether to reset categories to defaults or not. Default value is false.</param>
         /// <exception cref="SQLiteException">Thrown when the connection has not been initialized.</exception>
-        public Categories(bool newDatabase = false)
+        internal Categories(bool newDatabase = false)
         {
             if (newDatabase)
             {

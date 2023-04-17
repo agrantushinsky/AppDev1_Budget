@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="AppDev1_Budget">
+      <HintPath>..\AppDev1_Budget\bin\Debug\net6.0\AppDev1_Budget.dll</HintPath>
+    </Reference>
+    <ProjectReference Include="..\AppDev1_Budget\AppDev1_Budget.csproj" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.117" />
+  </ItemGroup>
+
+</Project>

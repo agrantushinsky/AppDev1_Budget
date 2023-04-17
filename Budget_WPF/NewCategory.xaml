@@ -1,0 +1,23 @@
+﻿<Window x:Class="Budget_WPF.NewCategory"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Budget_WPF"
+        mc:Ignorable="d"
+        Title="New Category" Height="450" Width="400" SizeToContent="WidthAndHeight" ResizeMode="NoResize">
+    <Grid Margin="5,5,5,5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Content="Description:"></Label>
+        <TextBox x:Name="txtboxCatDesc" Grid.Row="1"></TextBox>
+        <Label Grid.Row="2" Content="Category Type:"></Label>
+         <ComboBox x:Name="cmbCatType" Grid.Row="3"></ComboBox>
+        <Button x:Name="btnAddCat" Click="btnAddCat_Click" Content="Save Category" Grid.Row="4" HorizontalAlignment="Left" Margin="0,5,5,5" Width="100"></Button>
+    </Grid>
+</Window>
