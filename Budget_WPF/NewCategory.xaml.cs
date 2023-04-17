@@ -22,8 +22,8 @@ namespace Budget_WPF
     {
         private Presenter _presenter;
 
-        private static bool _success = false;
-        public static bool Success
+        private bool _success;
+        public bool Success
         {
             get => _success;
         }

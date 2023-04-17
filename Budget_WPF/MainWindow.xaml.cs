@@ -89,7 +89,7 @@ namespace Budget_WPF
             Refresh();
 
             // Set the selected index to the newly made category
-            if(NewCategory.Success)
+            if(newCat.Success)
                 cmbCategories.SelectedIndex = cmbCategories.Items.Count - 1;
         }
 
