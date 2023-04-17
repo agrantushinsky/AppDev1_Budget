@@ -301,8 +301,8 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
-       public void PresenterMethods_AddExpense_InvalidAmount()
-       {
+        public void PresenterMethods_AddExpense_InvalidAmount()
+        {
             //Assert
             String folder = TestConstants.GetSolutionDir();
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
@@ -311,6 +311,25 @@ namespace BudgetCodeTests
             TestView v = new TestView();
             Presenter p = new Presenter(v);
             p.ConnectToDatabase(messyDB, false);
+            v.calledSetLastAction = false;
+            v.calledShowError = false;
+
+            //Act
+            p.AddExpense(new DateTime(), 1, "abc", "Lunch", false);
+
+            //Assert
+            Assert.True(v.calledShowError);
+            Assert.False(v.calledSetLastAction);
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void PresenterMethods_AddExpense_NoConnection()
+        {
+            //Assert
+            TestView v = new TestView();
+            Presenter p = new Presenter(v);
             v.calledSetLastAction = false;
             v.calledShowError = false;
 
@@ -444,6 +463,72 @@ namespace BudgetCodeTests
 
             // Cleanup (delete bad key)
             key.DeleteValue(KEYNAME);
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void PresenterMethods_IsFileSelected_FalseState()
+        {
+            //Arrange
+            TestView v = new TestView();
+            Presenter p = new Presenter(v);
+            v.calledShowError = false;
+            bool isSelected;
+
+            //Act
+            isSelected = p.IsFileSelected();
+
+            //Assert
+            Assert.True(v.calledShowError);
+            Assert.False(isSelected);
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void PresenterMethods_IsFileSelected_TrueState()
+        {
+            //Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            TestView v = new TestView();
+            Presenter p = new Presenter(v);
+            p.ConnectToDatabase(messyDB, false);
+            v.calledShowError = false;
+            bool isSelected;
+
+            //Act
+            isSelected = p.IsFileSelected();
+
+            //Assert
+            Assert.False(v.calledShowError);
+            Assert.True(isSelected);
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void PresenterMethods_GetCategories_Success()
+        {
+            //Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            TestView v = new TestView();
+            Presenter p = new Presenter(v);
+            p.ConnectToDatabase(messyDB, false);
+            int categoryCount;
+            const int EXPECTED_COUNT = 17;
+
+            //Act
+            categoryCount = p.GetCategories().Count;
+
+            //Assert
+            Assert.Equal(EXPECTED_COUNT, categoryCount);
         }
     }
 }
