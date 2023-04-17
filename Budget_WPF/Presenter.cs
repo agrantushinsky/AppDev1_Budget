@@ -212,7 +212,7 @@ namespace Budget_WPF
         public void ShowFirstTimeUserSetup()
         {
             if(string.IsNullOrEmpty(GetRecentFile()))
-                if (_view.ShowMessageWithConfirmation("Hello first time user, would you like to browse to create a new budget?"))
+                if (_view.ShowMessageWithConfirmation("Welcome first time user, would you like to browse to create a new budget?"))
                     _view.OpenNewFile();
         }
     }

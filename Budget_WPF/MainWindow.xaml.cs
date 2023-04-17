@@ -94,6 +94,9 @@ namespace Budget_WPF
 
         public void AddExpense()
         {
+            if (!_presenter.IsFileSelected())
+                return;
+
             // Impossible to be null, but SelectedDate is nullabe.
             DateTime date = dp_Date.SelectedDate ?? DateTime.Now;
             string desc = tbx_Description.Text;
