@@ -108,7 +108,7 @@ namespace Budget_WPF
                 errorMessage.AppendLine("No file is currently opened.");
             }
 
-            if (_isConnected && (category <= 0 || category > GetCategories().Count))
+            if (category < 0)
             {
                 errorMessage.AppendLine("An existing category must be selected.");
             }
