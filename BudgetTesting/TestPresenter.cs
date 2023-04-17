@@ -103,7 +103,7 @@ namespace BudgetCodeTests
         [Fact]
         public void PresenterMethods_ConnectToDatabse_Success()
         {
-            //Assert
+            //Arrange
             String folder = TestConstants.GetSolutionDir();
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
@@ -129,7 +129,7 @@ namespace BudgetCodeTests
         [Fact]
         public void PresenterMethods_ConnectToDatabse_EmptyFilename()
         {
-            //Assert
+            //Arrange
             TestView v = new TestView();
             Presenter p = new Presenter(v);
             v.calledShowCurrentFile = false;
@@ -153,7 +153,7 @@ namespace BudgetCodeTests
         [Fact]
         public void PresenterMethods_AddCategory_Success()
         {
-            //Assert
+            //Arrange
             String folder = TestConstants.GetSolutionDir();
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
@@ -182,7 +182,7 @@ namespace BudgetCodeTests
         [Fact]
         public void PresenterMethods_AddCategory_InvalidDescription()
         {
-            //Assert
+            //Arrange
             String folder = TestConstants.GetSolutionDir();
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
@@ -206,7 +206,7 @@ namespace BudgetCodeTests
         [Fact]
         public void PresenterMethods_AddCategory_InvalidType()
         {
-            //Assert
+            //Arrange
             String folder = TestConstants.GetSolutionDir();
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
@@ -230,7 +230,7 @@ namespace BudgetCodeTests
         [Fact]
         public void PresenterMethods_AddExpense_Success()
         {
-            //Assert
+            //Arrange
             String folder = TestConstants.GetSolutionDir();
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
@@ -254,7 +254,7 @@ namespace BudgetCodeTests
         [Fact]
         public void PresenterMethods_AddExpense_InexistantCategory()
         {
-            //Assert
+            //Arrange
             String folder = TestConstants.GetSolutionDir();
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
@@ -279,7 +279,7 @@ namespace BudgetCodeTests
         [Fact]
         public void PresenterMethods_AddExpense_InvalidDescription()
         {
-            //Assert
+            //Arrange
             String folder = TestConstants.GetSolutionDir();
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
@@ -303,7 +303,7 @@ namespace BudgetCodeTests
         [Fact]
         public void PresenterMethods_AddExpense_InvalidAmount()
         {
-            //Assert
+            //Arrange
             String folder = TestConstants.GetSolutionDir();
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
@@ -327,7 +327,7 @@ namespace BudgetCodeTests
         [Fact]
         public void PresenterMethods_AddExpense_NoConnection()
         {
-            //Assert
+            //Arrange
             TestView v = new TestView();
             Presenter p = new Presenter(v);
             v.calledSetLastAction = false;
@@ -346,7 +346,7 @@ namespace BudgetCodeTests
         [Fact]
         public void PresenterMethods_UnsavedChangesCheck_ShowConfirmPopUp()
         {
-            //Assert
+            //Arrange
             String folder = TestConstants.GetSolutionDir();
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
@@ -368,7 +368,7 @@ namespace BudgetCodeTests
         [Fact]
         public void PresenterMethods_UnsavedChangesCheck_PopUpDoesntShow()
         {
-            //Assert
+            //Arrange
             String folder = TestConstants.GetSolutionDir();
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
@@ -391,7 +391,7 @@ namespace BudgetCodeTests
         [Fact]
         public void PresenterMethods_GetAndSetRecentFile_Success()
         {
-            //Assert
+            //Arrange
             String folder = TestConstants.GetSolutionDir();
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
