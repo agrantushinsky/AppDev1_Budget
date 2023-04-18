@@ -8,6 +8,6 @@ namespace Budget_WPF
 {
     public interface IBudgetView
     {
-
+        public void UpdateView(object items);
     }
 }
