@@ -19,14 +19,14 @@ using System.Windows.Shapes;
 namespace Budget_WPF
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for AddOrUpdateExpense.xaml
     /// </summary>
-    public partial class MainWindow : Window, ViewInterface
+    public partial class AddOrUpdateExpense : Window, ViewInterface
     {
         private Presenter _presenter;
         private string _filename;
 
-        public MainWindow()
+        public AddOrUpdateExpense()
         {
             InitializeComponent();
             _presenter = new Presenter(this);
