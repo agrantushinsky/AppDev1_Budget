@@ -21,15 +21,15 @@ namespace Budget_WPF
     /// <summary>
     /// Interaction logic for AddOrUpdateExpense.xaml
     /// </summary>
-    public partial class AddOrUpdateExpense : Window, ViewInterface
+    public partial class AddOrUpdateExpense : Window, IExpenseView
     {
-        private Presenter _presenter;
+        private ExpensePresenter _presenter;
         private string _filename;
 
         public AddOrUpdateExpense()
         {
             InitializeComponent();
-            _presenter = new Presenter(this);
+            _presenter = new ExpensePresenter(this);
             dp_Date.SelectedDate = DateTime.Now;
             _presenter.ShowFirstTimeUserSetup();
         }

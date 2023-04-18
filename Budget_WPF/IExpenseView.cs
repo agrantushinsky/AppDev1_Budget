@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Budget_WPF
 {
-    public interface ExpenseViewInterface
+    public interface IExpenseView
     {
         /// <summary>
         /// Creates a new Category from user input

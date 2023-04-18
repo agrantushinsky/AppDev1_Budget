@@ -14,7 +14,7 @@ namespace Budget_WPF
 {
     public class ExpensePresenter
     {
-        private ExpenseViewInterface _view;
+        private IExpenseView _view;
         private HomeBudget _model;
 
         const string SOFTWATRE_ROOT = "HKEY_CURRENT_USER\\SOFTWARE";
@@ -29,7 +29,7 @@ namespace Budget_WPF
         /// Creates a Presenter object and saves the view object
         /// </summary>
         /// <param name="view">Object that represents the UI</param>
-        public ExpensePresenter(ExpenseViewInterface view)
+        public ExpensePresenter(IExpenseView view)
         {
             _view = view;
         }
