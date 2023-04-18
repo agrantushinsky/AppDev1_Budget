@@ -9,6 +9,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="3*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -16,26 +17,32 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
+        <!-- Menu -->
         <Menu Grid.Row="0" Grid.ColumnSpan="2">
             <MenuItem Header="Test"/>
         </Menu>
 
+        <!-- Display Options-->
         <StackPanel Grid.Row="1" Margin="8">
             <Label Content="Display Options" FontSize="16"/>
 
+            <!-- Filter -->
             <GroupBox Header="Filter" Grid.Column="0">
                 <StackPanel>
+                    <!-- Start & End Date -->
                     <Label Content="Start Date"/>
                     <DatePicker/>
 
                     <Label Content="End Date"/>
                     <DatePicker/>
 
+                    <!-- Filter by category-->
                     <CheckBox Content="Filter by category?"/>
                     <ComboBox/>
                 </StackPanel>
             </GroupBox>
 
+            <!-- Group by Month & Category-->
             <GroupBox Header="Summary" Margin="8">
                 <StackPanel>
                     <CheckBox Content="By Month"/>
@@ -43,20 +50,25 @@
                 </StackPanel>
             </GroupBox>
 
+            <!-- Add Expense-->
             <Button Content="Add Expense"/>
         </StackPanel>
 
         <GroupBox Header="Expenses" Grid.Column="1" Grid.Row="1">
             <StackPanel>
+                
+                <!--Search Bar-->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Content="Search"/>
                     <TextBox Width="200"/>
                 </StackPanel>
 
+                <!-- Table of Expenses-->
                 <DataGrid>
                     
                 </DataGrid>
             </StackPanel>
         </GroupBox>
+        <TextBlock Grid.Row="2" Grid.ColumnSpan="2">Current File: None</TextBlock>
     </Grid>
 </Window>
