@@ -79,7 +79,7 @@ namespace BudgetCodeTests
 
 
     [Collection("Sequential")]
-    public class TestPresenter
+    public class TestExpensePresenter
     {
         public int maxIDInCategoryInFile = TestConstants.maxIDInCategoryInFile;
 
@@ -101,7 +101,7 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
-        public void PresenterMethods_ConnectToDatabse_Success()
+        public void ExpensePresenterMethods_ConnectToDatabse_Success()
         {
             //Arrange
             String folder = TestConstants.GetSolutionDir();
@@ -127,7 +127,7 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
-        public void PresenterMethods_ConnectToDatabse_EmptyFilename()
+        public void ExpensePresenterMethods_ConnectToDatabse_EmptyFilename()
         {
             //Arrange
             TestView v = new TestView();
@@ -151,7 +151,7 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
-        public void PresenterMethods_AddCategory_Success()
+        public void ExpensePresenterMethods_AddCategory_Success()
         {
             //Arrange
             String folder = TestConstants.GetSolutionDir();
@@ -180,7 +180,7 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
-        public void PresenterMethods_AddCategory_InvalidDescription()
+        public void ExpensePresenterMethods_AddCategory_InvalidDescription()
         {
             //Arrange
             String folder = TestConstants.GetSolutionDir();
@@ -204,7 +204,7 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
-        public void PresenterMethods_AddCategory_InvalidType()
+        public void ExpensePresenterMethods_AddCategory_InvalidType()
         {
             //Arrange
             String folder = TestConstants.GetSolutionDir();
@@ -228,7 +228,7 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
-        public void PresenterMethods_AddExpense_Success()
+        public void ExpensePresenterMethods_AddExpense_Success()
         {
             //Arrange
             String folder = TestConstants.GetSolutionDir();
@@ -252,7 +252,7 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
-        public void PresenterMethods_AddExpense_Credit()
+        public void ExpensePresenterMethods_AddExpense_Credit()
         {
             //Arrange
             String folder = TestConstants.GetSolutionDir();
@@ -279,7 +279,7 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
-        public void PresenterMethods_AddExpense_InexistantCategory()
+        public void ExpensePresenterMethods_AddExpense_InexistantCategory()
         {
             //Arrange
             String folder = TestConstants.GetSolutionDir();
@@ -304,7 +304,7 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
-        public void PresenterMethods_AddExpense_InvalidDescription()
+        public void ExpensePresenterMethods_AddExpense_InvalidDescription()
         {
             //Arrange
             String folder = TestConstants.GetSolutionDir();
@@ -328,7 +328,7 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
-        public void PresenterMethods_AddExpense_InvalidAmount()
+        public void ExpensePresenterMethods_AddExpense_InvalidAmount()
         {
             //Arrange
             String folder = TestConstants.GetSolutionDir();
@@ -352,7 +352,7 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
-        public void PresenterMethods_AddExpense_NoConnection()
+        public void ExpensePresenterMethods_AddExpense_NoConnection()
         {
             //Arrange
             TestView v = new TestView();
@@ -371,7 +371,7 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
-        public void PresenterMethods_UnsavedChangesCheck_ShowConfirmPopUp()
+        public void ExpensePresenterMethods_UnsavedChangesCheck_ShowConfirmPopUp()
         {
             //Arrange
             String folder = TestConstants.GetSolutionDir();
@@ -393,7 +393,7 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
-        public void PresenterMethods_UnsavedChangesCheck_PopUpDoesntShow()
+        public void ExpensePresenterMethods_UnsavedChangesCheck_PopUpDoesntShow()
         {
             //Arrange
             String folder = TestConstants.GetSolutionDir();
@@ -416,7 +416,7 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
-        public void PresenterMethods_GetAndSetRecentFile_Success()
+        public void ExpensePresenterMethods_GetAndSetRecentFile_Success()
         {
             //Arrange
             String folder = TestConstants.GetSolutionDir();
@@ -437,7 +437,7 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
-        public void PresenterMethods_ShowFirstTimeUserSetup_FirstTimeUser()
+        public void ExpensePresenterMethods_ShowFirstTimeUserSetup_FirstTimeUser()
         {
             const string FULL_REGISTER_PATH = "SOFTWARE\\AppDevBudget\\";
             const string KEYNAME = "recentFile";
@@ -467,7 +467,7 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
-        public void PresenterMethods_ShowFirstTimeUserSetup_ReturningUser()
+        public void ExpensePresenterMethods_ShowFirstTimeUserSetup_ReturningUser()
         {
             const string FULL_REGISTER_PATH = "SOFTWARE\\AppDevBudget\\";
             const string KEYNAME = "recentFile";
@@ -495,7 +495,7 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
-        public void PresenterMethods_IsFileSelected_FalseState()
+        public void ExpensePresenterMethods_IsFileSelected_FalseState()
         {
             //Arrange
             TestView v = new TestView();
@@ -514,7 +514,7 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
-        public void PresenterMethods_IsFileSelected_TrueState()
+        public void ExpensePresenterMethods_IsFileSelected_TrueState()
         {
             //Arrange
             String folder = TestConstants.GetSolutionDir();
@@ -538,7 +538,7 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
-        public void PresenterMethods_GetCategories_Success()
+        public void ExpensePresenterMethods_GetCategories_Success()
         {
             //Arrange
             String folder = TestConstants.GetSolutionDir();
