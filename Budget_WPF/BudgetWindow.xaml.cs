@@ -177,4 +177,5 @@ namespace Budget_WPF
                 // TODO: Show error?
             }
         }
+    }
 }
