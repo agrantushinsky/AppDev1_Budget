@@ -20,7 +20,7 @@ namespace Budget_WPF
     /// </summary>
     public partial class NewCategory : Window
     {
-        private ExpensePresenter _presenter;
+        private Presenter _presenter;
 
         private bool _success;
         public bool Success
@@ -28,7 +28,7 @@ namespace Budget_WPF
             get => _success;
         }
 
-        public NewCategory(ExpensePresenter presenter, string description)
+        public NewCategory(Presenter presenter, string description)
         {
             _presenter = presenter;
             InitializeComponent();

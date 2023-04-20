@@ -9,5 +9,10 @@ namespace Budget_WPF
     public interface IBudgetView
     {
         public void UpdateView(object items);
+
+        void ShowCurrentFile(string filename);
+
+        void ShowError(string message);
+        void Refresh();
     }
 }

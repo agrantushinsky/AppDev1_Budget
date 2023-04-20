@@ -12,10 +12,12 @@ using System.Windows;
 
 namespace Budget_WPF
 {
-    public class ExpensePresenter
+    public class Presenter
     {
-        private IExpenseView _view;
+        private IExpenseView _expenseView;
+        private IBudgetView _budgetView;
         private HomeBudget _model;
+
 
         const string SOFTWATRE_ROOT = "HKEY_CURRENT_USER\\SOFTWARE";
         const string SUB_KEY = "AppDevBudget";
@@ -29,9 +31,10 @@ namespace Budget_WPF
         /// Creates a Presenter object and saves the view object
         /// </summary>
         /// <param name="view">Object that represents the UI</param>
-        public ExpensePresenter(IExpenseView view)
+        public Presenter(IBudgetView budgetView,IExpenseView expenseView)
         {
-            _view = view;
+            _budgetView = budgetView;
+            _expenseView = expenseView;
         }
 
         /// <summary>
@@ -44,15 +47,19 @@ namespace Budget_WPF
         {
             if (string.IsNullOrEmpty(filename))
             {
-                _view.ShowError("You must open a file before you may use Open Recent");
+                _budgetView.ShowError("You must open a file before you may use Open Recent");
                 return;
             }
 
             _model = new HomeBudget(filename, newDatabase);
             _isConnected = true;
-            _view.ShowCurrentFile(filename);
-            _view.SetLastAction($"Opened {filename}");
-            _view.Refresh();
+
+            // Set up the UI
+            _budgetView.ShowCurrentFile(filename);
+            _budgetView.Refresh();
+            _expenseView.ShowCurrentFile(filename);
+            _expenseView.SetLastAction($"Opened {filename}");
+            _expenseView.Refresh();
             SetRecentFile(filename);
 
             // Find the credit card category id
@@ -70,16 +77,16 @@ namespace Budget_WPF
         public void AddCategory(string description, Category.CategoryType? type)
         {
             if (string.IsNullOrEmpty(description))
-                _view.ShowError("Invalid description, please try again.");
+                _expenseView.ShowError("Invalid description, please try again.");
             else if (type is null)
-                _view.ShowError("Please select a type.");
+                _expenseView.ShowError("Please select a type.");
             else
             {
                 try
                 {
                     //Change type to non-nullable
                     _model.categories.Add(description, (Category.CategoryType)type);
-                    _view.SetLastAction($"Successfully added category: {description}");
+                    _expenseView.SetLastAction($"Successfully added category: {description}");
 
                 }
                 catch (Exception ex)
@@ -140,7 +147,7 @@ namespace Budget_WPF
             // If an error occurred, show the error and return this method.
             if (errorMessage.Length > 0)
             {
-                _view.ShowError(errorMessage.ToString());
+                _expenseView.ShowError(errorMessage.ToString());
                 return;
             }
 
@@ -152,14 +159,14 @@ namespace Budget_WPF
                 if (credit)
                     _model.expenses.Add(date, _creditCardCategoryId, -amount, $"{description} (on credit)");
 
-                _view.SetLastAction($"Successfully added expense: {description}");
+                _expenseView.SetLastAction($"Successfully added expense: {description}");
 
             }
             catch (Exception ex)
             {
 
             }
-            _view.ClearInputs();
+            _expenseView.ClearInputs();
         }
 
         /// <summary>
@@ -173,7 +180,7 @@ namespace Budget_WPF
             if(!string.IsNullOrEmpty(description) ||
                 !string.IsNullOrEmpty(amount))
             {
-                return _view.ShowMessageWithConfirmation("You have unsaved changes, are you sure you wanted to exit?");
+                return _expenseView.ShowMessageWithConfirmation("You have unsaved changes, are you sure you wanted to exit?");
             }
 
             return true;
@@ -214,7 +221,7 @@ namespace Budget_WPF
         {
             if (!_isConnected)
             {
-                _view.ShowError("Please select a file before continuing.");
+                _expenseView.ShowError("Please select a file before continuing.");
             }
             return _isConnected;
         }
@@ -225,8 +232,8 @@ namespace Budget_WPF
         public void ShowFirstTimeUserSetup()
         {
             if(string.IsNullOrEmpty(GetRecentFile()))
-                if (_view.ShowMessageWithConfirmation("Welcome first time user, would you like to browse to create a new budget?"))
-                    _view.OpenNewFile();
+                if (_expenseView.ShowMessageWithConfirmation("Welcome first time user, would you like to browse to create a new budget?"))
+                    _expenseView.OpenNewFile();
         }
     }
 }

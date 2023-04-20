@@ -23,15 +23,13 @@ namespace Budget_WPF
     /// </summary>
     public partial class AddOrUpdateExpense : Window, IExpenseView
     {
-        private ExpensePresenter _presenter;
+        private Presenter _presenter;
         private string _filename;
 
         public AddOrUpdateExpense()
         {
             InitializeComponent();
-            _presenter = new ExpensePresenter(this);
             dp_Date.SelectedDate = DateTime.Now;
-            _presenter.ShowFirstTimeUserSetup();
         }
 
         private void Menu_NewFile_Click(object sender, RoutedEventArgs e)
