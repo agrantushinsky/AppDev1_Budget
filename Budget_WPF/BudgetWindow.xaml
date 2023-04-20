@@ -71,7 +71,7 @@
                 </StackPanel>
 
                 <!-- Table of Expenses-->
-                <DataGrid>
+                <DataGrid x:Name="dgExpenses" AutoGenerateColumns="False">
                     
                 </DataGrid>
             </StackPanel>
