@@ -28,14 +28,16 @@ namespace Budget_WPF
         private int _creditCardCategoryId;
 
         /// <summary>
-        /// Creates a Presenter object and saves the view object
+        /// Creates a Presenter object and saves the two views object
         /// </summary>
-        /// <param name="view">Object that represents the UI</param>
+        /// <param name="budgetView">Object that represents the budget UI</param>
+        /// <param name="expenseView">Object that represents the expense UI</param>
         public Presenter(IBudgetView budgetView,IExpenseView expenseView)
         {
             _budgetView = budgetView;
             _expenseView = expenseView;
         }
+
 
         /// <summary>
         /// Opens a connection to the database using the provided filename and sets up the UI. 
@@ -234,6 +236,21 @@ namespace Budget_WPF
             if(string.IsNullOrEmpty(GetRecentFile()))
                 if (_expenseView.ShowMessageWithConfirmation("Welcome first time user, would you like to browse to create a new budget?"))
                     _expenseView.OpenNewFile();
+        }
+
+        /// <summary>
+        /// TODO: Needs to be implemented, called by budget view to update the datagrid with the new filters
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="categoryId"></param>
+        /// <param name="shouldFilterCategory"></param>
+        /// <param name="groupByMonth"></param>
+        /// <param name="groupByCategory"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        public void FiltersChange(DateTime start, DateTime end, int categoryId, bool shouldFilterCategory, bool groupByMonth, bool groupByCategory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

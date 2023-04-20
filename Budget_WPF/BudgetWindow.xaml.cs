@@ -177,4 +177,20 @@ namespace Budget_WPF
                 // TODO: Show error?
             }
         }
+
+        private void Menu_OpenRecent_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_OpenFile_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Menu_NewFile_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+    }
 }
