@@ -41,11 +41,11 @@ namespace Budget_WPF
         {
             if (string.IsNullOrEmpty(filename))
             {
-                txtb_currentFile.Text = "Budget File: None";
+                txtbCurrentFile.Text = "Budget File: None";
             }
             else
             {
-                txtb_currentFile.Text = $"Budget File {filename}";
+                txtbCurrentFile.Text = $"Budget File {filename}";
             }
         }
 

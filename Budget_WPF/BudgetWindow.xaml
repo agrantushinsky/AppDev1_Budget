@@ -76,6 +76,6 @@
                 </DataGrid>
             </StackPanel>
         </GroupBox>
-        <TextBlock x:Name="txtb_currentFile" Grid.Row="2" Grid.ColumnSpan="2">Budget File: None</TextBlock>
+        <TextBlock x:Name="txtbCurrentFile" Grid.Row="2" Grid.ColumnSpan="2">Budget File: None</TextBlock>
     </Grid>
 </Window>
