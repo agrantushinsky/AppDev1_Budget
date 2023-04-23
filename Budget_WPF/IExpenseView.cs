@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Budget;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -53,5 +54,12 @@ namespace Budget_WPF
         /// </summary>
         /// <param name="message">Last action message</param>
         void SetLastAction(string message);
+        /// <summary>
+        /// Sets up the expense window depending on whether the user is adding or updating an expense
+        /// </summary>
+        /// <param name="mode">Add or update mode</param>
+        /// <param name="presenter">Presenter object</param>
+        /// <param name="budgetItem">Selected budget item if user wants to update it</param>
+        void SetAddOrUpdateView(AddOrUpdateExpense.Mode mode, Presenter presenter, BudgetItem budgetItem = null);
     }
 }

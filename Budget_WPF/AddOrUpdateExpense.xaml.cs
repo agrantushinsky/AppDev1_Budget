@@ -35,32 +35,9 @@ namespace Budget_WPF
             Update
         }
 
-        public AddOrUpdateExpense(Mode mode, object budgetItem = null)
+        public AddOrUpdateExpense()
         {
             InitializeComponent();
-
-            currentMode = mode;
-            //Set categories
-            Refresh();
-
-            if(currentMode == Mode.Add)
-            {
-                dp_Date.SelectedDate = DateTime.Now;
-                txb_Title.Text = "Add Expense";
-                btn_CloseOrDelete.Content = "Close";
-            }
-            else if(currentMode == Mode.Update)
-            {
-                txb_Title.Text = "Update Expense";
-                btn_CloseOrDelete.Content = "Delete";
-                BudgetItem item = (BudgetItem)budgetItem;
-                //Display info
-                currentExpenseItem = _presenter.GetExpenses().Find(exp => exp.Id == item.ExpenseID);
-                cmbCategories.SelectedValue = _presenter.GetCategories().Find(cat => cat.Id == item.CategoryID);
-                tbx_Description.Text = currentExpenseItem.Description;
-                tbx_Amount.Text = currentExpenseItem.Amount.ToString();
-            }
-
         }
 
         private void Menu_NewFile_Click(object sender, RoutedEventArgs e)
@@ -211,6 +188,31 @@ namespace Budget_WPF
             else if (currentMode == Mode.Update)
             {
                 _presenter.DeleteExpense(currentExpenseItem.Id, currentExpenseItem.Description);
+            }
+        }
+
+        public void SetAddOrUpdateView(Mode mode, Presenter presenter, BudgetItem budgetItem = null)
+        {
+            _presenter = presenter;
+            currentMode = mode;
+            Refresh();
+
+            if (currentMode == Mode.Add)
+            {
+                dp_Date.SelectedDate = DateTime.Now;
+                txb_Title.Text = "Add Expense";
+                btn_CloseOrDelete.Content = "Close";
+            }
+            else if (currentMode == Mode.Update)
+            {
+                txb_Title.Text = "Update Expense";
+                btn_CloseOrDelete.Content = "Delete";
+                BudgetItem item = budgetItem;
+                //Display info
+                currentExpenseItem = _presenter.GetExpenses().Find(exp => exp.Id == item.ExpenseID);
+                cmbCategories.SelectedValue = _presenter.GetCategories().Find(cat => cat.Id == item.CategoryID);
+                tbx_Description.Text = currentExpenseItem.Description;
+                tbx_Amount.Text = currentExpenseItem.Amount.ToString();
             }
         }
 

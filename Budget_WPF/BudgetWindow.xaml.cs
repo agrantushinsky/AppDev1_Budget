@@ -21,14 +21,15 @@ namespace Budget_WPF
     /// </summary>
     public partial class BudgetWindow : Window, IBudgetView
     {
+        private AddOrUpdateExpense _addOrUpdateExpense;
         private Presenter _presenter;
         private string _filename;
 
         public BudgetWindow()
         {
             InitializeComponent();
-            AddOrUpdateExpense addOrUpdateExpense = new AddOrUpdateExpense();
-            _presenter = new Presenter(this, addOrUpdateExpense);
+            _addOrUpdateExpense = new AddOrUpdateExpense();
+            _presenter = new Presenter(this, _addOrUpdateExpense);
 
         }
 
@@ -195,8 +196,8 @@ namespace Budget_WPF
 
         private void btn_AddExpense_Click(object sender, RoutedEventArgs e)
         {
-            AddOrUpdateExpense addWindow = new AddOrUpdateExpense(AddOrUpdateExpense.Mode.Add);
-            addWindow.ShowDialog();
+            _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Add, _presenter);
+            _addOrUpdateExpense.ShowDialog();
         }
     }
 }

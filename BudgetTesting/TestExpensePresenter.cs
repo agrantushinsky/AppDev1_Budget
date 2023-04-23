@@ -93,6 +93,11 @@ namespace BudgetCodeTests
             calledShowMessageWithConfirmation = true;
             return true;
         }
+
+        public void SetAddOrUpdateView(AddOrUpdateExpense.Mode mode, Presenter presenter, BudgetItem budgetItem = null)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 
