@@ -58,7 +58,9 @@
             </GroupBox>
 
             <!-- Add Expense-->
-            <Button Content="Add Expense"/>
+            <Button Content="Add Expense"
+                    x:Name="btn_AddExpense"
+                    Click="btn_AddExpense_Click"/>
         </StackPanel>
 
         <GroupBox Header="Expenses" Grid.Column="1" Grid.Row="1">

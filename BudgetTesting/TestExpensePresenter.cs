@@ -48,7 +48,7 @@ namespace BudgetCodeTests
             calledAddCategory = true;
         }
 
-        public void AddExpense()
+        public void SaveExpense()
         {
             calledAddExpense = true;
         }

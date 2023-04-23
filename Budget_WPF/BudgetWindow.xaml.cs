@@ -192,5 +192,11 @@ namespace Budget_WPF
         {
 
         }
+
+        private void btn_AddExpense_Click(object sender, RoutedEventArgs e)
+        {
+            AddOrUpdateExpense addWindow = new AddOrUpdateExpense(AddOrUpdateExpense.Mode.Add);
+            addWindow.ShowDialog();
+        }
     }
 }

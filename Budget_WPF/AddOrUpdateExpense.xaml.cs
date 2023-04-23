@@ -25,11 +25,33 @@ namespace Budget_WPF
     {
         private Presenter _presenter;
         private string _filename;
+        private Mode currentMode;
 
-        public AddOrUpdateExpense()
+        public enum Mode
+        {
+            Add,
+            Update
+        }
+
+        public AddOrUpdateExpense(Mode mode)
         {
             InitializeComponent();
-            dp_Date.SelectedDate = DateTime.Now;
+
+            currentMode = mode;
+
+            if(currentMode == Mode.Add)
+            {
+                dp_Date.SelectedDate = DateTime.Now;
+                txb_Title.Text = "Add Expense";
+                btn_CloseOrDelete.Content = "Close";
+            }
+            else if(currentMode == Mode.Update)
+            {
+                txb_Title.Text = "Update Expense";
+                btn_CloseOrDelete.Content = "Delete";
+                //save selected object 
+            }
+
         }
 
         private void Menu_NewFile_Click(object sender, RoutedEventArgs e)
@@ -44,7 +66,7 @@ namespace Budget_WPF
 
         private void btn_Save_Click(object sender, RoutedEventArgs e)
         {
-            AddExpense();
+            SaveExpense();
         }
 
 
@@ -91,7 +113,7 @@ namespace Budget_WPF
                 cmbCategories.SelectedIndex = cmbCategories.Items.Count - 1;
         }
 
-        public void AddExpense()
+        public void SaveExpense()
         {
             if (!_presenter.IsFileSelected())
                 return;
@@ -111,7 +133,14 @@ namespace Budget_WPF
             Category? selectedCat = cmbCategories.SelectedValue as Category;
             int catID = (selectedCat) is null ? -1 : selectedCat.Id;
 
-            _presenter.AddExpense(date, catID, amount, desc, cbCredit.IsChecked == true);
+            if(currentMode == Mode.Add)
+                _presenter.AddExpense(date, catID, amount, desc, cbCredit.IsChecked == true);
+            else
+            {
+                //get selected item's id
+                //call presenter update expense
+
+            }
         }
 
         public void Refresh()
@@ -164,6 +193,20 @@ namespace Budget_WPF
         private void btn_Discard_Click(object sender, RoutedEventArgs e)
         {
             ClearInputs();
+        }
+
+        private void btn_CloseOrDelete_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentMode == Mode.Add)
+            {
+                //does this trigger the unsaved changes function?
+                this.Close();
+            }
+            else if (currentMode == Mode.Update)
+            {
+                //Get id of selected item
+                //call delete expense from presenter
+            }
         }
     }
 }

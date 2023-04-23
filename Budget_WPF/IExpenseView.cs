@@ -15,7 +15,7 @@ namespace Budget_WPF
         /// <summary>
         /// Creates a new Expense from user input
         /// </summary>
-        void AddExpense();
+        void SaveExpense();
         /// <summary>
         /// Sets list of categories in the combo box
         /// </summary>
