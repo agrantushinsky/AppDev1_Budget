@@ -156,8 +156,6 @@ namespace Budget_WPF
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            //e.Cancel = !_presenter.UnsavedChangesCheck(tbx_Description.Text, tbx_Amount.Text);
-
             e.Cancel = true;
 
             if (_presenter.UnsavedChangesCheck(tbx_Description.Text, tbx_Amount.Text))
@@ -189,7 +187,6 @@ namespace Budget_WPF
         {
             if (currentMode == Mode.Add)
             {
-                //does this trigger the unsaved changes function?
                 this.Close();
             }
             else if (currentMode == Mode.Update)
