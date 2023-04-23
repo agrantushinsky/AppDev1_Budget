@@ -26,6 +26,7 @@ namespace Budget_WPF
         private Presenter _presenter;
         private string _filename;
         private Mode currentMode;
+        private Expense currentExpenseItem;
 
         public enum Mode
         {
@@ -33,11 +34,13 @@ namespace Budget_WPF
             Update
         }
 
-        public AddOrUpdateExpense(Mode mode)
+        public AddOrUpdateExpense(Mode mode, object budgetItem = null)
         {
             InitializeComponent();
 
             currentMode = mode;
+            //Set categories
+            Refresh();
 
             if(currentMode == Mode.Add)
             {
@@ -49,7 +52,12 @@ namespace Budget_WPF
             {
                 txb_Title.Text = "Update Expense";
                 btn_CloseOrDelete.Content = "Delete";
-                //save selected object 
+                BudgetItem item = (BudgetItem)budgetItem;
+                //Display info
+                currentExpenseItem = _presenter.GetExpenses().Find(exp => exp.Id == item.ExpenseID);
+                cmbCategories.SelectedValue = _presenter.GetCategories().Find(cat => cat.Id == item.CategoryID);
+                tbx_Description.Text = currentExpenseItem.Description;
+                tbx_Amount.Text = currentExpenseItem.Amount.ToString();
             }
 
         }
@@ -135,12 +143,9 @@ namespace Budget_WPF
 
             if(currentMode == Mode.Add)
                 _presenter.AddExpense(date, catID, amount, desc, cbCredit.IsChecked == true);
-            else
-            {
-                //get selected item's id
-                //call presenter update expense
+            else if (currentMode == Mode.Update)
+                _presenter.UpdateExpense(currentExpenseItem.Id, date, catID, amount, desc, cbCredit.IsChecked == true);
 
-            }
         }
 
         public void Refresh()

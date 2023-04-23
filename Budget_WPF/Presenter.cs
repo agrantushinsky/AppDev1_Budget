@@ -252,5 +252,10 @@ namespace Budget_WPF
         {
             throw new NotImplementedException();
         }
+
+        public List<Expense> GetExpenses()
+        {
+            return _model.expenses.List();
+        }
     }
 }
