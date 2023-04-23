@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.DirectoryServices;
 using System.Linq;
 using System.Security.Permissions;
 using System.Text;
@@ -209,9 +210,9 @@ namespace Budget_WPF
             }
             else if (currentMode == Mode.Update)
             {
-                //Get id of selected item
-                //call delete expense from presenter
+                _presenter.DeleteExpense(currentExpenseItem.Id, currentExpenseItem.Description);
             }
         }
+
     }
 }

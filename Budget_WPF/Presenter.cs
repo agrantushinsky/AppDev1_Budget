@@ -257,5 +257,43 @@ namespace Budget_WPF
         {
             return _model.expenses.List();
         }
+
+        public void UpdateExpense(int expId, DateTime date, int category, string amountStr, string description, bool credit)
+        {
+            int amount = 0;
+
+            //data validation
+
+            try
+            {
+                _model.expenses.Update(expId, date, category, amount, description);
+
+                if (credit)
+                    _model.expenses.Add(date, _creditCardCategoryId, -amount, $"{description} (on credit)");
+
+                _expenseView.SetLastAction($"Successfully updated expense: {description}");
+
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        public void DeleteExpense(int expId, string description)
+        {
+            try
+            {
+                _model.expenses.Delete(expId);
+
+                _expenseView.SetLastAction($"Successfully deleted expense: {description}");
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+        }
     }
 }
