@@ -156,7 +156,14 @@ namespace Budget_WPF
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            e.Cancel = !_presenter.UnsavedChangesCheck(tbx_Description.Text, tbx_Amount.Text);
+            //e.Cancel = !_presenter.UnsavedChangesCheck(tbx_Description.Text, tbx_Amount.Text);
+
+            e.Cancel = true;
+
+            if (_presenter.UnsavedChangesCheck(tbx_Description.Text, tbx_Amount.Text))
+            {
+                this.Visibility = Visibility.Hidden;
+            }
         }
 
         public bool ShowMessageWithConfirmation(string message)
@@ -196,6 +203,7 @@ namespace Budget_WPF
             _presenter = presenter;
             currentMode = mode;
             Refresh();
+            ClearInputs();
 
             if (currentMode == Mode.Add)
             {

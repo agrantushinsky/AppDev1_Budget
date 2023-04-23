@@ -36,7 +36,7 @@ namespace Budget_WPF
 
         public void Refresh()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public void ShowCurrentFile(string filename)

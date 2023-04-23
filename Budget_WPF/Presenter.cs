@@ -59,9 +59,9 @@ namespace Budget_WPF
             // Set up the UI
             _budgetView.ShowCurrentFile(filename);
             _budgetView.Refresh();
-            _expenseView.ShowCurrentFile(filename);
-            _expenseView.SetLastAction($"Opened {filename}");
-            _expenseView.Refresh();
+            //_expenseView.ShowCurrentFile(filename);
+            //_expenseView.SetLastAction($"Opened {filename}");
+            //_expenseView.Refresh();
             SetRecentFile(filename);
 
             // Find the credit card category id
