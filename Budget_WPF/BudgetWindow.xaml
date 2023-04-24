@@ -38,10 +38,10 @@
                 <StackPanel>
                     <!-- Start & End Date -->
                     <Label Content="Start Date"/>
-                    <DatePicker/>
+                    <DatePicker x:Name="dpStartDate"/>
 
                     <Label Content="End Date"/>
-                    <DatePicker/>
+                    <DatePicker x:Name="dpEndDate"/>
 
                     <!-- Filter by category-->
                     <CheckBox Content="Filter by category?"/>
@@ -74,7 +74,13 @@
 
                 <!-- Table of Expenses-->
                 <DataGrid x:Name="dgExpenses" AutoGenerateColumns="False">
-                    
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Modify" x:Name="miModify" Click="miModify_Click"/>
+                            <MenuItem Header="Delete" x:Name="miDelete" Click="miDelete_Click"/>
+                        </ContextMenu>
+
+                    </DataGrid.ContextMenu>
                 </DataGrid>
             </StackPanel>
         </GroupBox>

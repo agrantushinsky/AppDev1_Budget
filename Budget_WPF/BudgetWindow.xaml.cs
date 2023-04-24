@@ -224,5 +224,16 @@ namespace Budget_WPF
             _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Add, _presenter);
             _addOrUpdateExpense.ShowDialog();
         }
+
+        private void miModify_Click(object sender, RoutedEventArgs e)
+        {
+            _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Update, _presenter, (BudgetItem)dgExpenses.SelectedItem);
+            _addOrUpdateExpense.ShowDialog();
+        }
+
+        private void miDelete_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
