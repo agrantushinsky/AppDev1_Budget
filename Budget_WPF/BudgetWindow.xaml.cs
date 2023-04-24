@@ -49,7 +49,8 @@ namespace Budget_WPF
 
         public void Refresh()
         {
-            //throw new NotImplementedException();
+            _presenter.FiltersChange(dpStartDate.SelectedDate, dpEndDate.SelectedDate, cmbCategories.SelectedIndex, 
+                cbFilterCategory.IsChecked == true, cbFilterByMonth.IsChecked == true, cbFilterByCategory.IsChecked == true);
         }
 
         public void ShowCurrentFile(string filename)

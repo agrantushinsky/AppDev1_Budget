@@ -58,7 +58,6 @@ namespace Budget_WPF
 
             // Set up the UI
             _budgetView.ShowCurrentFile(filename);
-            _budgetView.Refresh();
             //_expenseView.ShowCurrentFile(filename);
             //_expenseView.SetLastAction($"Opened {filename}");
             //_expenseView.Refresh();
@@ -69,7 +68,7 @@ namespace Budget_WPF
             Category? credit = categories.Find((category) => category.Type == Category.CategoryType.Credit);
             _creditCardCategoryId = credit is null? -1 : credit.Id;
 
-            FiltersChange(null, null, -1, false, false, false);
+            _budgetView.Refresh();
         }
 
         /// <summary>
@@ -171,6 +170,7 @@ namespace Budget_WPF
 
             }
             _expenseView.ClearInputs();
+            _budgetView.Refresh();
         }
 
         /// <summary>
@@ -250,7 +250,6 @@ namespace Budget_WPF
         /// <param name="shouldFilterCategory"></param>
         /// <param name="groupByMonth"></param>
         /// <param name="groupByCategory"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public void FiltersChange(DateTime? start, DateTime? end, int categoryId, bool shouldFilterCategory, bool groupByMonth, bool groupByCategory)
         {
             _budgetView.UpdateView(_model.GetBudgetItems(start, end, false, -1));
@@ -283,6 +282,7 @@ namespace Budget_WPF
             }
 
             _expenseView.ClearInputs();
+            _budgetView.Refresh();
         }
 
         public void DeleteExpense(int expId, string description)
@@ -299,7 +299,7 @@ namespace Budget_WPF
 
             }
             _expenseView.ClearInputs();
-
+            _budgetView.Refresh();
         }
     }
 }

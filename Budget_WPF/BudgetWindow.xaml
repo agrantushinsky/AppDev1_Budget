@@ -44,16 +44,16 @@
                     <DatePicker x:Name="dpEndDate"/>
 
                     <!-- Filter by category-->
-                    <CheckBox Content="Filter by category?"/>
-                    <ComboBox/>
+                    <CheckBox Content="Filter by category?" x:Name="cbFilterCategory"/>
+                    <ComboBox x:Name="cmbCategories"/>
                 </StackPanel>
             </GroupBox>
 
             <!-- Group by Month & Category-->
             <GroupBox Header="Summary" Margin="8">
                 <StackPanel>
-                    <CheckBox Content="By Month"/>
-                    <CheckBox Content="By Category"/>
+                    <CheckBox Content="By Month" x:Name="cbFilterByMonth"/>
+                    <CheckBox Content="By Category" x:Name="cbFilterByCategory"/>
                 </StackPanel>
             </GroupBox>
 
