@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Path = System.IO.Path;
+using System.IO;
 
 namespace Budget_WPF
 {
@@ -62,6 +65,7 @@ namespace Budget_WPF
             else
             {
                 txtbCurrentFile.Text = $"Budget File {filename}";
+                Menu_SaveAs.IsEnabled = true;
             }
         }
 
@@ -256,6 +260,25 @@ namespace Budget_WPF
             {
                 BudgetItem expense = (BudgetItem)dgExpenses.SelectedItem;
                 _presenter.DeleteExpense(expense.ExpenseID, expense.ShortDescription);
+            }
+        }
+
+        private void Menu_SaveAs_Click(object sender, RoutedEventArgs e)
+        {
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Database File | *.db";
+
+            string saveLocation = "";
+
+            if(saveFileDialog.ShowDialog() == true)
+            {
+                saveLocation = saveFileDialog.FileName;
+            }
+
+            if (!string.IsNullOrEmpty(saveLocation))
+            {
+                System.IO.File.Copy(_filename, saveLocation, true);
             }
         }
     }
