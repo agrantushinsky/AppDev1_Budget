@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Budget_WPF"
         mc:Ignorable="d"
-        Title="Add Expense" MinHeight="550" MinWidth="440" Height="550" Width="440" Closing="Window_Closing">
+        Title="Add Expense" MinHeight="550" MinWidth="440" Height="550" Width="440" Closing="Window_Closing" WindowStartupLocation="CenterScreen">
     <StackPanel Margin="5">
 
         <!--Title-->
@@ -70,14 +70,6 @@
                     Margin="5,0,0,0"
                     x:Name="btn_CloseOrDelete" Click="btn_CloseOrDelete_Click"/>
         </Grid>
-
-        <!--Current File-->
-        <TextBlock Text="Current File"
-                   Margin="0,20,0,0"
-                   FontWeight="Bold"/>
-        <TextBlock Text="None"
-                   x:Name="txb_CurrentFile"
-                   TextWrapping="Wrap"/>
 
         <!--Last Action-->
         <TextBlock Text="Last Action"
