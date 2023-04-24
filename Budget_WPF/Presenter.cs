@@ -228,15 +228,16 @@ namespace Budget_WPF
             return _isConnected;
         }
 
+        //TO DO: instead of showing in expense view, show in budget view
         /// <summary>
         /// Shows welcome message for first time users
         /// </summary>
-        public void ShowFirstTimeUserSetup()
-        {
-            if(string.IsNullOrEmpty(GetRecentFile()))
-                if (_expenseView.ShowMessageWithConfirmation("Welcome first time user, would you like to browse to create a new budget?"))
-                    _expenseView.OpenNewFile();
-        }
+        //public void ShowFirstTimeUserSetup()
+        //{
+        //    if(string.IsNullOrEmpty(GetRecentFile()))
+        //        if (_expenseView.ShowMessageWithConfirmation("Welcome first time user, would you like to browse to create a new budget?"))
+        //            _expenseView.OpenNewFile();
+        //}
 
         /// <summary>
         /// TODO: Needs to be implemented, called by budget view to update the datagrid with the new filters

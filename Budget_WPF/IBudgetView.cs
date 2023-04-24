@@ -14,5 +14,14 @@ namespace Budget_WPF
 
         void ShowError(string message);
         void Refresh();
+        /// <summary>
+        /// Opens the file dialog to create a new database file for Homebudget program
+        /// </summary>
+        void OpenNewFile();
+        /// <summary>
+        /// Opens the file dialog for users to search and open their existing database file
+        /// </summary>
+        void OpenExistingFile();
+
     }
 }

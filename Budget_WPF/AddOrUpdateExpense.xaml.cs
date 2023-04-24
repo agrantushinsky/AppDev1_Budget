@@ -40,50 +40,11 @@ namespace Budget_WPF
             InitializeComponent();
         }
 
-        private void Menu_NewFile_Click(object sender, RoutedEventArgs e)
-        {
-            OpenNewFile();
-        }
-
-        private void Menu_OpenFile_Click(object sender, RoutedEventArgs e)
-        {
-            OpenExistingFile();
-        }
-
         private void btn_Save_Click(object sender, RoutedEventArgs e)
         {
             SaveExpense();
         }
 
-
-        public void OpenExistingFile()
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Database File | *.db";
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                _filename = openFileDialog.FileName;
-                _presenter.ConnectToDatabase(_filename, false);
-            }
-        }
-
-        public void OpenNewFile()
-        {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "Database File | *.db";
-
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                _filename = saveFileDialog.FileName;
-                _presenter.ConnectToDatabase(_filename, true);
-            }
-        }
-
-        public void ShowCurrentFile(string filename)
-        {
-            txb_CurrentFile.Text = filename;
-        }
 
         public void AddCategory()
         {
@@ -169,10 +130,6 @@ namespace Budget_WPF
             return MessageBox.Show(message, "Info", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes;
         }
 
-        private void Menu_OpenRecent_Click(object sender, RoutedEventArgs e)
-        {
-            _presenter.ConnectToDatabase(_presenter.GetRecentFile(), false);
-        }
         public void SetLastAction(string message)
         {
             txb_LastAction.Text = $"[{DateTime.Now.ToShortTimeString()}] {message}";

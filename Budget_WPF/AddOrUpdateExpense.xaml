@@ -71,14 +71,6 @@
                     x:Name="btn_CloseOrDelete" Click="btn_CloseOrDelete_Click"/>
         </Grid>
 
-        <!--Current File-->
-        <TextBlock Text="Current File"
-                   Margin="0,20,0,0"
-                   FontWeight="Bold"/>
-        <TextBlock Text="None"
-                   x:Name="txb_CurrentFile"
-                   TextWrapping="Wrap"/>
-
         <!--Last Action-->
         <TextBlock Text="Last Action"
                    Margin="0,20,0,0"
