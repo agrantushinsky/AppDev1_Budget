@@ -248,9 +248,9 @@ namespace Budget_WPF
         /// <param name="groupByMonth"></param>
         /// <param name="groupByCategory"></param>
         /// <exception cref="NotImplementedException"></exception>
-        public void FiltersChange(DateTime start, DateTime end, int categoryId, bool shouldFilterCategory, bool groupByMonth, bool groupByCategory)
+        public void FiltersChange(DateTime? start, DateTime? end, int categoryId, bool shouldFilterCategory, bool groupByMonth, bool groupByCategory)
         {
-            throw new NotImplementedException();
+            _budgetView.UpdateView(_model.GetBudgetItems(start, end, false, -1));
         }
 
         public List<Expense> GetExpenses()
