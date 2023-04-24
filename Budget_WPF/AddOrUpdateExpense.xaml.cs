@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.DirectoryServices;
 using System.Linq;
 using System.Security.Permissions;
 using System.Text;
@@ -25,11 +26,18 @@ namespace Budget_WPF
     {
         private Presenter _presenter;
         private string _filename;
+        private Mode currentMode;
+        private Expense currentExpenseItem;
+
+        public enum Mode
+        {
+            Add,
+            Update
+        }
 
         public AddOrUpdateExpense()
         {
             InitializeComponent();
-            dp_Date.SelectedDate = DateTime.Now;
         }
 
         private void Menu_NewFile_Click(object sender, RoutedEventArgs e)
@@ -44,7 +52,7 @@ namespace Budget_WPF
 
         private void btn_Save_Click(object sender, RoutedEventArgs e)
         {
-            AddExpense();
+            SaveExpense();
         }
 
 
@@ -91,7 +99,7 @@ namespace Budget_WPF
                 cmbCategories.SelectedIndex = cmbCategories.Items.Count - 1;
         }
 
-        public void AddExpense()
+        public void SaveExpense()
         {
             if (!_presenter.IsFileSelected())
                 return;
@@ -111,7 +119,11 @@ namespace Budget_WPF
             Category? selectedCat = cmbCategories.SelectedValue as Category;
             int catID = (selectedCat) is null ? -1 : selectedCat.Id;
 
-            _presenter.AddExpense(date, catID, amount, desc, cbCredit.IsChecked == true);
+            if(currentMode == Mode.Add)
+                _presenter.AddExpense(date, catID, amount, desc, cbCredit.IsChecked == true);
+            else if (currentMode == Mode.Update)
+                _presenter.UpdateExpense(currentExpenseItem.Id, date, catID, amount, desc, cbCredit.IsChecked == true);
+
         }
 
         public void Refresh()
@@ -144,7 +156,12 @@ namespace Budget_WPF
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            e.Cancel = !_presenter.UnsavedChangesCheck(tbx_Description.Text, tbx_Amount.Text);
+            e.Cancel = true;
+
+            if (_presenter.UnsavedChangesCheck(tbx_Description.Text, tbx_Amount.Text))
+            {
+                this.Visibility = Visibility.Hidden;
+            }
         }
 
         public bool ShowMessageWithConfirmation(string message)
@@ -165,5 +182,44 @@ namespace Budget_WPF
         {
             ClearInputs();
         }
+
+        private void btn_CloseOrDelete_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentMode == Mode.Add)
+            {
+                this.Close();
+            }
+            else if (currentMode == Mode.Update)
+            {
+                _presenter.DeleteExpense(currentExpenseItem.Id, currentExpenseItem.Description);
+            }
+        }
+
+        public void SetAddOrUpdateView(Mode mode, Presenter presenter, BudgetItem budgetItem = null)
+        {
+            _presenter = presenter;
+            currentMode = mode;
+            Refresh();
+            ClearInputs();
+
+            if (currentMode == Mode.Add)
+            {
+                dp_Date.SelectedDate = DateTime.Now;
+                txb_Title.Text = "Add Expense";
+                btn_CloseOrDelete.Content = "Close";
+            }
+            else if (currentMode == Mode.Update)
+            {
+                txb_Title.Text = "Update Expense";
+                btn_CloseOrDelete.Content = "Delete";
+                BudgetItem item = budgetItem;
+                //Display info
+                currentExpenseItem = _presenter.GetExpenses().Find(exp => exp.Id == item.ExpenseID);
+                cmbCategories.SelectedValue = _presenter.GetCategories().Find(cat => cat.Id == item.CategoryID);
+                tbx_Description.Text = currentExpenseItem.Description;
+                tbx_Amount.Text = currentExpenseItem.Amount.ToString();
+            }
+        }
+
     }
 }

@@ -48,7 +48,7 @@ namespace BudgetCodeTests
             calledAddCategory = true;
         }
 
-        public void AddExpense()
+        public void SaveExpense()
         {
             calledAddExpense = true;
         }
@@ -92,6 +92,11 @@ namespace BudgetCodeTests
         {
             calledShowMessageWithConfirmation = true;
             return true;
+        }
+
+        public void SetAddOrUpdateView(AddOrUpdateExpense.Mode mode, Presenter presenter, BudgetItem budgetItem = null)
+        {
+            throw new NotImplementedException();
         }
     }
 

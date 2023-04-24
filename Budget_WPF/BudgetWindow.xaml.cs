@@ -1,4 +1,5 @@
 ﻿using Budget;
+using Microsoft.Win32;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
@@ -21,20 +22,21 @@ namespace Budget_WPF
     /// </summary>
     public partial class BudgetWindow : Window, IBudgetView
     {
+        private AddOrUpdateExpense _addOrUpdateExpense;
         private Presenter _presenter;
         private string _filename;
 
         public BudgetWindow()
         {
             InitializeComponent();
-            AddOrUpdateExpense addOrUpdateExpense = new AddOrUpdateExpense();
-            _presenter = new Presenter(this, addOrUpdateExpense);
+            _addOrUpdateExpense = new AddOrUpdateExpense();
+            _presenter = new Presenter(this, _addOrUpdateExpense);
 
         }
 
         public void Refresh()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public void ShowCurrentFile(string filename)
@@ -180,17 +182,47 @@ namespace Budget_WPF
 
         private void Menu_OpenRecent_Click(object sender, RoutedEventArgs e)
         {
-
+            _presenter.ConnectToDatabase(_presenter.GetRecentFile(), false);
         }
 
         private void Menu_OpenFile_Click(object sender, RoutedEventArgs e)
         {
-
+            OpenExistingFile();
         }
 
         private void Menu_NewFile_Click(object sender, RoutedEventArgs e)
         {
+            OpenNewFile();
+        }
 
+        public void OpenExistingFile()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Database File | *.db";
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                _filename = openFileDialog.FileName;
+                _presenter.ConnectToDatabase(_filename, false);
+            }
+        }
+
+        public void OpenNewFile()
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Database File | *.db";
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                _filename = saveFileDialog.FileName;
+                _presenter.ConnectToDatabase(_filename, true);
+            }
+        }
+
+        private void btn_AddExpense_Click(object sender, RoutedEventArgs e)
+        {
+            _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Add, _presenter);
+            _addOrUpdateExpense.ShowDialog();
         }
     }
 }
