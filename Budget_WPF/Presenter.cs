@@ -68,6 +68,8 @@ namespace Budget_WPF
             List<Category> categories = _model.categories.List();
             Category? credit = categories.Find((category) => category.Type == Category.CategoryType.Credit);
             _creditCardCategoryId = credit is null? -1 : credit.Id;
+
+            FiltersChange(null, null, -1, false, false, false);
         }
 
         /// <summary>

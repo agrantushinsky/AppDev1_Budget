@@ -158,6 +158,8 @@ namespace Budget_WPF
             currentMode = mode;
             Refresh();
             ClearInputs();
+            
+            cbCredit.IsEnabled = mode == Mode.Add;
 
             if (currentMode == Mode.Add)
             {
@@ -172,7 +174,14 @@ namespace Budget_WPF
                 BudgetItem item = budgetItem;
                 //Display info
                 currentExpenseItem = _presenter.GetExpenses().Find(exp => exp.Id == item.ExpenseID);
-                cmbCategories.SelectedValue = _presenter.GetCategories().Find(cat => cat.Id == item.CategoryID); //TO DO: currently not displaying the correct category
+                foreach(Category cat in cmbCategories.Items)
+                {
+                    if(cat.Id == item.CategoryID)
+                    {
+                        cmbCategories.SelectedValue = cat;
+                        break;
+                    }
+                }
                 dp_Date.SelectedDate = currentExpenseItem.Date;
                 tbx_Description.Text = currentExpenseItem.Description;
                 tbx_Amount.Text = currentExpenseItem.Amount.ToString();
