@@ -172,7 +172,8 @@ namespace Budget_WPF
                 BudgetItem item = budgetItem;
                 //Display info
                 currentExpenseItem = _presenter.GetExpenses().Find(exp => exp.Id == item.ExpenseID);
-                cmbCategories.SelectedValue = _presenter.GetCategories().Find(cat => cat.Id == item.CategoryID);
+                cmbCategories.SelectedValue = _presenter.GetCategories().Find(cat => cat.Id == item.CategoryID); //TO DO: currently not displaying the correct category
+                dp_Date.SelectedDate = currentExpenseItem.Date;
                 tbx_Description.Text = currentExpenseItem.Description;
                 tbx_Amount.Text = currentExpenseItem.Amount.ToString();
             }

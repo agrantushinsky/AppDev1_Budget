@@ -273,13 +273,14 @@ namespace Budget_WPF
                     _model.expenses.Add(date, _creditCardCategoryId, -amount, $"{description} (on credit)");
 
                 _expenseView.SetLastAction($"Successfully updated expense: {description}");
-
             }
 
             catch (Exception ex)
             {
 
             }
+
+            _expenseView.ClearInputs();
         }
 
         public void DeleteExpense(int expId, string description)
