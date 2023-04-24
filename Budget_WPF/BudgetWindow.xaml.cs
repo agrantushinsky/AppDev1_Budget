@@ -31,7 +31,13 @@ namespace Budget_WPF
             InitializeComponent();
             _addOrUpdateExpense = new AddOrUpdateExpense();
             _presenter = new Presenter(this, _addOrUpdateExpense);
+            InitializeFilters();
+        }
 
+        public void InitializeFilters()
+        {
+            dpStartDate.SelectedDate = DateTime.Today.AddYears(-1);
+            dpEndDate.SelectedDate = DateTime.Today;
         }
 
         public void Refresh()
