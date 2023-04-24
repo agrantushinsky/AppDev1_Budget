@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Path = System.IO.Path;
+using System.IO;
 
 namespace Budget_WPF
 {
@@ -53,7 +56,7 @@ namespace Budget_WPF
 
         public void ShowError(string message)
         {
-            throw new NotImplementedException();
+            MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         public void UpdateView(object items)
@@ -234,6 +237,32 @@ namespace Budget_WPF
         private void miDelete_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void Menu_SaveAs_Click(object sender, RoutedEventArgs e)
+        {
+            if (_filename != null)
+                Menu_SaveAs.IsEnabled = true;
+            else
+            {
+                ShowError("Please open a file first before creating a copy");
+                return;
+            }
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Database File | *.db";
+
+            string saveLocation = "";
+
+            if(saveFileDialog.ShowDialog() == true)
+            {
+                saveLocation = saveFileDialog.FileName;
+            }
+
+            if (!string.IsNullOrEmpty(saveLocation))
+            {
+                System.IO.File.Copy(_filename, saveLocation, true);
+            }
         }
     }
 }
