@@ -296,6 +296,8 @@ namespace Budget_WPF
             {
 
             }
+            _expenseView.ClearInputs();
+
         }
     }
 }
