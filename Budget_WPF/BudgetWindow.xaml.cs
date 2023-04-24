@@ -31,11 +31,18 @@ namespace Budget_WPF
             InitializeComponent();
             _addOrUpdateExpense = new AddOrUpdateExpense();
             _presenter = new Presenter(this, _addOrUpdateExpense);
-            InitializeFilters();
+            InitializeWindow();
         }
 
-        public void InitializeFilters()
+        public void InitializeWindow()
         {
+            //Disables open recent menu item if there is no recent file
+            if (string.IsNullOrEmpty(_presenter.GetRecentFile()))
+            {
+                miOpenRecent.IsEnabled = false;
+            }
+            miModify.IsEnabled = miDelete.IsEnabled = false;
+
             dpStartDate.SelectedDate = DateTime.Today.AddYears(-1);
             dpEndDate.SelectedDate = DateTime.Today;
         }
@@ -64,6 +71,8 @@ namespace Budget_WPF
 
         public void UpdateView(object items)
         {
+            miModify.IsEnabled = miDelete.IsEnabled = true;
+
             dgExpenses.Columns.Clear();
 
             Style rightAligned = new Style();
@@ -233,13 +242,21 @@ namespace Budget_WPF
 
         private void miModify_Click(object sender, RoutedEventArgs e)
         {
-            _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Update, _presenter, (BudgetItem)dgExpenses.SelectedItem);
-            _addOrUpdateExpense.ShowDialog();
+            if (dgExpenses.SelectedValue is not null)
+            {
+                _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Update, _presenter, (BudgetItem)dgExpenses.SelectedItem);
+                _addOrUpdateExpense.ShowDialog();
+            }
         }
 
         private void miDelete_Click(object sender, RoutedEventArgs e)
         {
+            //TODO: PUT DELETE CODE IN THE IF STATEMENT
+            if (dgExpenses.SelectedValue is not null)
+            {
 
+
+            }
         }
     }
 }

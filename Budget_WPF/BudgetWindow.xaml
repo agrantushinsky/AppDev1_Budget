@@ -24,8 +24,8 @@
                           Click="Menu_NewFile_Click"/>
                 <MenuItem Header="Open File..."
                           Click="Menu_OpenFile_Click"/>
-                <MenuItem Header="Open Recent"
-                          Click="Menu_OpenRecent_Click"/>
+                <MenuItem x:Name="miOpenRecent" Header="Open Recent"
+                          Click="Menu_OpenRecent_Click" />
             </MenuItem>
         </Menu>
         
@@ -76,8 +76,9 @@
                 <DataGrid x:Name="dgExpenses" AutoGenerateColumns="False">
                     <DataGrid.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Modify" x:Name="miModify" Click="miModify_Click"/>
-                            <MenuItem Header="Delete" x:Name="miDelete" Click="miDelete_Click"/>
+                            <!--TODO: May need to add Commands for the shortcut Ctrl+X or + M way?-->
+                            <MenuItem Header="_Modify" x:Name="miModify" Click="miModify_Click" InputGestureText="Ctrl+M"/>
+                            <MenuItem Header="_Delete" x:Name="miDelete" Click="miDelete_Click" InputGestureText="Ctrl+X"/>
                         </ContextMenu>
 
                     </DataGrid.ContextMenu>
