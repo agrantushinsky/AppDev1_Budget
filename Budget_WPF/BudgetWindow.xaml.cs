@@ -251,11 +251,10 @@ namespace Budget_WPF
 
         private void miDelete_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: PUT DELETE CODE IN THE IF STATEMENT
             if (dgExpenses.SelectedValue is not null)
             {
-
-
+                BudgetItem expense = (BudgetItem)dgExpenses.SelectedItem;
+                _presenter.DeleteExpense(expense.ExpenseID, expense.ShortDescription);
             }
         }
     }
