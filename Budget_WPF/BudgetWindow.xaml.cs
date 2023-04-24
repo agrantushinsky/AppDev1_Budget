@@ -53,7 +53,7 @@ namespace Budget_WPF
 
         public void ShowError(string message)
         {
-            throw new NotImplementedException();
+            MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         public void UpdateView(object items)

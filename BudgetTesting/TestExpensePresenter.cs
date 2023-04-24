@@ -12,20 +12,51 @@ namespace BudgetCodeTests
 {
     public class TestBudgetView : IBudgetView
     {
+        public bool calledRefresh = false;
+        public bool calledShowCurrentFile = false;
+        public bool calledShowError = false;
+        public bool calledUpdateView = false;
+        public bool calledOpenNewFile = false;
+        public bool calledOpenExistingFile = false;
+        //RESET ALL BOOLS TO FALSE IN EACH TEST
+        public void SetToFalse()
+        {
+            calledRefresh = false;
+            calledShowCurrentFile = false;
+            calledShowError = false;
+            calledUpdateView = false;
+            calledOpenNewFile = false;
+            calledOpenExistingFile = false;
+        }
+
         public void Refresh()
         {
+            calledRefresh = true;
         }
 
         public void ShowCurrentFile(string filename)
         {
+            calledShowCurrentFile = true;
         }
 
         public void ShowError(string message)
         {
+            calledShowError = true;
         }
 
         public void UpdateView(object items)
         {
+            calledUpdateView = true;
+        }
+
+        public void OpenNewFile()
+        {
+            calledOpenNewFile = true;
+        }
+
+        public void OpenExistingFile()
+        {
+            calledOpenExistingFile = true;
         }
     }
     public class TestExpenseView : IExpenseView

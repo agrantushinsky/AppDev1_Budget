@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Budget_WPF"
         mc:Ignorable="d"
-        Title="BudgetWindow" Height="500" Width="1200" MinHeight="200" MinWidth="600">
+        Title="BudgetWindow" Height="500" Width="1200" MinHeight="200" MinWidth="600" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -18,7 +18,7 @@
         </Grid.ColumnDefinitions>
 
         <!--Menu-->
-        <Menu>
+        <Menu Grid.ColumnSpan="2">
             <MenuItem Header="File">
                 <MenuItem Header="New File..."
                           Click="Menu_NewFile_Click"/>
