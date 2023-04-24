@@ -34,7 +34,20 @@ namespace Budget_WPF
             InitializeComponent();
             _addOrUpdateExpense = new AddOrUpdateExpense();
             _presenter = new Presenter(this, _addOrUpdateExpense);
+            InitializeWindow();
+        }
 
+        public void InitializeWindow()
+        {
+            //Disables open recent menu item if there is no recent file
+            if (string.IsNullOrEmpty(_presenter.GetRecentFile()))
+            {
+                miOpenRecent.IsEnabled = false;
+            }
+            miModify.IsEnabled = miDelete.IsEnabled = false;
+
+            dpStartDate.SelectedDate = DateTime.Today.AddYears(-1);
+            dpEndDate.SelectedDate = DateTime.Today;
         }
 
         public void Refresh()
@@ -51,6 +64,7 @@ namespace Budget_WPF
             else
             {
                 txtbCurrentFile.Text = $"Budget File {filename}";
+                Menu_SaveAs.IsEnabled = true;
             }
         }
 
@@ -61,6 +75,8 @@ namespace Budget_WPF
 
         public void UpdateView(object items)
         {
+            miModify.IsEnabled = miDelete.IsEnabled = true;
+
             dgExpenses.Columns.Clear();
 
             Style rightAligned = new Style();
@@ -230,24 +246,24 @@ namespace Budget_WPF
 
         private void miModify_Click(object sender, RoutedEventArgs e)
         {
-            _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Update, _presenter, (BudgetItem)dgExpenses.SelectedItem);
-            _addOrUpdateExpense.ShowDialog();
+            if (dgExpenses.SelectedValue is not null)
+            {
+                _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Update, _presenter, (BudgetItem)dgExpenses.SelectedItem);
+                _addOrUpdateExpense.ShowDialog();
+            }
         }
 
         private void miDelete_Click(object sender, RoutedEventArgs e)
         {
-
+            if (dgExpenses.SelectedValue is not null)
+            {
+                BudgetItem expense = (BudgetItem)dgExpenses.SelectedItem;
+                _presenter.DeleteExpense(expense.ExpenseID, expense.ShortDescription);
+            }
         }
 
         private void Menu_SaveAs_Click(object sender, RoutedEventArgs e)
         {
-            if (_filename != null)
-                Menu_SaveAs.IsEnabled = true;
-            else
-            {
-                ShowError("Please open a file first before creating a copy");
-                return;
-            }
 
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "Database File | *.db";

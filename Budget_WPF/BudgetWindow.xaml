@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Budget_WPF"
         mc:Ignorable="d"
-        Title="BudgetWindow" Height="500" Width="1200" MinHeight="200" MinWidth="600">
+        Title="BudgetWindow" Height="500" Width="1200" MinHeight="200" MinWidth="600" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -18,14 +18,14 @@
         </Grid.ColumnDefinitions>
 
         <!--Menu-->
-        <Menu>
+        <Menu Grid.ColumnSpan="2">
             <MenuItem Header="File">
                 <MenuItem Header="New File..."
                           Click="Menu_NewFile_Click"/>
                 <MenuItem Header="Open File..."
                           Click="Menu_OpenFile_Click"/>
-                <MenuItem Header="Open Recent"
-                          Click="Menu_OpenRecent_Click"/>
+                <MenuItem x:Name="miOpenRecent" Header="Open Recent"
+                          Click="Menu_OpenRecent_Click" />
                 <MenuItem Header="Save As..."
                           x:Name="Menu_SaveAs"
                           Click="Menu_SaveAs_Click"
@@ -80,8 +80,9 @@
                 <DataGrid x:Name="dgExpenses" AutoGenerateColumns="False">
                     <DataGrid.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Modify" x:Name="miModify" Click="miModify_Click"/>
-                            <MenuItem Header="Delete" x:Name="miDelete" Click="miDelete_Click"/>
+                            <!--TODO: May need to add Commands for the shortcut Ctrl+X or + M way?-->
+                            <MenuItem Header="_Modify" x:Name="miModify" Click="miModify_Click" InputGestureText="Ctrl+M"/>
+                            <MenuItem Header="_Delete" x:Name="miDelete" Click="miDelete_Click" InputGestureText="Ctrl+X"/>
                         </ContextMenu>
 
                     </DataGrid.ContextMenu>
