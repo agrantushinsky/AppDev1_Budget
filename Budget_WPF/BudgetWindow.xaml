@@ -64,7 +64,8 @@
             <!-- Add Expense-->
             <Button Content="Add Expense"
                     x:Name="btn_AddExpense"
-                    Click="btn_AddExpense_Click"/>
+                    Click="btn_AddExpense_Click"
+                    IsEnabled="False"/>
         </StackPanel>
 
         <GroupBox Header="Expenses" Grid.Column="1" Grid.Row="1">

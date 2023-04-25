@@ -66,6 +66,7 @@ namespace Budget_WPF
             {
                 txtbCurrentFile.Text = $"Budget File {filename}";
                 Menu_SaveAs.IsEnabled = true;
+                btn_AddExpense.IsEnabled = true;
             }
         }
 
