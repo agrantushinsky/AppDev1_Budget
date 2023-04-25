@@ -112,7 +112,7 @@ namespace Budget_WPF
             // Attempt to add the expense
             try
             {
-                if(ValidateUserInput(date, category, amountStr, description))
+                if (ValidateUserInput(date, category, amountStr, description))
                 {
                     double amount = double.Parse(amountStr);
 
@@ -123,6 +123,8 @@ namespace Budget_WPF
 
                     _expenseView.SetLastAction($"Successfully added expense: {description}");
                 }
+                else
+                    return;
             }
             catch (Exception ex)
             {
@@ -223,7 +225,7 @@ namespace Budget_WPF
         {
             try
             {
-                if(ValidateUserInput(date, category, amountStr, description))
+                if (ValidateUserInput(date, category, amountStr, description))
                 {
                     double amount = double.Parse(amountStr);
 
@@ -232,6 +234,8 @@ namespace Budget_WPF
                     _expenseView.SetLastAction($"Successfully updated expense: {description}");
 
                 }
+                else
+                    return;
             }
 
             catch (Exception ex)
