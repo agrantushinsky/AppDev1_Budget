@@ -58,9 +58,7 @@ namespace Budget_WPF
 
             // Set up the UI
             _budgetView.ShowCurrentFile(filename);
-            //_expenseView.ShowCurrentFile(filename);
-            //_expenseView.SetLastAction($"Opened {filename}");
-            //_expenseView.Refresh();
+            _expenseView.SetLastAction($"Opened {filename}");
             SetRecentFile(filename);
 
             // Find the credit card category id
@@ -157,13 +155,15 @@ namespace Budget_WPF
             // Attempt to add the expense
             try
             {
-                _model.expenses.Add(date, category, amount, description);
+                if(ValidateUserInput(date, category, amountStr, description))
+                {
+                    _model.expenses.Add(date, category, amount, description);
 
-                if (credit)
-                    _model.expenses.Add(date, _creditCardCategoryId, -amount, $"{description} (on credit)");
+                    if (credit)
+                        _model.expenses.Add(date, _creditCardCategoryId, -amount, $"{description} (on credit)");
 
-                _expenseView.SetLastAction($"Successfully added expense: {description}");
-
+                    _expenseView.SetLastAction($"Successfully added expense: {description}");
+                }
             }
             catch (Exception ex)
             {
@@ -260,20 +260,19 @@ namespace Budget_WPF
             return _model.expenses.List();
         }
 
-        public void UpdateExpense(int expId, DateTime date, int category, string amountStr, string description, bool credit)
+        public void UpdateExpense(int expId, DateTime date, int category, string amountStr, string description)
         {
-            int amount = 0;
-
-            //data validation
-
             try
             {
-                _model.expenses.Update(expId, date, category, amount, description);
+                if(ValidateUserInput(date, category, amountStr, description))
+                {
+                    double amount = double.Parse(amountStr);
 
-                if (credit)
-                    _model.expenses.Add(date, _creditCardCategoryId, -amount, $"{description} (on credit)");
+                    _model.expenses.Update(expId, date, category, amount, description);
 
-                _expenseView.SetLastAction($"Successfully updated expense: {description}");
+                    _expenseView.SetLastAction($"Successfully updated expense: {description}");
+
+                }
             }
 
             catch (Exception ex)
@@ -300,6 +299,54 @@ namespace Budget_WPF
             }
             _expenseView.ClearInputs();
             _budgetView.Refresh();
+        }
+
+        public bool ValidateUserInput(DateTime date, int category, string amountStr, string description)
+        {
+            StringBuilder errorMessage = new();
+            double amount;
+
+            if (!_isConnected)
+            {
+                errorMessage.AppendLine("No file is currently opened.");
+            }
+
+
+            if (category < 0)
+            {
+                errorMessage.AppendLine("An existing category must be selected.");
+            }
+            else
+            {
+                try
+                {
+                    // Throws when the ID is not found.
+                    _ = _model.categories.GetCategoryFromId(category);
+                }
+                catch
+                {
+                    errorMessage.AppendLine("An existing category must be selected.");
+                }
+            }
+
+            if (string.IsNullOrEmpty(description))
+            {
+                errorMessage.AppendLine("A description must be added.");
+            }
+
+            if (!double.TryParse(amountStr, out amount))
+            {
+                errorMessage.AppendLine("The amount is invalid.");
+            }
+
+            // If an error occurred, show the error and return this method.
+            if (errorMessage.Length > 0)
+            {
+                _expenseView.ShowError(errorMessage.ToString());
+                return false;
+            }
+
+            return true;
         }
     }
 }

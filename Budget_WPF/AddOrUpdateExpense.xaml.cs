@@ -83,7 +83,7 @@ namespace Budget_WPF
             if(currentMode == Mode.Add)
                 _presenter.AddExpense(date, catID, amount, desc, cbCredit.IsChecked == true);
             else if (currentMode == Mode.Update)
-                _presenter.UpdateExpense(currentExpenseItem.Id, date, catID, amount, desc, cbCredit.IsChecked == true);
+                _presenter.UpdateExpense(currentExpenseItem.Id, date, catID, amount, desc);
 
         }
 
