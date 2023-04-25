@@ -517,63 +517,64 @@ namespace BudgetCodeTests
 
         // ========================================================================
 
-        //TO DO: Show first time user pop up in budget window rather than expense window
+        [Fact]
+        public void ExpensePresenterMethods_ShowFirstTimeUserSetup_FirstTimeUser()
+        {
+            const string FULL_REGISTER_PATH = "SOFTWARE\\AppDevBudget\\";
+            const string KEYNAME = "recentFile";
 
-        //[Fact]
-        //public void ExpensePresenterMethods_ShowFirstTimeUserSetup_FirstTimeUser()
-        //{
-        //    const string FULL_REGISTER_PATH = "SOFTWARE\\AppDevBudget\\";
-        //    const string KEYNAME = "recentFile";
+            //Arrange
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
 
-        //    //Arrange
-        //    TestExpenseView ev = new TestExpenseView();
-        //    Presenter p = new Presenter(budgetView,ev);
+            // Delete the existing key if it exists
+            try
+            {
+                RegistryKey? key = Registry.CurrentUser.OpenSubKey(FULL_REGISTER_PATH, true);
+                key.DeleteValue(KEYNAME);
+            }
+            catch { }
 
-        //    // Delete the existing key if it exists
-        //    try
-        //    {
-        //        RegistryKey? key = Registry.CurrentUser.OpenSubKey(FULL_REGISTER_PATH, true);
-        //        key.DeleteValue(KEYNAME);
-        //    } catch { }
+            budgetView.calledShowMessageWithConfirmation = false;
+            budgetView.calledOpenNewFile = false;
 
-        //    ev.calledShowMessageWithConfirmation = false;
-        //    //ev.calledOpenNewFile = false;
+            //Act
+            p.ShowFirstTimeUserSetup();
 
-        //    //Act
-        //    //p.ShowFirstTimeUserSetup();
+            //Assert
+            Assert.True(budgetView.calledShowMessageWithConfirmation);
+            Assert.True(budgetView.calledOpenNewFile);
+        }
 
-        //    //Assert
-        //    Assert.True(ev.calledShowMessageWithConfirmation);
-        //    //Assert.True(ev.calledOpenNewFile);
-        //}
+        // ========================================================================
 
-        //// ========================================================================
+        [Fact]
+        public void ExpensePresenterMethods_ShowFirstTimeUserSetup_ReturningUser()
+        {
+            const string FULL_REGISTER_PATH = "SOFTWARE\\AppDevBudget\\";
+            const string KEYNAME = "recentFile";
 
-        //[Fact]
-        //public void ExpensePresenterMethods_ShowFirstTimeUserSetup_ReturningUser()
-        //{
-        //    const string FULL_REGISTER_PATH = "SOFTWARE\\AppDevBudget\\";
-        //    const string KEYNAME = "recentFile";
+            //Arrange
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
+            // Wipe recent file register
+            RegistryKey? key = Registry.CurrentUser.OpenSubKey(FULL_REGISTER_PATH, true);
+            key.SetValue(KEYNAME, "C:\\");
+            budgetView.calledShowMessageWithConfirmation = false;
+            budgetView.calledOpenNewFile = false;
 
-        //    //Arrange
-        //    TestExpenseView ev = new TestExpenseView();
-        //    Presenter p = new Presenter(budgetView,ev);
-        //    // Wipe recent file register
-        //    RegistryKey? key = Registry.CurrentUser.OpenSubKey(FULL_REGISTER_PATH, true);
-        //    key.SetValue(KEYNAME, "C:\\");
-        //    ev.calledShowMessageWithConfirmation = false;
-        //    //ev.calledOpenNewFile = false;
+            //Act
+            p.ShowFirstTimeUserSetup();
 
-        //    //Act
-        //    //p.ShowFirstTimeUserSetup();
+            //Assert
+            Assert.False(budgetView.calledShowMessageWithConfirmation);
+            Assert.False(budgetView.calledOpenNewFile);
 
-        //    //Assert
-        //    Assert.False(ev.calledShowMessageWithConfirmation);
-        //    //Assert.False(ev.calledOpenNewFile);
-
-        //    // Cleanup (delete bad key)
-        //    key.DeleteValue(KEYNAME);
-        //}
+            // Cleanup (delete bad key)
+            key.DeleteValue(KEYNAME);
+        }
 
         // ========================================================================
 
