@@ -252,7 +252,24 @@ namespace Budget_WPF
         /// <param name="groupByCategory"></param>
         public void FiltersChange(DateTime? start, DateTime? end, int categoryId, bool shouldFilterCategory, bool groupByMonth, bool groupByCategory)
         {
-            _budgetView.UpdateView(_model.GetBudgetItems(start, end, false, -1));
+            object items;
+            if(groupByCategory && groupByMonth)
+            {
+                items = _model.GetBudgetDictionaryByCategoryAndMonth(start, end, shouldFilterCategory, categoryId);
+            }
+            else if(groupByCategory)
+            {
+                items = _model.GetBudgetItemsByCategory(start, end, shouldFilterCategory, categoryId);
+            }
+            else if(groupByMonth)
+            {
+                items = _model.GetBudgetItemsByMonth(start, end, shouldFilterCategory, categoryId);
+            }
+            else 
+            {
+                items = _model.GetBudgetItems(start, end, shouldFilterCategory, categoryId);
+            }
+            _budgetView.UpdateView(items);
         }
 
         public List<Expense> GetExpenses()
