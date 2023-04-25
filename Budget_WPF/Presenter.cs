@@ -108,55 +108,14 @@ namespace Budget_WPF
         /// <param name="credit">If credit was used to pay</param>
         public void AddExpense(DateTime date, int category, string amountStr, string description, bool credit)
         {
-            StringBuilder errorMessage = new();
-            double amount;
-
-            if (!_isConnected)
-            {
-                errorMessage.AppendLine("No file is currently opened.");
-            }
-
-            
-            if (category < 0)
-            {
-                errorMessage.AppendLine("An existing category must be selected.");
-            }
-            else
-            {
-                try
-                {
-                    // Throws when the ID is not found.
-                    _ = _model.categories.GetCategoryFromId(category);
-                }
-                catch
-                {
-                    errorMessage.AppendLine("An existing category must be selected.");
-                }
-            }
-
-            if (string.IsNullOrEmpty(description))
-            {
-                errorMessage.AppendLine("A description must be added.");
-            }
-
-            if(!double.TryParse(amountStr, out amount))
-            {
-                errorMessage.AppendLine("The amount is invalid.");
-            }
-
-
-            // If an error occurred, show the error and return this method.
-            if (errorMessage.Length > 0)
-            {
-                _expenseView.ShowError(errorMessage.ToString());
-                return;
-            }
 
             // Attempt to add the expense
             try
             {
                 if(ValidateUserInput(date, category, amountStr, description))
                 {
+                    double amount = double.Parse(amountStr);
+
                     _model.expenses.Add(date, category, amount, description);
 
                     if (credit)
