@@ -28,15 +28,17 @@ namespace Budget_WPF
         private int _creditCardCategoryId;
 
         /// <summary>
-        /// Creates a Presenter object and saves the two views object
+        /// Creates a Presenter object and saves the budget view
         /// </summary>
         /// <param name="budgetView">Object that represents the budget UI</param>
-        /// <param name="expenseView">Object that represents the expense UI</param>
         public Presenter(IBudgetView budgetView)
         {
             _budgetView = budgetView;
         }
 
+        /// <summary>
+        /// Sets the expense view
+        /// </summary>
         public IExpenseView expenseView
         {
             set { _expenseView = value; }
@@ -104,8 +106,8 @@ namespace Budget_WPF
         }
 
         /// <summary>
-        /// Adds the new expense to the database. If any of the arguments is invalid, an error message will be shown. 
-        /// If credit is used to pay, an additonal expense is created. 
+        /// Adds the new expense to the database. If any of the user inputs is invalid, error messsage will be shown
+        /// If credit is used to pay, an additonal expense is created. Once saved, the datagrid is refreshed.
         /// </summary>
         /// <param name="date">Date of the transaction</param>
         /// <param name="category">Category ID</param>
@@ -208,14 +210,14 @@ namespace Budget_WPF
         }
 
         /// <summary>
-        /// TODO: Needs to be implemented, called by budget view to update the datagrid with the new filters
+        /// Gets the list of budget items according to the filters and updates the budget view
         /// </summary>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        /// <param name="categoryId"></param>
-        /// <param name="shouldFilterCategory"></param>
-        /// <param name="groupByMonth"></param>
-        /// <param name="groupByCategory"></param>
+        /// <param name="start">Start date</param>
+        /// <param name="end">End date</param>
+        /// <param name="categoryId">The ID of the category to filter by, if filter flag is true</param>
+        /// <param name="shouldFilterCategory">Flag to indicate whether to filter by category ID or not</param>
+        /// <param name="groupByMonth">Flag to indicate whether to group by month</param>
+        /// <param name="groupByCategory">Flag to indicate whether to group by category</param>
         public void FiltersChange(DateTime? start, DateTime? end, int categoryId, bool shouldFilterCategory, bool groupByMonth, bool groupByCategory)
         {
             // Don't do anything if the model has not been initialize (no file open)
@@ -243,11 +245,24 @@ namespace Budget_WPF
             _budgetView.UpdateView(items);
         }
 
+        /// <summary>
+        /// Gets the list of Expenses
+        /// </summary>
+        /// <returns>List of expenses</returns>
         public List<Expense> GetExpenses()
         {
             return _model.expenses.List();
         }
 
+        /// <summary>
+        /// Updates the selected expense item. If any of the user inputs is invalid, error messsage will be shown.
+        /// Once saved, the datagrid is refreshed.
+        /// </summary>
+        /// <param name="expId">Expense ID</param>
+        /// <param name="date">Transaction date</param>
+        /// <param name="category">Category ID</param>
+        /// <param name="amountStr">Expense amount</param>
+        /// <param name="description">Short description</param>
         public void UpdateExpense(int expId, DateTime date, int category, string amountStr, string description)
         {
             try
@@ -274,6 +289,11 @@ namespace Budget_WPF
             _budgetView.Refresh();
         }
 
+        /// <summary>
+        /// Deletes the selected expense item. Once done, the datagrid is refreshed.
+        /// </summary>
+        /// <param name="expId">Expense ID</param>
+        /// <param name="description">Short description</param>
         public void DeleteExpense(int expId, string description)
         {
             try
@@ -291,6 +311,14 @@ namespace Budget_WPF
             _budgetView.Refresh();
         }
 
+        /// <summary>
+        /// Validates user input. Expense date, category ID, amount and description must not be null.
+        /// </summary>
+        /// <param name="date">Transaction date</param>
+        /// <param name="category">Category ID</param>
+        /// <param name="amountStr">Expense amount</param>
+        /// <param name="description">Short description</param>
+        /// <returns>True if all the arguments are valid. False otherwise.</returns>
         public bool ValidateUserInput(DateTime date, int category, string amountStr, string description)
         {
             StringBuilder errorMessage = new();
