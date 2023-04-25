@@ -32,10 +32,14 @@ namespace Budget_WPF
         /// </summary>
         /// <param name="budgetView">Object that represents the budget UI</param>
         /// <param name="expenseView">Object that represents the expense UI</param>
-        public Presenter(IBudgetView budgetView,IExpenseView expenseView)
+        public Presenter(IBudgetView budgetView)
         {
             _budgetView = budgetView;
-            _expenseView = expenseView;
+        }
+
+        public IExpenseView expenseView
+        {
+            set { _expenseView = value; }
         }
 
 
@@ -58,7 +62,7 @@ namespace Budget_WPF
 
             // Set up the UI
             _budgetView.ShowCurrentFile(filename);
-            _expenseView.SetLastAction($"Opened {filename}");
+            //_expenseView.SetLastAction($"Opened {filename}");
             SetRecentFile(filename);
 
             // Find the credit card category id
