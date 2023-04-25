@@ -53,7 +53,7 @@ namespace Budget_WPF
         public void Refresh()
         {
             Category? category = cmbCategories.SelectedItem as Category;
-            _presenter.FiltersChange(dpStartDate.SelectedDate, dpEndDate.SelectedDate, category is null ? -1 : category.Id, cbFilterByCategory.IsChecked == true, cbFilterByMonth.IsChecked == true, cbFilterByCategory.IsChecked == true);
+            _presenter.FiltersChange(dpStartDate.SelectedDate, dpEndDate.SelectedDate, category is null ? -1 : category.Id, cbFilterCategory.IsChecked == true, cbFilterByMonth.IsChecked == true, cbFilterByCategory.IsChecked == true);
 
         }
 
