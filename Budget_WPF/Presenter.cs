@@ -197,7 +197,6 @@ namespace Budget_WPF
             return _isConnected;
         }
 
-        //TO DO: instead of showing in expense view, show in budget view
         /// <summary>
         /// Shows welcome message for first time users
         /// </summary>

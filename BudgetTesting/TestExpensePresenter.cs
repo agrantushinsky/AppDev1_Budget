@@ -18,6 +18,9 @@ namespace BudgetCodeTests
         public bool calledUpdateView = false;
         public bool calledOpenNewFile = false;
         public bool calledOpenExistingFile = false;
+        public bool calledShowCategories = false;
+        public bool calledShowMessageWithConfirmation = false;
+
         //RESET ALL BOOLS TO FALSE IN EACH TEST
         public void SetToFalse()
         {
@@ -27,6 +30,8 @@ namespace BudgetCodeTests
             calledUpdateView = false;
             calledOpenNewFile = false;
             calledOpenExistingFile = false;
+            calledShowCategories = false;
+            calledShowMessageWithConfirmation = false;
         }
 
         public void Refresh()
@@ -61,7 +66,13 @@ namespace BudgetCodeTests
 
         public void ShowCategories(List<Category> categories)
         {
-            throw new NotImplementedException();
+            calledShowCategories = true;
+        }
+
+        public bool ShowMessageWithConfirmation(string message)
+        {
+            calledShowMessageWithConfirmation = true;
+            return true;
         }
     }
     public class TestExpenseView : IExpenseView
@@ -142,11 +153,9 @@ namespace BudgetCodeTests
         [Fact]
         public void PresenterConstructor()
         {
-            //Arrange
-            TestExpenseView ev = new TestExpenseView();
 
             //Act
-            Presenter p = new Presenter(budgetView,ev);
+            Presenter p = new Presenter(budgetView);
 
             //Assert
             Assert.IsType<Presenter>(p);
@@ -163,16 +172,16 @@ namespace BudgetCodeTests
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
             TestExpenseView ev = new TestExpenseView();
-            Presenter p = new Presenter(budgetView,ev);
+            Presenter p = new Presenter(budgetView);
             budgetView.SetToFalse();
             ev.SetToFalse();
 
             //Act
             p.ConnectToDatabase(messyDB, false);
+            p.expenseView = ev;
 
             //Assert
             Assert.True(budgetView.calledShowCurrentFile);
-            Assert.True(ev.calledSetLastAction);
             Assert.True(budgetView.calledRefresh);
             Assert.True(p.IsFileSelected());
         }
@@ -184,7 +193,8 @@ namespace BudgetCodeTests
         {
             //Arrange
             TestExpenseView expenseView = new TestExpenseView();
-            Presenter p = new Presenter(budgetView,expenseView);
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = expenseView;
             budgetView.SetToFalse();
 
             //Act
@@ -209,7 +219,8 @@ namespace BudgetCodeTests
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
             TestExpenseView ev = new TestExpenseView();
-            Presenter p = new Presenter(budgetView,ev);
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
             p.ConnectToDatabase(messyDB, false);
             int count = p.GetCategories().Count;
             string desc = "Game";
@@ -238,7 +249,8 @@ namespace BudgetCodeTests
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
             TestExpenseView ev = new TestExpenseView();
-            Presenter p = new Presenter(budgetView,ev);
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
             p.ConnectToDatabase(messyDB, false);
             ev.calledSetLastAction = false;
             ev.calledShowError = false;
@@ -262,7 +274,8 @@ namespace BudgetCodeTests
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
             TestExpenseView ev = new TestExpenseView();
-            Presenter p = new Presenter(budgetView,ev);
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
             p.ConnectToDatabase(messyDB, false);
             ev.calledSetLastAction = false;
             ev.calledShowError = false;
@@ -286,7 +299,8 @@ namespace BudgetCodeTests
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
             TestExpenseView ev = new TestExpenseView();
-            Presenter p = new Presenter(budgetView,ev);
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
             p.ConnectToDatabase(messyDB, false);
             ev.calledSetLastAction = false;
             ev.calledClearInputs = false;
@@ -318,7 +332,8 @@ namespace BudgetCodeTests
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
             TestExpenseView ev = new TestExpenseView();
-            Presenter p = new Presenter(budgetView,ev);
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
             p.ConnectToDatabase(messyDB, false);
             ev.calledSetLastAction = false;
             ev.calledClearInputs = false;
@@ -346,7 +361,8 @@ namespace BudgetCodeTests
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
             TestExpenseView ev = new TestExpenseView();
-            Presenter p = new Presenter(budgetView,ev);
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
             p.ConnectToDatabase(messyDB, false);
             int count = p.GetCategories().Count;
             ev.calledSetLastAction = false;
@@ -371,7 +387,8 @@ namespace BudgetCodeTests
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
             TestExpenseView ev = new TestExpenseView();
-            Presenter p = new Presenter(budgetView,ev);
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
             p.ConnectToDatabase(messyDB, false);
             ev.calledSetLastAction = false;
             ev.calledShowError = false;
@@ -395,7 +412,8 @@ namespace BudgetCodeTests
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
             TestExpenseView ev = new TestExpenseView();
-            Presenter p = new Presenter(budgetView,ev);
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
             p.ConnectToDatabase(messyDB, false);
             ev.calledSetLastAction = false;
             ev.calledShowError = false;
@@ -415,7 +433,8 @@ namespace BudgetCodeTests
         {
             //Arrange
             TestExpenseView ev = new TestExpenseView();
-            Presenter p = new Presenter(budgetView,ev);
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
             ev.calledSetLastAction = false;
             ev.calledShowError = false;
 
@@ -438,7 +457,8 @@ namespace BudgetCodeTests
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
             TestExpenseView ev = new TestExpenseView();
-            Presenter p = new Presenter(budgetView,ev);
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
             p.ConnectToDatabase(messyDB, false);
             ev.calledShowMessageWithConfirmation = false;
 
@@ -460,7 +480,8 @@ namespace BudgetCodeTests
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
             TestExpenseView ev = new TestExpenseView();
-            Presenter p = new Presenter(budgetView,ev);
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
             p.ConnectToDatabase(messyDB, false);
             ev.calledShowMessageWithConfirmation = false;
 
@@ -483,7 +504,8 @@ namespace BudgetCodeTests
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
             TestExpenseView ev = new TestExpenseView();
-            Presenter p = new Presenter(budgetView,ev);
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
             p.ConnectToDatabase(messyDB, false);
 
             //Act
@@ -560,7 +582,8 @@ namespace BudgetCodeTests
         {
             //Arrange
             TestExpenseView ev = new TestExpenseView();
-            Presenter p = new Presenter(budgetView,ev);
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
             ev.calledShowError = false;
             bool isSelected;
 
@@ -583,7 +606,8 @@ namespace BudgetCodeTests
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
             TestExpenseView ev = new TestExpenseView();
-            Presenter p = new Presenter(budgetView,ev);
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
             p.ConnectToDatabase(messyDB, false);
             ev.calledShowError = false;
             bool isSelected;
@@ -607,7 +631,8 @@ namespace BudgetCodeTests
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
             TestExpenseView ev = new TestExpenseView();
-            Presenter p = new Presenter(budgetView,ev);
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
             p.ConnectToDatabase(messyDB, false);
             int categoryCount;
             const int EXPECTED_COUNT = 17;
@@ -630,7 +655,8 @@ namespace BudgetCodeTests
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
             TestExpenseView ev = new TestExpenseView();
-            Presenter p = new Presenter(budgetView, ev);
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
             p.ConnectToDatabase(messyDB, false);
             int expenseCount;
 
@@ -652,7 +678,8 @@ namespace BudgetCodeTests
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
             TestExpenseView ev = new TestExpenseView();
-            Presenter p = new Presenter(budgetView, ev);
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
             p.ConnectToDatabase(messyDB, false);
             ev.SetToFalse();
             budgetView.SetToFalse();
@@ -680,7 +707,8 @@ namespace BudgetCodeTests
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
             TestExpenseView ev = new TestExpenseView();
-            Presenter p = new Presenter(budgetView, ev);
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
             p.ConnectToDatabase(messyDB, false);
             ev.SetToFalse();
             Expense firstExpenseInFile = p.GetExpenses().First();
@@ -704,7 +732,8 @@ namespace BudgetCodeTests
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
             TestExpenseView ev = new TestExpenseView();
-            Presenter p = new Presenter(budgetView, ev);
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
             p.ConnectToDatabase(messyDB, false);
             ev.SetToFalse();
             Expense firstExpenseInFile = p.GetExpenses().First();
@@ -728,7 +757,8 @@ namespace BudgetCodeTests
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
             TestExpenseView ev = new TestExpenseView();
-            Presenter p = new Presenter(budgetView, ev);
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
             p.ConnectToDatabase(messyDB, false);
             ev.SetToFalse();
             budgetView.SetToFalse();
