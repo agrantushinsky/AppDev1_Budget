@@ -52,8 +52,10 @@ namespace Budget_WPF
 
         public void Refresh()
         {
-            _presenter.FiltersChange(dpStartDate.SelectedDate, dpEndDate.SelectedDate, cmbCategories.SelectedIndex, 
-                cbFilterCategory.IsChecked == true, cbFilterByMonth.IsChecked == true, cbFilterByCategory.IsChecked == true);
+            Category? category = cmbCategories.SelectedItem as Category;
+            ShowError(dpEndDate.SelectedDate.ToString());
+            _presenter.FiltersChange(dpStartDate.SelectedDate, dpEndDate.SelectedDate, category is null ? -1 : category.Id, cbFilterByCategory.IsChecked == true, cbFilterByMonth.IsChecked == true, cbFilterByCategory.IsChecked == true);
+
         }
 
         public void ShowCurrentFile(string filename)
@@ -66,6 +68,7 @@ namespace Budget_WPF
             {
                 txtbCurrentFile.Text = $"Budget File {filename}";
                 Menu_SaveAs.IsEnabled = true;
+                btn_AddExpense.IsEnabled = true;
             }
         }
 
@@ -280,6 +283,21 @@ namespace Budget_WPF
             {
                 System.IO.File.Copy(_filename, saveLocation, true);
             }
+        }
+
+        private void SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Refresh();
+        }
+
+        private void CheckBox_Changed(object sender, RoutedEventArgs e)
+        {
+            Refresh();
+        }
+
+        private void cmbCategories_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Refresh();
         }
     }
 }

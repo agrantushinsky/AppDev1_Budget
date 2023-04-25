@@ -64,7 +64,7 @@
             <Button Content="Discard"
                     Grid.Column="1"
                     Margin="5,0,5,0"
-                    x:Name="btn_Discard" Click="btn_Discard_Click"/>
+                    x:Name="btn_DiscardOrCancel" Click="btn_DiscardOrClose_Click"/>
             <Button Content="Close"
                     Grid.Column="2"
                     Margin="5,0,0,0"

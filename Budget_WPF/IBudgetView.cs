@@ -8,11 +8,24 @@ namespace Budget_WPF
 {
     public interface IBudgetView
     {
+        /// <summary>
+        /// Sets up the budget item datagrid 
+        /// </summary>
+        /// <param name="items">List of items to display</param>
         public void UpdateView(object items);
-
+        /// <summary>
+        /// Displays current file opened
+        /// </summary>
+        /// <param name="filename">File path to current file</param>
         void ShowCurrentFile(string filename);
-
+        /// <summary>
+        ///  Displays error messages
+        /// </summary>
+        /// <param name="message">Error message</param>
         void ShowError(string message);
+        /// <summary>
+        /// Updates budget item datagrid whenever a filter change or an add/update/delete operation occurs
+        /// </summary>
         void Refresh();
         /// <summary>
         /// Opens the file dialog to create a new database file for Homebudget program

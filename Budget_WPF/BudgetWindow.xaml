@@ -42,29 +42,30 @@
                 <StackPanel>
                     <!-- Start & End Date -->
                     <Label Content="Start Date"/>
-                    <DatePicker x:Name="dpStartDate"/>
+                    <DatePicker x:Name="dpStartDate" SelectedDateChanged="SelectedDateChanged"/>
 
                     <Label Content="End Date"/>
-                    <DatePicker x:Name="dpEndDate"/>
+                    <DatePicker x:Name="dpEndDate" SelectedDateChanged="SelectedDateChanged"/>
 
                     <!-- Filter by category-->
-                    <CheckBox Content="Filter by category?" x:Name="cbFilterCategory"/>
-                    <ComboBox x:Name="cmbCategories"/>
+                    <CheckBox Content="Filter by category?" x:Name="cbFilterCategory" Unchecked="CheckBox_Changed" Checked="CheckBox_Changed"/>
+                    <ComboBox x:Name="cmbCategories" SelectionChanged="cmbCategories_SelectionChanged"/>
                 </StackPanel>
             </GroupBox>
 
             <!-- Group by Month & Category-->
             <GroupBox Header="Summary" Margin="8">
                 <StackPanel>
-                    <CheckBox Content="By Month" x:Name="cbFilterByMonth"/>
-                    <CheckBox Content="By Category" x:Name="cbFilterByCategory"/>
+                    <CheckBox Content="By Month" x:Name="cbFilterByMonth" Checked="CheckBox_Changed" Unchecked="CheckBox_Changed"/>
+                    <CheckBox Content="By Category" x:Name="cbFilterByCategory" Checked="CheckBox_Changed" Unchecked="CheckBox_Changed"/>
                 </StackPanel>
             </GroupBox>
 
             <!-- Add Expense-->
             <Button Content="Add Expense"
                     x:Name="btn_AddExpense"
-                    Click="btn_AddExpense_Click"/>
+                    Click="btn_AddExpense_Click"
+                    IsEnabled="False"/>
         </StackPanel>
 
         <GroupBox Header="Expenses" Grid.Column="1" Grid.Row="1">
@@ -77,7 +78,7 @@
                 </StackPanel>
 
                 <!-- Table of Expenses-->
-                <DataGrid x:Name="dgExpenses" AutoGenerateColumns="False">
+                <DataGrid x:Name="dgExpenses" AutoGenerateColumns="False" IsReadOnly="True">
                     <DataGrid.ContextMenu>
                         <ContextMenu>
                             <!--TODO: May need to add Commands for the shortcut Ctrl+X or + M way?-->

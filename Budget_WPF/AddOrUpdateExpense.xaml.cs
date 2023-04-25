@@ -83,7 +83,12 @@ namespace Budget_WPF
             if(currentMode == Mode.Add)
                 _presenter.AddExpense(date, catID, amount, desc, cbCredit.IsChecked == true);
             else if (currentMode == Mode.Update)
-                _presenter.UpdateExpense(currentExpenseItem.Id, date, catID, amount, desc, cbCredit.IsChecked == true);
+                _presenter.UpdateExpense(currentExpenseItem.Id, date, catID, amount, desc);
+
+            if (currentMode == Mode.Update)
+            {
+                this.Close();
+            }
 
         }
 
@@ -135,9 +140,14 @@ namespace Budget_WPF
             txb_LastAction.Text = $"[{DateTime.Now.ToShortTimeString()}] {message}";
         }
 
-        private void btn_Discard_Click(object sender, RoutedEventArgs e)
+        private void btn_DiscardOrClose_Click(object sender, RoutedEventArgs e)
         {
             ClearInputs();
+
+            if(currentMode == Mode.Update)
+            {
+                this.Close();
+            }
         }
 
         private void btn_CloseOrDelete_Click(object sender, RoutedEventArgs e)
@@ -166,11 +176,13 @@ namespace Budget_WPF
                 dp_Date.SelectedDate = DateTime.Now;
                 txb_Title.Text = "Add Expense";
                 btn_CloseOrDelete.Content = "Close";
+                btn_DiscardOrCancel.Content = "Discard";
             }
             else if (currentMode == Mode.Update)
             {
                 txb_Title.Text = "Update Expense";
                 btn_CloseOrDelete.Content = "Delete";
+                btn_DiscardOrCancel.Content = "Cancel";
                 BudgetItem item = budgetItem;
                 //Display info
                 currentExpenseItem = _presenter.GetExpenses().Find(exp => exp.Id == item.ExpenseID);
