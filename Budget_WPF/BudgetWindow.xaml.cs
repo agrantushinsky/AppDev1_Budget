@@ -33,6 +33,7 @@ namespace Budget_WPF
         {
             InitializeComponent();
             _presenter = new Presenter(this);
+            _presenter.ShowFirstTimeUserSetup();
             InitializeWindow();
         }
 
@@ -317,6 +318,11 @@ namespace Budget_WPF
                 _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Update, _presenter, (BudgetItem)dgExpenses.SelectedItem);
                 _addOrUpdateExpense.ShowDialog();
             }
+        }
+
+        public bool ShowMessageWithConfirmation(string message)
+        {
+            return MessageBox.Show(message, "Info", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes;
         }
     }
 }

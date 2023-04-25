@@ -62,7 +62,6 @@ namespace Budget_WPF
 
             // Set up the UI
             _budgetView.ShowCurrentFile(filename);
-            //_expenseView.SetLastAction($"Opened {filename}");
             SetRecentFile(filename);
 
             // Find the credit card category id
@@ -202,12 +201,12 @@ namespace Budget_WPF
         /// <summary>
         /// Shows welcome message for first time users
         /// </summary>
-        //public void ShowFirstTimeUserSetup()
-        //{
-        //    if(string.IsNullOrEmpty(GetRecentFile()))
-        //        if (_expenseView.ShowMessageWithConfirmation("Welcome first time user, would you like to browse to create a new budget?"))
-        //            _expenseView.OpenNewFile();
-        //}
+        public void ShowFirstTimeUserSetup()
+        {
+            if (string.IsNullOrEmpty(GetRecentFile()))
+                if (_budgetView.ShowMessageWithConfirmation("Welcome first time user, would you like to browse to create a new budget?"))
+                    _budgetView.OpenNewFile();
+        }
 
         /// <summary>
         /// TODO: Needs to be implemented, called by budget view to update the datagrid with the new filters
