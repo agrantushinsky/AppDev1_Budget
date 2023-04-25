@@ -78,7 +78,11 @@ namespace Budget_WPF
 
         public void UpdateView(object items)
         {
-            miModify.IsEnabled = miDelete.IsEnabled = true;
+            //Updates the Menu items on the datagrid
+            if (cbFilterByMonth.IsChecked == true || cbFilterByCategory.IsChecked == true)
+                miModify.IsEnabled = miDelete.IsEnabled = false;
+            else
+                miModify.IsEnabled = miDelete.IsEnabled = true;
 
             dgExpenses.Columns.Clear();
 
@@ -304,5 +308,6 @@ namespace Budget_WPF
             cmbCategories.DisplayMemberPath = "Description";
             cmbCategories.ItemsSource = _presenter.GetCategories();
         }
+
     }
 }

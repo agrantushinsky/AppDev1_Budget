@@ -60,7 +60,7 @@ namespace BudgetCodeTests
         }
 
         public void ShowCategories(List<Category> categories)
-        {
+        { 
             throw new NotImplementedException();
         }
     }
