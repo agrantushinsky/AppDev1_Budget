@@ -78,7 +78,7 @@
                 </StackPanel>
 
                 <!-- Table of Expenses-->
-                <DataGrid x:Name="dgExpenses" AutoGenerateColumns="False" IsReadOnly="True">
+                <DataGrid x:Name="dgExpenses" AutoGenerateColumns="False" IsReadOnly="True" MouseDoubleClick="dgExpenses_MouseDoubleClick">
                     <DataGrid.ContextMenu>
                         <ContextMenu>
                             <!--TODO: May need to add Commands for the shortcut Ctrl+X or + M way?-->

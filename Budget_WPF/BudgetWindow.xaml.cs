@@ -32,8 +32,8 @@ namespace Budget_WPF
         public BudgetWindow()
         {
             InitializeComponent();
-            _addOrUpdateExpense = new AddOrUpdateExpense();
-            _presenter = new Presenter(this, _addOrUpdateExpense);
+            _presenter = new Presenter(this);
+            _presenter.ShowFirstTimeUserSetup();
             InitializeWindow();
         }
 
@@ -247,6 +247,8 @@ namespace Budget_WPF
 
         private void btn_AddExpense_Click(object sender, RoutedEventArgs e)
         {
+            _addOrUpdateExpense = new AddOrUpdateExpense();
+            _presenter.expenseView = _addOrUpdateExpense;
             _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Add, _presenter);
             _addOrUpdateExpense.ShowDialog();
         }
@@ -255,6 +257,8 @@ namespace Budget_WPF
         {
             if (dgExpenses.SelectedValue is not null)
             {
+                _addOrUpdateExpense = new AddOrUpdateExpense();
+                _presenter.expenseView = _addOrUpdateExpense;
                 _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Update, _presenter, (BudgetItem)dgExpenses.SelectedItem);
                 _addOrUpdateExpense.ShowDialog();
             }
@@ -306,7 +310,23 @@ namespace Budget_WPF
         public void ShowCategories(List<Category> categories)
         {
             cmbCategories.DisplayMemberPath = "Description";
-            cmbCategories.ItemsSource = _presenter.GetCategories();
+            cmbCategories.ItemsSource = categories;
+        }
+
+        private void dgExpenses_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (dgExpenses.SelectedValue is not null)
+            {
+                _addOrUpdateExpense = new AddOrUpdateExpense();
+                _presenter.expenseView = _addOrUpdateExpense;
+                _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Update, _presenter, (BudgetItem)dgExpenses.SelectedItem);
+                _addOrUpdateExpense.ShowDialog();
+            }
+        }
+
+        public bool ShowMessageWithConfirmation(string message)
+        {
+            return MessageBox.Show(message, "Info", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes;
         }
 
     }

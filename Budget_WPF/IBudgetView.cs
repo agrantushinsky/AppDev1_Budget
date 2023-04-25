@@ -36,8 +36,17 @@ namespace Budget_WPF
         /// Opens the file dialog for users to search and open their existing database file
         /// </summary>
         void OpenExistingFile();
-
+        /// <summary>
+        /// Displys the list of categories in the budget view
+        /// </summary>
+        /// <param name="categories">List of categories</param>
         void ShowCategories(List<Category> categories);
+        /// <summary>
+        /// Displays message box with a yes/no
+        /// </summary>
+        /// <param name="message">Confirmation message</param>
+        /// <returns>True if user answered yes. False otherwise.</returns>
+        bool ShowMessageWithConfirmation(string message);
 
     }
 }

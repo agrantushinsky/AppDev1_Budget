@@ -32,10 +32,14 @@ namespace Budget_WPF
         /// </summary>
         /// <param name="budgetView">Object that represents the budget UI</param>
         /// <param name="expenseView">Object that represents the expense UI</param>
-        public Presenter(IBudgetView budgetView,IExpenseView expenseView)
+        public Presenter(IBudgetView budgetView)
         {
             _budgetView = budgetView;
-            _expenseView = expenseView;
+        }
+
+        public IExpenseView expenseView
+        {
+            set { _expenseView = value; }
         }
 
 
@@ -58,13 +62,14 @@ namespace Budget_WPF
 
             // Set up the UI
             _budgetView.ShowCurrentFile(filename);
-            _expenseView.SetLastAction($"Opened {filename}");
             SetRecentFile(filename);
 
             // Find the credit card category id
             List<Category> categories = _model.categories.List();
             Category? credit = categories.Find((category) => category.Type == Category.CategoryType.Credit);
             _creditCardCategoryId = credit is null? -1 : credit.Id;
+
+            _budgetView.ShowCategories(categories);
 
             _budgetView.Refresh();
         }
@@ -88,6 +93,7 @@ namespace Budget_WPF
                     //Change type to non-nullable
                     _model.categories.Add(description, (Category.CategoryType)type);
                     _expenseView.SetLastAction($"Successfully added category: {description}");
+                    _budgetView.ShowCategories(_model.categories.List());
 
                 }
                 catch (Exception ex)
@@ -195,12 +201,12 @@ namespace Budget_WPF
         /// <summary>
         /// Shows welcome message for first time users
         /// </summary>
-        //public void ShowFirstTimeUserSetup()
-        //{
-        //    if(string.IsNullOrEmpty(GetRecentFile()))
-        //        if (_expenseView.ShowMessageWithConfirmation("Welcome first time user, would you like to browse to create a new budget?"))
-        //            _expenseView.OpenNewFile();
-        //}
+        public void ShowFirstTimeUserSetup()
+        {
+            if (string.IsNullOrEmpty(GetRecentFile()))
+                if (_budgetView.ShowMessageWithConfirmation("Welcome first time user, would you like to browse to create a new budget?"))
+                    _budgetView.OpenNewFile();
+        }
 
         /// <summary>
         /// TODO: Needs to be implemented, called by budget view to update the datagrid with the new filters
