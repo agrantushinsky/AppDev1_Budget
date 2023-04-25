@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Budget;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -35,6 +36,8 @@ namespace Budget_WPF
         /// Opens the file dialog for users to search and open their existing database file
         /// </summary>
         void OpenExistingFile();
+
+        void ShowCategories(List<Category> categories);
 
     }
 }
