@@ -298,5 +298,14 @@ namespace Budget_WPF
         {
             Refresh();
         }
+
+        private void dgExpenses_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (dgExpenses.SelectedValue is not null)
+            {
+                _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Update, _presenter, (BudgetItem)dgExpenses.SelectedItem);
+                _addOrUpdateExpense.ShowDialog();
+            }
+        }
     }
 }
