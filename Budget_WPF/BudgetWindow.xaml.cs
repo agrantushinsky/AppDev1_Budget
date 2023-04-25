@@ -302,6 +302,12 @@ namespace Budget_WPF
             Refresh();
         }
 
+        public void ShowCategories(List<Category> categories)
+        {
+            cmbCategories.DisplayMemberPath = "Description";
+            cmbCategories.ItemsSource = _presenter.GetCategories();
+        }
+
         private void dgExpenses_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (dgExpenses.SelectedValue is not null)
