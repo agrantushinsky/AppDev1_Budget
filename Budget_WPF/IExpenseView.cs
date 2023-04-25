@@ -14,7 +14,7 @@ namespace Budget_WPF
         /// </summary>
         void AddCategory();
         /// <summary>
-        /// Creates a new Expense from user input
+        /// Saves an Expense according to user input
         /// </summary>
         void SaveExpense();
         /// <summary>
@@ -27,10 +27,10 @@ namespace Budget_WPF
         /// <param name="message">Error message</param>
         void ShowError(string message);
         /// <summary>
-        /// Displays message box for confirming unsaved changes
+        /// Displays message box with a yes/no
         /// </summary>
         /// <param name="message">Confirmation message</param>
-        /// <returns>True if user wants to save. False otherwise.</returns>
+        /// <returns>True if user answered yes. False otherwise.</returns>
         bool ShowMessageWithConfirmation(string message);
         /// <summary>
         /// Clears the content in the description and amount fields
