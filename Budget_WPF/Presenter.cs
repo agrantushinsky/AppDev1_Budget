@@ -66,6 +66,8 @@ namespace Budget_WPF
             Category? credit = categories.Find((category) => category.Type == Category.CategoryType.Credit);
             _creditCardCategoryId = credit is null? -1 : credit.Id;
 
+            _budgetView.ShowCategories(categories);
+
             _budgetView.Refresh();
         }
 
@@ -88,6 +90,7 @@ namespace Budget_WPF
                     //Change type to non-nullable
                     _model.categories.Add(description, (Category.CategoryType)type);
                     _expenseView.SetLastAction($"Successfully added category: {description}");
+                    _budgetView.ShowCategories(_model.categories.List());
 
                 }
                 catch (Exception ex)

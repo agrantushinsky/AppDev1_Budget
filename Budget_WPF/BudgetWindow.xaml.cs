@@ -302,7 +302,7 @@ namespace Budget_WPF
         public void ShowCategories(List<Category> categories)
         {
             cmbCategories.DisplayMemberPath = "Description";
-            cmbCategories.ItemsSource = _presenter.GetCategories();
+            cmbCategories.ItemsSource = categories;
         }
     }
 }
