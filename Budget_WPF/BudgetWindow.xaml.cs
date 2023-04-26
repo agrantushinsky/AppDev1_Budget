@@ -89,8 +89,6 @@ namespace Budget_WPF
             Style rightAligned = new Style();
             rightAligned.Setters.Add(new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Right));
 
-            // TODO: The ordering of by category is off
-
             if (items is List<BudgetItem>)
             {
                 List<BudgetItem> budgetItems = (List<BudgetItem>)items;
@@ -202,7 +200,8 @@ namespace Budget_WPF
             }
             else
             {
-                // TODO: Show error?
+                // This should never happen, but here is an error:
+                ShowError("Fatal error occurred when attempting to update expenses view.");
             }
         }
 
