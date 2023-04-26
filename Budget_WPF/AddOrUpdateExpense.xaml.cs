@@ -147,14 +147,12 @@ namespace Budget_WPF
 
         private void btn_CloseOrDelete_Click(object sender, RoutedEventArgs e)
         {
-            if (currentMode == Mode.Add)
-            {
-                this.Close();
-            }
-            else if (currentMode == Mode.Update)
+            if (currentMode == Mode.Update)
             {
                 _presenter.DeleteExpense(currentExpenseItem.Id, currentExpenseItem.Description);
             }
+
+            this.Close();
         }
 
         public void SetAddOrUpdateView(Mode mode, Presenter presenter, BudgetItem budgetItem = null)
