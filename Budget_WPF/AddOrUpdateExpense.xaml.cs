@@ -118,6 +118,7 @@ namespace Budget_WPF
         {
             tbx_Amount.Text = "";
             tbx_Description.Text = "";
+            cbCredit.IsChecked = false;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
