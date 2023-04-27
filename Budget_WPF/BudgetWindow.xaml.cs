@@ -333,5 +333,10 @@ namespace Budget_WPF
         {
             ShowError("Search Button ETA: Next sprint.");
         }
+
+        private void Menu_Exit_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }

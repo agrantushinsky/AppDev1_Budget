@@ -30,6 +30,8 @@
                           x:Name="Menu_SaveAs"
                           Click="Menu_SaveAs_Click"
                           IsEnabled="False"/>
+                <Separator/>
+                <MenuItem Header="Exit" x:Name="Menu_Exit" Click="Menu_Exit_Click"/>
             </MenuItem>
         </Menu>
         
