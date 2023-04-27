@@ -233,6 +233,7 @@ namespace BudgetCodeTests
 
             //Assert
             Assert.True(ev.calledSetLastAction);
+            Assert.True(budgetView.calledShowCategories);
             Assert.Equal(count + 1, p.GetCategories().Count);
             Assert.Equal(desc, cat.Description);
             Assert.Equal(type, cat.Type);
@@ -260,6 +261,7 @@ namespace BudgetCodeTests
             //Assert
             Assert.True(ev.calledShowError);
             Assert.False(ev.calledSetLastAction);
+            Assert.False(budgetView.calledShowCategories);
         }
 
         // ========================================================================
@@ -279,12 +281,15 @@ namespace BudgetCodeTests
             ev.calledSetLastAction = false;
             ev.calledShowError = false;
 
+            // TODO: The ordering of by category is off
+
             //Act
             p.AddCategory("Game", null);
 
             //Assert
             Assert.True(ev.calledShowError);
             Assert.False(ev.calledSetLastAction);
+            Assert.False(budgetView.calledShowCategories);
         }
 
         // ========================================================================
