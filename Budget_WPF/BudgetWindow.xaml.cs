@@ -208,6 +208,7 @@ namespace Budget_WPF
         private void Menu_OpenRecent_Click(object sender, RoutedEventArgs e)
         {
             _presenter.ConnectToDatabase(_presenter.GetRecentFile(), false);
+            _filename = _presenter.GetRecentFile();
         }
 
         private void Menu_OpenFile_Click(object sender, RoutedEventArgs e)
