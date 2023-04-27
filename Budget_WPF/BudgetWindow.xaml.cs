@@ -329,5 +329,9 @@ namespace Budget_WPF
             return MessageBox.Show(message, "Info", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes;
         }
 
+        private void btnSearch_Click(object sender, RoutedEventArgs e)
+        {
+            ShowError("Search Button ETA: Next sprint.");
+        }
     }
 }

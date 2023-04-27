@@ -73,7 +73,7 @@
                 
                 <!--Search Bar-->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="Search"/>
+                    <Button Content="Search" x:Name="btnSearch" Click="btnSearch_Click"/>
                     <TextBox Width="200"/>
                 </StackPanel>
 
