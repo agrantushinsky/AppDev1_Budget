@@ -86,30 +86,36 @@ namespace Budget_WPF
 
             dgExpenses.Columns.Clear();
 
+            // Create rightAligned style.
             Style rightAligned = new Style();
             rightAligned.Setters.Add(new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Right));
 
+            // Setup columns according to the type of items.
             if (items is List<BudgetItem>)
             {
                 List<BudgetItem> budgetItems = (List<BudgetItem>)items;
                 dgExpenses.ItemsSource = budgetItems;
 
+                // Date column
                 DataGridTextColumn dateColumn = new();
                 dateColumn.Header = "Date";
                 dateColumn.Binding = new Binding("Date");
                 dateColumn.Binding.StringFormat = "dd/MM/yyyy";
                 dgExpenses.Columns.Add(dateColumn);
 
+                // Category column
                 DataGridTextColumn categoryColumn = new();
                 categoryColumn.Header = "Category";
                 categoryColumn.Binding = new Binding("Category");
                 dgExpenses.Columns.Add(categoryColumn);
 
+                // Description column
                 DataGridTextColumn descriptionColumn = new();
                 descriptionColumn.Header = "Description";
                 descriptionColumn.Binding = new Binding("ShortDescription");
                 dgExpenses.Columns.Add(descriptionColumn);
 
+                // Amount column
                 DataGridTextColumn amountColumn = new();
                 amountColumn.Header = "Amount";
                 amountColumn.Binding = new Binding("Amount");
@@ -117,6 +123,7 @@ namespace Budget_WPF
                 amountColumn.CellStyle = rightAligned;
                 dgExpenses.Columns.Add(amountColumn);
 
+                // Balance column
                 DataGridTextColumn balanceColumn = new();
                 balanceColumn.Header = "Balance";
                 balanceColumn.Binding = new Binding("Balance");
@@ -129,11 +136,13 @@ namespace Budget_WPF
                 List<BudgetItemsByCategory> budgetItems = (List<BudgetItemsByCategory>)items;
                 dgExpenses.ItemsSource = budgetItems;
 
+                // Category column
                 DataGridTextColumn categoryColumn = new();
                 categoryColumn.Header = "Category";
                 categoryColumn.Binding = new Binding("Category");
                 dgExpenses.Columns.Add(categoryColumn);
 
+                // Total column
                 DataGridTextColumn totalColumn = new();
                 totalColumn.Header = "Total";
                 totalColumn.Binding = new Binding("Total");
@@ -146,11 +155,13 @@ namespace Budget_WPF
                 List<BudgetItemsByMonth> budgetItems = (List<BudgetItemsByMonth>)items;
                 dgExpenses.ItemsSource = budgetItems;
 
+                // Month column
                 DataGridTextColumn monthColumn = new();
                 monthColumn.Header = "Month";
                 monthColumn.Binding = new Binding("Month");
                 dgExpenses.Columns.Add(monthColumn);
 
+                // Total column
                 DataGridTextColumn totalColumn = new();
                 totalColumn.Header = "Total";
                 totalColumn.Binding = new Binding("Total");
@@ -163,22 +174,27 @@ namespace Budget_WPF
                 List<Dictionary<string, object>> budgetItems = (List<Dictionary<string, object>>)items;
                 dgExpenses.ItemsSource = budgetItems;
 
+                // Month column
                 DataGridTextColumn monthColumn = new();
                 monthColumn.Header = "Month";
                 monthColumn.Binding = new Binding("[Month]");
                 dgExpenses.Columns.Add(monthColumn);
 
+                // Keep track of category columns that have already been added in a map.
                 Dictionary<string, bool> categories = new();
 
+                // Foreach month
                 foreach (Dictionary<string, object> monthlyBudget in budgetItems)
                 {
+                    // Foreach category summary for the current month
                     foreach (KeyValuePair<string, object> entry in monthlyBudget)
                     {
-                        bool outValue;
+                        // Skip Month, Total, details and duplicate category keys.
                         if (entry.Key == "Month" || entry.Key == "Total" || entry.Key.StartsWith("details:")
-                            || categories.TryGetValue(entry.Key, out outValue))
+                            || categories.TryGetValue(entry.Key, out _))
                             continue;
 
+                        // Add the category column
                         DataGridTextColumn categoryColumn = new();
                         categoryColumn.Header = entry.Key;
                         categoryColumn.Binding = new Binding($"[{entry.Key}]");
@@ -186,11 +202,12 @@ namespace Budget_WPF
                         categoryColumn.CellStyle = rightAligned;
                         dgExpenses.Columns.Add(categoryColumn);
 
+                        // Add to the map to prevent duplicates.
                         categories.Add(entry.Key, true);
                     }
                 }
 
-
+                // Add the totals column.
                 DataGridTextColumn totalColumn = new();
                 totalColumn.Header = "Total";
                 totalColumn.Binding = new Binding("[Total]");
