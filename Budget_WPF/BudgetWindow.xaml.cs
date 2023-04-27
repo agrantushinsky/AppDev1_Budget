@@ -248,7 +248,7 @@ namespace Budget_WPF
         private void btn_AddExpense_Click(object sender, RoutedEventArgs e)
         {
             _addOrUpdateExpense = new AddOrUpdateExpense();
-            _presenter.expenseView = _addOrUpdateExpense;
+            _presenter.ExpenseView = _addOrUpdateExpense;
             _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Add, _presenter);
             _addOrUpdateExpense.ShowDialog();
         }
@@ -258,7 +258,7 @@ namespace Budget_WPF
             if (dgExpenses.SelectedValue is not null)
             {
                 _addOrUpdateExpense = new AddOrUpdateExpense();
-                _presenter.expenseView = _addOrUpdateExpense;
+                _presenter.ExpenseView = _addOrUpdateExpense;
                 _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Update, _presenter, (BudgetItem)dgExpenses.SelectedItem);
                 _addOrUpdateExpense.ShowDialog();
             }
@@ -318,7 +318,7 @@ namespace Budget_WPF
             if (dgExpenses.SelectedValue is not null)
             {
                 _addOrUpdateExpense = new AddOrUpdateExpense();
-                _presenter.expenseView = _addOrUpdateExpense;
+                _presenter.ExpenseView = _addOrUpdateExpense;
                 _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Update, _presenter, (BudgetItem)dgExpenses.SelectedItem);
                 _addOrUpdateExpense.ShowDialog();
             }

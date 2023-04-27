@@ -18,7 +18,6 @@ namespace Budget_WPF
         private IBudgetView _budgetView;
         private HomeBudget _model;
 
-
         const string SOFTWATRE_ROOT = "HKEY_CURRENT_USER\\SOFTWARE";
         const string SUB_KEY = "AppDevBudget";
         const string KEY_NAME = SOFTWATRE_ROOT + "\\" + SUB_KEY;
@@ -39,11 +38,10 @@ namespace Budget_WPF
         /// <summary>
         /// Sets the expense view
         /// </summary>
-        public IExpenseView expenseView
+        public IExpenseView ExpenseView
         {
             set { _expenseView = value; }
         }
-
 
         /// <summary>
         /// Opens a connection to the database using the provided filename and sets up the UI. 
@@ -71,8 +69,8 @@ namespace Budget_WPF
             Category? credit = categories.Find((category) => category.Type == Category.CategoryType.Credit);
             _creditCardCategoryId = credit is null? -1 : credit.Id;
 
+            // Show categories and refresh
             _budgetView.ShowCategories(categories);
-
             _budgetView.Refresh();
         }
 
@@ -94,9 +92,10 @@ namespace Budget_WPF
                 {
                     //Change type to non-nullable
                     _model.categories.Add(description, (Category.CategoryType)type);
+
+                    // If successful, set last action and refresh the categories list.
                     _expenseView.SetLastAction($"Successfully added category: {description}");
                     _budgetView.ShowCategories(_model.categories.List());
-
                 }
                 catch (Exception ex)
                 {
@@ -120,19 +119,20 @@ namespace Budget_WPF
             // Attempt to add the expense
             try
             {
-                if (ValidateUserInput(date, category, amountStr, description))
-                {
-                    double amount = double.Parse(amountStr);
-
-                    _model.expenses.Add(date, category, amount, description);
-
-                    if (credit)
-                        _model.expenses.Add(date, _creditCardCategoryId, -amount, $"{description} (on credit)");
-
-                    _expenseView.SetLastAction($"Successfully added expense: {description}");
-                }
-                else
+                // ValidateUserInput handles showing errors.
+                if (!ValidateUserInput(date, category, amountStr, description))
                     return;
+
+                // Add the expense.
+                double amount = double.Parse(amountStr);
+                _model.expenses.Add(date, category, amount, description);
+
+                // If it is credit, add an additional expense with the negative amount.
+                if (credit)
+                    _model.expenses.Add(date, _creditCardCategoryId, -amount, $"{description} (on credit)");
+
+                // Set the last action.
+                _expenseView.SetLastAction($"Successfully added expense: {description}");
             }
             catch (Exception ex)
             {
@@ -150,6 +150,7 @@ namespace Budget_WPF
         /// <returns>True if description and amount are empty. Otherwise, shows pop up with confirmation message to exit</returns>
         public bool UnsavedChangesCheck(string description, string amount)
         {
+            // Show confirmation window if the description or amount contain something.
             if(!string.IsNullOrEmpty(description) ||
                 !string.IsNullOrEmpty(amount))
             {
@@ -204,6 +205,7 @@ namespace Budget_WPF
         /// </summary>
         public void ShowFirstTimeUserSetup()
         {
+            // If there isn't a recentFile stored in registry, ask the user if they wisk to create a new budget.
             if (string.IsNullOrEmpty(GetRecentFile()))
                 if (_budgetView.ShowMessageWithConfirmation("Welcome first time user, would you like to browse to create a new budget?"))
                     _budgetView.OpenNewFile();
@@ -225,6 +227,7 @@ namespace Budget_WPF
                 return;
 
             object items;
+            // Based on the combination of groupByMonth and groupByCategory, call the correct GetBudgetItems method.
             if(groupByCategory && groupByMonth)
             {
                 items = _model.GetBudgetDictionaryByCategoryAndMonth(start, end, shouldFilterCategory, categoryId);
@@ -242,6 +245,7 @@ namespace Budget_WPF
                 items = _model.GetBudgetItems(start, end, shouldFilterCategory, categoryId);
             }
 
+            // Call UpdateView with the budget items as a generic object.
             _budgetView.UpdateView(items);
         }
 
@@ -267,17 +271,15 @@ namespace Budget_WPF
         {
             try
             {
-                if (ValidateUserInput(date, category, amountStr, description))
-                {
-                    double amount = double.Parse(amountStr);
-
-                    _model.expenses.Update(expId, date, category, amount, description);
-
-                    _expenseView.SetLastAction($"Successfully updated expense: {description}");
-
-                }
-                else
+                if (!ValidateUserInput(date, category, amountStr, description))
                     return;
+
+                // Update the expense
+                double amount = double.Parse(amountStr);
+                _model.expenses.Update(expId, date, category, amount, description);
+
+                // Set the last action
+                _expenseView.SetLastAction($"Successfully updated expense: {description}");
             }
 
             catch (Exception ex)
@@ -298,8 +300,10 @@ namespace Budget_WPF
         {
             try
             {
+                // Delete the expense
                 _model.expenses.Delete(expId);
 
+                // Set the last action
                 _expenseView.SetLastAction($"Successfully deleted expense: {description}");
             }
 
@@ -324,18 +328,20 @@ namespace Budget_WPF
             StringBuilder errorMessage = new();
             double amount;
 
+            // Check connection
             if (!_isConnected)
             {
                 errorMessage.AppendLine("No file is currently opened.");
             }
 
-
+            // Verify a valid category is selected (not -1)
             if (category < 0)
             {
                 errorMessage.AppendLine("An existing category must be selected.");
             }
             else
             {
+                // Make sure the category actually exists:
                 try
                 {
                     // Throws when the ID is not found.
@@ -347,11 +353,13 @@ namespace Budget_WPF
                 }
             }
 
+            // Description must contain a non-empty string.
             if (string.IsNullOrEmpty(description))
             {
                 errorMessage.AppendLine("A description must be added.");
             }
 
+            // Amount must be a valid double.
             if (!double.TryParse(amountStr, out amount))
             {
                 errorMessage.AppendLine("The amount is invalid.");
@@ -364,6 +372,7 @@ namespace Budget_WPF
                 return false;
             }
 
+            // Otherwise, return true.
             return true;
         }
     }
