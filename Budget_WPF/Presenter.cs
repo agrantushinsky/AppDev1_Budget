@@ -14,7 +14,8 @@ namespace Budget_WPF
 {
     public class Presenter
     {
-        private ViewInterface _view;
+        private IExpenseView _expenseView;
+        private IBudgetView _budgetView;
         private HomeBudget _model;
 
         const string SOFTWATRE_ROOT = "HKEY_CURRENT_USER\\SOFTWARE";
@@ -26,12 +27,20 @@ namespace Budget_WPF
         private int _creditCardCategoryId;
 
         /// <summary>
-        /// Creates a Presenter object and saves the view object
+        /// Creates a Presenter object and saves the budget view
         /// </summary>
-        /// <param name="view">Object that represents the UI</param>
-        public Presenter(ViewInterface view)
+        /// <param name="budgetView">Object that represents the budget UI</param>
+        public Presenter(IBudgetView budgetView)
         {
-            _view = view;
+            _budgetView = budgetView;
+        }
+
+        /// <summary>
+        /// Sets the expense view
+        /// </summary>
+        public IExpenseView ExpenseView
+        {
+            set { _expenseView = value; }
         }
 
         /// <summary>
@@ -44,21 +53,25 @@ namespace Budget_WPF
         {
             if (string.IsNullOrEmpty(filename))
             {
-                _view.ShowError("You must open a file before you may use Open Recent");
+                _budgetView.ShowError("You must open a file before you may use Open Recent");
                 return;
             }
 
             _model = new HomeBudget(filename, newDatabase);
             _isConnected = true;
-            _view.ShowCurrentFile(filename);
-            _view.SetLastAction($"Opened {filename}");
-            _view.Refresh();
+
+            // Set up the UI
+            _budgetView.ShowCurrentFile(filename);
             SetRecentFile(filename);
 
             // Find the credit card category id
             List<Category> categories = _model.categories.List();
             Category? credit = categories.Find((category) => category.Type == Category.CategoryType.Credit);
             _creditCardCategoryId = credit is null? -1 : credit.Id;
+
+            // Show categories and refresh
+            _budgetView.ShowCategories(categories);
+            _budgetView.Refresh();
         }
 
         /// <summary>
@@ -70,17 +83,19 @@ namespace Budget_WPF
         public void AddCategory(string description, Category.CategoryType? type)
         {
             if (string.IsNullOrEmpty(description))
-                _view.ShowError("Invalid description, please try again.");
+                _expenseView.ShowError("Invalid description, please try again.");
             else if (type is null)
-                _view.ShowError("Please select a type.");
+                _expenseView.ShowError("Please select a type.");
             else
             {
                 try
                 {
                     //Change type to non-nullable
                     _model.categories.Add(description, (Category.CategoryType)type);
-                    _view.SetLastAction($"Successfully added category: {description}");
 
+                    // If successful, set last action and refresh the categories list.
+                    _expenseView.SetLastAction($"Successfully added category: {description}");
+                    _budgetView.ShowCategories(_model.categories.List());
                 }
                 catch (Exception ex)
                 {
@@ -90,8 +105,8 @@ namespace Budget_WPF
         }
 
         /// <summary>
-        /// Adds the new expense to the database. If any of the arguments is invalid, an error message will be shown. 
-        /// If credit is used to pay, an additonal expense is created. 
+        /// Adds the new expense to the database. If any of the user inputs is invalid, error messsage will be shown
+        /// If credit is used to pay, an additonal expense is created. Once saved, the datagrid is refreshed.
         /// </summary>
         /// <param name="date">Date of the transaction</param>
         /// <param name="category">Category ID</param>
@@ -100,66 +115,31 @@ namespace Budget_WPF
         /// <param name="credit">If credit was used to pay</param>
         public void AddExpense(DateTime date, int category, string amountStr, string description, bool credit)
         {
-            StringBuilder errorMessage = new();
-            double amount;
-
-            if (!_isConnected)
-            {
-                errorMessage.AppendLine("No file is currently opened.");
-            }
-
-            
-            if (category < 0)
-            {
-                errorMessage.AppendLine("An existing category must be selected.");
-            }
-            else
-            {
-                try
-                {
-                    // Throws when the ID is not found.
-                    _ = _model.categories.GetCategoryFromId(category);
-                }
-                catch
-                {
-                    errorMessage.AppendLine("An existing category must be selected.");
-                }
-            }
-
-            if (string.IsNullOrEmpty(description))
-            {
-                errorMessage.AppendLine("A description must be added.");
-            }
-
-            if(!double.TryParse(amountStr, out amount))
-            {
-                errorMessage.AppendLine("The amount is invalid.");
-            }
-
-
-            // If an error occurred, show the error and return this method.
-            if (errorMessage.Length > 0)
-            {
-                _view.ShowError(errorMessage.ToString());
-                return;
-            }
 
             // Attempt to add the expense
             try
             {
+                // ValidateUserInput handles showing errors.
+                if (!ValidateUserInput(date, category, amountStr, description))
+                    return;
+
+                // Add the expense.
+                double amount = double.Parse(amountStr);
                 _model.expenses.Add(date, category, amount, description);
 
+                // If it is credit, add an additional expense with the negative amount.
                 if (credit)
                     _model.expenses.Add(date, _creditCardCategoryId, -amount, $"{description} (on credit)");
 
-                _view.SetLastAction($"Successfully added expense: {description}");
-
+                // Set the last action.
+                _expenseView.SetLastAction($"Successfully added expense: {description}");
             }
             catch (Exception ex)
             {
 
             }
-            _view.ClearInputs();
+            _expenseView.ClearInputs();
+            _budgetView.Refresh();
         }
 
         /// <summary>
@@ -170,10 +150,11 @@ namespace Budget_WPF
         /// <returns>True if description and amount are empty. Otherwise, shows pop up with confirmation message to exit</returns>
         public bool UnsavedChangesCheck(string description, string amount)
         {
+            // Show confirmation window if the description or amount contain something.
             if(!string.IsNullOrEmpty(description) ||
                 !string.IsNullOrEmpty(amount))
             {
-                return _view.ShowMessageWithConfirmation("You have unsaved changes, are you sure you wanted to exit?");
+                return _expenseView.ShowMessageWithConfirmation("You have unsaved changes, are you sure you wanted to exit?");
             }
 
             return true;
@@ -214,7 +195,7 @@ namespace Budget_WPF
         {
             if (!_isConnected)
             {
-                _view.ShowError("Please select a file before continuing.");
+                _expenseView.ShowError("Please select a file before continuing.");
             }
             return _isConnected;
         }
@@ -224,9 +205,171 @@ namespace Budget_WPF
         /// </summary>
         public void ShowFirstTimeUserSetup()
         {
-            if(string.IsNullOrEmpty(GetRecentFile()))
-                if (_view.ShowMessageWithConfirmation("Welcome first time user, would you like to browse to create a new budget?"))
-                    _view.OpenNewFile();
+            // If there isn't a recentFile stored in registry, ask the user if they wisk to create a new budget.
+            if (string.IsNullOrEmpty(GetRecentFile()))
+                if (_budgetView.ShowMessageWithConfirmation("Welcome first time user, would you like to browse to create a new budget?"))
+                    _budgetView.OpenNewFile();
+        }
+
+        /// <summary>
+        /// Gets the list of budget items according to the filters and updates the budget view
+        /// </summary>
+        /// <param name="start">Start date</param>
+        /// <param name="end">End date</param>
+        /// <param name="categoryId">The ID of the category to filter by, if filter flag is true</param>
+        /// <param name="shouldFilterCategory">Flag to indicate whether to filter by category ID or not</param>
+        /// <param name="groupByMonth">Flag to indicate whether to group by month</param>
+        /// <param name="groupByCategory">Flag to indicate whether to group by category</param>
+        public void FiltersChange(DateTime? start, DateTime? end, int categoryId, bool shouldFilterCategory, bool groupByMonth, bool groupByCategory)
+        {
+            // Don't do anything if the model has not been initialize (no file open)
+            if (_model is null)
+                return;
+
+            object items;
+            // Based on the combination of groupByMonth and groupByCategory, call the correct GetBudgetItems method.
+            if(groupByCategory && groupByMonth)
+            {
+                items = _model.GetBudgetDictionaryByCategoryAndMonth(start, end, shouldFilterCategory, categoryId);
+            }
+            else if(groupByCategory)
+            {
+                items = _model.GetBudgetItemsByCategory(start, end, shouldFilterCategory, categoryId);
+            }
+            else if(groupByMonth)
+            {
+                items = _model.GetBudgetItemsByMonth(start, end, shouldFilterCategory, categoryId);
+            }
+            else 
+            {
+                items = _model.GetBudgetItems(start, end, shouldFilterCategory, categoryId);
+            }
+
+            // Call UpdateView with the budget items as a generic object.
+            _budgetView.UpdateView(items);
+        }
+
+        /// <summary>
+        /// Gets the list of Expenses
+        /// </summary>
+        /// <returns>List of expenses</returns>
+        public List<Expense> GetExpenses()
+        {
+            return _model.expenses.List();
+        }
+
+        /// <summary>
+        /// Updates the selected expense item. If any of the user inputs is invalid, error messsage will be shown.
+        /// Once saved, the datagrid is refreshed.
+        /// </summary>
+        /// <param name="expId">Expense ID</param>
+        /// <param name="date">Transaction date</param>
+        /// <param name="category">Category ID</param>
+        /// <param name="amountStr">Expense amount</param>
+        /// <param name="description">Short description</param>
+        public void UpdateExpense(int expId, DateTime date, int category, string amountStr, string description)
+        {
+            try
+            {
+                if (!ValidateUserInput(date, category, amountStr, description))
+                    return;
+
+                // Update the expense
+                double amount = double.Parse(amountStr);
+                _model.expenses.Update(expId, date, category, amount, description);
+
+                // Set the last action
+                _expenseView.SetLastAction($"Successfully updated expense: {description}");
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            _expenseView.ClearInputs();
+            _budgetView.Refresh();
+        }
+
+        /// <summary>
+        /// Deletes the selected expense item. Once done, the datagrid is refreshed.
+        /// </summary>
+        /// <param name="expId">Expense ID</param>
+        /// <param name="description">Short description</param>
+        public void DeleteExpense(int expId, string description)
+        {
+            try
+            {
+                // Delete the expense
+                _model.expenses.Delete(expId);
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+            _budgetView.Refresh();
+        }
+
+        /// <summary>
+        /// Validates user input. Expense date, category ID, amount and description must not be null.
+        /// </summary>
+        /// <param name="date">Transaction date</param>
+        /// <param name="category">Category ID</param>
+        /// <param name="amountStr">Expense amount</param>
+        /// <param name="description">Short description</param>
+        /// <returns>True if all the arguments are valid. False otherwise.</returns>
+        private bool ValidateUserInput(DateTime date, int category, string amountStr, string description)
+        {
+            StringBuilder errorMessage = new();
+            double amount;
+
+            // Check connection
+            if (!_isConnected)
+            {
+                errorMessage.AppendLine("No file is currently opened.");
+            }
+
+            // Verify a valid category is selected (not -1)
+            if (category < 0)
+            {
+                errorMessage.AppendLine("An existing category must be selected.");
+            }
+            else
+            {
+                // Make sure the category actually exists:
+                try
+                {
+                    // Throws when the ID is not found.
+                    _ = _model.categories.GetCategoryFromId(category);
+                }
+                catch
+                {
+                    errorMessage.AppendLine("An existing category must be selected.");
+                }
+            }
+
+            // Description must contain a non-empty string.
+            if (string.IsNullOrEmpty(description))
+            {
+                errorMessage.AppendLine("A description must be added.");
+            }
+
+            // Amount must be a valid double.
+            if (!double.TryParse(amountStr, out amount))
+            {
+                errorMessage.AppendLine("The amount is invalid.");
+            }
+
+            // If an error occurred, show the error and return this method.
+            if (errorMessage.Length > 0)
+            {
+                _expenseView.ShowError(errorMessage.ToString());
+                return false;
+            }
+
+            // Otherwise, return true.
+            return true;
         }
     }
 }

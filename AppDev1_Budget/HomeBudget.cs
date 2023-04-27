@@ -364,13 +364,12 @@ namespace Budget
             Dictionary<string, object> totalsRecord = new Dictionary<string, object>();
             totalsRecord["Month"] = "TOTALS";
 
-            foreach (var cat in categories.List())
+            foreach (var category in categories.List())
             {
-                try
+                if (totalsPerCategory.TryGetValue(category.Description, out double total))
                 {
-                    totalsRecord.Add(cat.Description, totalsPerCategory[cat.Description]);
+                    totalsRecord.Add(category.Description, total);
                 }
-                catch { }
             }
             summary.Add(totalsRecord);
 

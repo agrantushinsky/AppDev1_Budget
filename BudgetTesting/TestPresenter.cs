@@ -10,54 +10,35 @@ using System.Threading.Tasks;
 
 namespace BudgetCodeTests
 {
-    public class TestView : ViewInterface
+    public class TestBudgetView : IBudgetView
     {
-        public bool calledAddCategory = false;
-        public bool calledAddExpense = false;
-        public bool calledClearInputs = false;
-        public bool calledOpenExistingFile = false;
-        public bool calledCloseExistingFile = false;
-        public bool calledOpenNewFile = false;
         public bool calledRefresh = false;
         public bool calledShowCurrentFile = false;
         public bool calledShowError = false;
+        public bool calledUpdateView = false;
+        public bool calledOpenNewFile = false;
+        public bool calledOpenExistingFile = false;
+        public bool calledShowCategories = false;
         public bool calledShowMessageWithConfirmation = false;
-        public bool calledSetLastAction = false;
+        public object? listItems;
 
-
-        public void AddCategory()
+        //RESET ALL BOOLS TO FALSE IN EACH TEST
+        public void SetToFalse()
         {
-            calledAddCategory = true;
-        }
-
-        public void AddExpense()
-        {
-            calledAddExpense = true;
-        }
-
-        public void ClearInputs()
-        {
-            calledClearInputs = true;
-        }
-
-        public void OpenExistingFile()
-        {
-            calledOpenExistingFile = true;
-        }
-
-        public void OpenNewFile()
-        {
-            calledOpenNewFile = true;
+            calledRefresh = false;
+            calledShowCurrentFile = false;
+            calledShowError = false;
+            calledUpdateView = false;
+            calledOpenNewFile = false;
+            calledOpenExistingFile = false;
+            calledShowCategories = false;
+            calledShowMessageWithConfirmation = false;
+            listItems = null;
         }
 
         public void Refresh()
         {
             calledRefresh = true;
-        }
-
-        public void SetLastAction(string message)
-        {
-            calledSetLastAction = true;
         }
 
         public void ShowCurrentFile(string filename)
@@ -70,10 +51,95 @@ namespace BudgetCodeTests
             calledShowError = true;
         }
 
+        public void UpdateView(object items)
+        {
+            calledUpdateView = true;
+            listItems = items;
+        }
+
+        public void OpenNewFile()
+        {
+            calledOpenNewFile = true;
+        }
+
+        public void OpenExistingFile()
+        {
+            calledOpenExistingFile = true;
+        }
+
+        public void ShowCategories(List<Category> categories)
+        {
+            calledShowCategories = true;
+        }
+
         public bool ShowMessageWithConfirmation(string message)
         {
             calledShowMessageWithConfirmation = true;
             return true;
+        }
+    }
+    public class TestExpenseView : IExpenseView
+    {
+        public bool calledAddCategory = false;
+        public bool calledSaveExpense = false;
+        public bool calledClearInputs = false;
+        public bool calledRefresh = false;
+        public bool calledShowError = false;
+        public bool calledShowMessageWithConfirmation = false;
+        public bool calledSetLastAction = false;
+        public bool calledSetAddOrUpdateView = false;
+
+        public void SetToFalse()
+        {
+            calledAddCategory = false;
+            calledSaveExpense = false;
+            calledClearInputs = false;
+            calledRefresh = false;
+            calledShowError = false;
+            calledShowMessageWithConfirmation = false;
+            calledSetLastAction = false;
+            calledSetAddOrUpdateView = false;
+        }
+
+        public void AddCategory()
+        {
+            calledAddCategory = true;
+        }
+
+        public void SaveExpense()
+        {
+            calledSaveExpense = true;
+        }
+
+        public void ClearInputs()
+        {
+            calledClearInputs = true;
+        }
+
+        public void Refresh()
+        {
+            calledRefresh = true;
+        }
+
+        public void SetLastAction(string message)
+        {
+            calledSetLastAction = true;
+        }
+
+        public void ShowError(string message)
+        {
+            calledShowError = true;
+        }
+
+        public bool ShowMessageWithConfirmation(string message)
+        {
+            calledShowMessageWithConfirmation = true;
+            return true;
+        }
+
+        public void SetAddOrUpdateView(AddOrUpdateExpense.Mode mode, Presenter presenter, BudgetItem budgetItem = null)
+        {
+            calledSetAddOrUpdateView = true;
         }
     }
 
@@ -82,6 +148,8 @@ namespace BudgetCodeTests
     public class TestPresenter
     {
         public int maxIDInCategoryInFile = TestConstants.maxIDInCategoryInFile;
+        public int numberOfExpensesInFile = TestConstants.numberOfExpensesInFile;
+        public TestBudgetView budgetView = new TestBudgetView();
 
         // ========================================================================
 
@@ -89,10 +157,10 @@ namespace BudgetCodeTests
         public void PresenterConstructor()
         {
             //Arrange
-            TestView v = new TestView();
+            TestBudgetView bv = new TestBudgetView();
 
             //Act
-            Presenter p = new Presenter(v);
+            Presenter p = new Presenter(bv);
 
             //Assert
             Assert.IsType<Presenter>(p);
@@ -101,26 +169,23 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
-        public void PresenterMethods_ConnectToDatabse_Success()
+        public void PresenterMethods_ConnectToDatabase_Success()
         {
             //Arrange
             String folder = TestConstants.GetSolutionDir();
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
-            TestView v = new TestView();
-            Presenter p = new Presenter(v);
-            v.calledShowCurrentFile = false;
-            v.calledSetLastAction = false;
-            v.calledRefresh = false;
+            Presenter p = new Presenter(budgetView);
+            budgetView.SetToFalse();
 
             //Act
             p.ConnectToDatabase(messyDB, false);
 
             //Assert
-            Assert.True(v.calledShowCurrentFile);
-            Assert.True(v.calledSetLastAction);
-            Assert.True(v.calledRefresh);
+            Assert.True(budgetView.calledShowCurrentFile);
+            Assert.True(budgetView.calledRefresh);
+            Assert.True(budgetView.calledShowCategories);
             Assert.True(p.IsFileSelected());
         }
 
@@ -130,22 +195,17 @@ namespace BudgetCodeTests
         public void PresenterMethods_ConnectToDatabse_EmptyFilename()
         {
             //Arrange
-            TestView v = new TestView();
-            Presenter p = new Presenter(v);
-            v.calledShowCurrentFile = false;
-            v.calledSetLastAction = false;
-            v.calledRefresh = false;
-            v.calledShowError = false;
+            Presenter p = new Presenter(budgetView);
+            budgetView.SetToFalse();
 
             //Act
             p.ConnectToDatabase("", false);
 
             //Assert
-            Assert.True(v.calledShowError);
-            Assert.False(v.calledShowCurrentFile);
-            Assert.False(v.calledSetLastAction);
-            Assert.False(v.calledRefresh);
-            Assert.False(p.IsFileSelected());
+            Assert.True(budgetView.calledShowError);
+            Assert.False(budgetView.calledShowCurrentFile);
+            Assert.False(budgetView.calledUpdateView);
+            Assert.False(budgetView.calledRefresh);
         }
 
         // ========================================================================
@@ -158,20 +218,23 @@ namespace BudgetCodeTests
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
-            TestView v = new TestView();
-            Presenter p = new Presenter(v);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
             p.ConnectToDatabase(messyDB, false);
             int count = p.GetCategories().Count;
             string desc = "Game";
             Category.CategoryType type = Category.CategoryType.Expense;
-            v.calledSetLastAction = false;
+            ev.SetToFalse();
+            budgetView.calledShowCategories = false;
 
             //Act
             p.AddCategory(desc, type);
             Category cat = p.GetCategories()[maxIDInCategoryInFile];
 
             //Assert
-            Assert.True(v.calledSetLastAction);
+            Assert.True(ev.calledSetLastAction);
+            Assert.True(budgetView.calledShowCategories);
             Assert.Equal(count + 1, p.GetCategories().Count);
             Assert.Equal(desc, cat.Description);
             Assert.Equal(type, cat.Type);
@@ -187,18 +250,20 @@ namespace BudgetCodeTests
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
-            TestView v = new TestView();
-            Presenter p = new Presenter(v);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
             p.ConnectToDatabase(messyDB, false);
-            v.calledSetLastAction = false;
-            v.calledShowError = false;
+            ev.SetToFalse();
+            budgetView.calledShowCategories = false;
 
             //Act
             p.AddCategory("", Budget.Category.CategoryType.Expense);
 
             //Assert
-            Assert.True(v.calledShowError);
-            Assert.False(v.calledSetLastAction);
+            Assert.True(ev.calledShowError);
+            Assert.False(ev.calledSetLastAction);
+            Assert.False(budgetView.calledShowCategories);
         }
 
         // ========================================================================
@@ -211,18 +276,21 @@ namespace BudgetCodeTests
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
-            TestView v = new TestView();
-            Presenter p = new Presenter(v);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
             p.ConnectToDatabase(messyDB, false);
-            v.calledSetLastAction = false;
-            v.calledShowError = false;
+            ev.calledSetLastAction = false;
+            ev.calledShowError = false;
+            budgetView.calledShowCategories = false;
 
             //Act
             p.AddCategory("Game", null);
 
             //Assert
-            Assert.True(v.calledShowError);
-            Assert.False(v.calledSetLastAction);
+            Assert.True(ev.calledShowError);
+            Assert.False(ev.calledSetLastAction);
+            Assert.False(budgetView.calledShowCategories);
         }
 
         // ========================================================================
@@ -235,18 +303,26 @@ namespace BudgetCodeTests
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
-            TestView v = new TestView();
-            Presenter p = new Presenter(v);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
             p.ConnectToDatabase(messyDB, false);
-            v.calledSetLastAction = false;
-            v.calledClearInputs = false;
+            ev.SetToFalse();
+            budgetView.SetToFalse();
 
             //Act
             p.AddExpense(new DateTime(), 1, "10", "Lunch", false);
+            Expense exp = p.GetExpenses()[numberOfExpensesInFile];
 
             //Assert
-            Assert.True(v.calledSetLastAction);
-            Assert.True(v.calledClearInputs);
+            Assert.True(ev.calledSetLastAction);
+            Assert.True(ev.calledClearInputs);
+            Assert.True(budgetView.calledRefresh);
+            Assert.Equal(numberOfExpensesInFile + 1, p.GetExpenses().Count);
+            Assert.Equal(new DateTime(), exp.Date);
+            Assert.Equal(1, exp.Category);
+            Assert.Equal(10, exp.Amount);
+            Assert.Equal("Lunch", exp.Description);
         }
 
         // ========================================================================
@@ -259,46 +335,49 @@ namespace BudgetCodeTests
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
-            TestView v = new TestView();
-            Presenter p = new Presenter(v);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
             p.ConnectToDatabase(messyDB, false);
-            v.calledSetLastAction = false;
-            v.calledClearInputs = false;
+            ev.SetToFalse();
+            budgetView.SetToFalse();
 
             //Act
             p.AddExpense(new DateTime(), 1, "10", "Lunch", true);
+            int count = p.GetExpenses().Count;
 
             //Assert
-            Assert.True(v.calledSetLastAction);
-            Assert.True(v.calledClearInputs);
-
-            // TODO: Currently there is no way of checking that the credit expense was added.
-            // It will be possible once we have the code to display expenses to the user.
+            Assert.True(budgetView.calledRefresh);
+            Assert.True(ev.calledSetLastAction);
+            Assert.True(ev.calledClearInputs);
+            Assert.Equal(numberOfExpensesInFile + 2, count);
         }
 
         // ========================================================================
 
         [Fact]
-        public void PresenterMethods_AddExpense_InexistantCategory()
+        public void PresenterMethods_AddExpense_InexistentCategory()
         {
             //Arrange
             String folder = TestConstants.GetSolutionDir();
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
-            TestView v = new TestView();
-            Presenter p = new Presenter(v);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
             p.ConnectToDatabase(messyDB, false);
             int count = p.GetCategories().Count;
-            v.calledSetLastAction = false;
-            v.calledShowError = false;
+            ev.SetToFalse();
+            budgetView.SetToFalse();
 
             //Act
             p.AddExpense(new DateTime(), count + 1, "10", "Lunch", false);
 
             //Assert
-            Assert.True(v.calledShowError);
-            Assert.False(v.calledSetLastAction);
+            Assert.True(ev.calledShowError);
+            Assert.False(ev.calledSetLastAction);
+            Assert.False(budgetView.calledRefresh);
         }
 
         // ========================================================================
@@ -311,18 +390,20 @@ namespace BudgetCodeTests
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
-            TestView v = new TestView();
-            Presenter p = new Presenter(v);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
             p.ConnectToDatabase(messyDB, false);
-            v.calledSetLastAction = false;
-            v.calledShowError = false;
+            ev.SetToFalse();
+            budgetView.SetToFalse();
 
             //Act
             p.AddExpense(new DateTime(), 1, "10", "", false);
 
             //Assert
-            Assert.True(v.calledShowError);
-            Assert.False(v.calledSetLastAction);
+            Assert.True(ev.calledShowError);
+            Assert.False(ev.calledSetLastAction);
+            Assert.False(budgetView.calledRefresh);
         }
 
         // ========================================================================
@@ -335,18 +416,20 @@ namespace BudgetCodeTests
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
-            TestView v = new TestView();
-            Presenter p = new Presenter(v);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
             p.ConnectToDatabase(messyDB, false);
-            v.calledSetLastAction = false;
-            v.calledShowError = false;
+            ev.SetToFalse();
+            budgetView.SetToFalse();
 
             //Act
             p.AddExpense(new DateTime(), 1, "abc", "Lunch", false);
 
             //Assert
-            Assert.True(v.calledShowError);
-            Assert.False(v.calledSetLastAction);
+            Assert.True(ev.calledShowError);
+            Assert.False(ev.calledSetLastAction);
+            Assert.False(budgetView.calledRefresh);
         }
 
         // ========================================================================
@@ -355,17 +438,19 @@ namespace BudgetCodeTests
         public void PresenterMethods_AddExpense_NoConnection()
         {
             //Arrange
-            TestView v = new TestView();
-            Presenter p = new Presenter(v);
-            v.calledSetLastAction = false;
-            v.calledShowError = false;
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
+            ev.SetToFalse();
+            budgetView.SetToFalse();
 
             //Act
             p.AddExpense(new DateTime(), 1, "abc", "Lunch", false);
 
             //Assert
-            Assert.True(v.calledShowError);
-            Assert.False(v.calledSetLastAction);
+            Assert.True(ev.calledShowError);
+            Assert.False(ev.calledSetLastAction);
+            Assert.False(budgetView.calledRefresh);
         }
 
         // ========================================================================
@@ -378,16 +463,17 @@ namespace BudgetCodeTests
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
-            TestView v = new TestView();
-            Presenter p = new Presenter(v);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
             p.ConnectToDatabase(messyDB, false);
-            v.calledShowMessageWithConfirmation = false;
+            ev.SetToFalse();
 
             //Act
             p.UnsavedChangesCheck("Lunch", "");
 
             //Assert
-            Assert.True(v.calledShowMessageWithConfirmation);
+            Assert.True(ev.calledShowMessageWithConfirmation);
         }
 
         // ========================================================================
@@ -400,16 +486,17 @@ namespace BudgetCodeTests
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
-            TestView v = new TestView();
-            Presenter p = new Presenter(v);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
             p.ConnectToDatabase(messyDB, false);
-            v.calledShowMessageWithConfirmation = false;
+            ev.SetToFalse();
 
             //Act
             p.UnsavedChangesCheck("", "");
             
             //Assert
-            Assert.False(v.calledShowMessageWithConfirmation);
+            Assert.False(ev.calledShowMessageWithConfirmation);
 
         }
 
@@ -423,8 +510,9 @@ namespace BudgetCodeTests
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
-            TestView v = new TestView();
-            Presenter p = new Presenter(v);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
             p.ConnectToDatabase(messyDB, false);
 
             //Act
@@ -443,25 +531,26 @@ namespace BudgetCodeTests
             const string KEYNAME = "recentFile";
 
             //Arrange
-            TestView v = new TestView();
-            Presenter p = new Presenter(v);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
 
             // Delete the existing key if it exists
             try
             {
                 RegistryKey? key = Registry.CurrentUser.OpenSubKey(FULL_REGISTER_PATH, true);
                 key.DeleteValue(KEYNAME);
-            } catch { }
+            }
+            catch { }
 
-            v.calledShowMessageWithConfirmation = false;
-            v.calledOpenNewFile = false;
+            budgetView.SetToFalse();
 
             //Act
             p.ShowFirstTimeUserSetup();
 
             //Assert
-            Assert.True(v.calledShowMessageWithConfirmation);
-            Assert.True(v.calledOpenNewFile);
+            Assert.True(budgetView.calledShowMessageWithConfirmation);
+            Assert.True(budgetView.calledOpenNewFile);
         }
 
         // ========================================================================
@@ -473,20 +562,20 @@ namespace BudgetCodeTests
             const string KEYNAME = "recentFile";
 
             //Arrange
-            TestView v = new TestView();
-            Presenter p = new Presenter(v);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
             // Wipe recent file register
             RegistryKey? key = Registry.CurrentUser.OpenSubKey(FULL_REGISTER_PATH, true);
             key.SetValue(KEYNAME, "C:\\");
-            v.calledShowMessageWithConfirmation = false;
-            v.calledOpenNewFile = false;
+            budgetView.SetToFalse();
 
             //Act
             p.ShowFirstTimeUserSetup();
 
             //Assert
-            Assert.False(v.calledShowMessageWithConfirmation);
-            Assert.False(v.calledOpenNewFile);
+            Assert.False(budgetView.calledShowMessageWithConfirmation);
+            Assert.False(budgetView.calledOpenNewFile);
 
             // Cleanup (delete bad key)
             key.DeleteValue(KEYNAME);
@@ -498,16 +587,17 @@ namespace BudgetCodeTests
         public void PresenterMethods_IsFileSelected_FalseState()
         {
             //Arrange
-            TestView v = new TestView();
-            Presenter p = new Presenter(v);
-            v.calledShowError = false;
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
+            ev.calledShowError = false;
             bool isSelected;
 
             //Act
             isSelected = p.IsFileSelected();
 
             //Assert
-            Assert.True(v.calledShowError);
+            Assert.True(ev.calledShowError);
             Assert.False(isSelected);
         }
 
@@ -521,17 +611,18 @@ namespace BudgetCodeTests
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
-            TestView v = new TestView();
-            Presenter p = new Presenter(v);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
             p.ConnectToDatabase(messyDB, false);
-            v.calledShowError = false;
+            ev.calledShowError = false;
             bool isSelected;
 
             //Act
             isSelected = p.IsFileSelected();
 
             //Assert
-            Assert.False(v.calledShowError);
+            Assert.False(ev.calledShowError);
             Assert.True(isSelected);
         }
 
@@ -545,8 +636,9 @@ namespace BudgetCodeTests
             String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
-            TestView v = new TestView();
-            Presenter p = new Presenter(v);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
             p.ConnectToDatabase(messyDB, false);
             int categoryCount;
             const int EXPECTED_COUNT = 17;
@@ -556,6 +648,410 @@ namespace BudgetCodeTests
 
             //Assert
             Assert.Equal(EXPECTED_COUNT, categoryCount);
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void PresenterMethods_GetExpenses_Success()
+        {
+            //Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
+            p.ConnectToDatabase(messyDB, false);
+            int expenseCount;
+
+            //Act
+            expenseCount = p.GetExpenses().Count;
+
+            //Assert
+            Assert.Equal(numberOfExpensesInFile, expenseCount);
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void PresenterMethods_UpdateExpense_Success()
+        {
+            //Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
+            p.ConnectToDatabase(messyDB, false);
+            ev.SetToFalse();
+            budgetView.SetToFalse();
+            Expense firstExpenseInFile = p.GetExpenses().First();
+
+            //Act
+            p.UpdateExpense(firstExpenseInFile.Id, firstExpenseInFile.Date, firstExpenseInFile.Category, firstExpenseInFile.Amount.ToString(), "Updated Item");
+            firstExpenseInFile = p.GetExpenses().First();
+
+            //Assert
+            Assert.True(budgetView.calledRefresh);
+            Assert.True(ev.calledSetLastAction);
+            Assert.True(ev.calledClearInputs);
+            Assert.Equal("Updated Item", firstExpenseInFile.Description);
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void PresenterMethods_UpdateExpense_InvalidAmount()
+        {
+            //Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
+            p.ConnectToDatabase(messyDB, false);
+            ev.SetToFalse();
+            Expense firstExpenseInFile = p.GetExpenses().First();
+
+            //Act
+            p.UpdateExpense(firstExpenseInFile.Id, firstExpenseInFile.Date, firstExpenseInFile.Category, "abc", "Updated Item");
+
+            //Assert
+            Assert.True(ev.calledShowError);
+            Assert.False(ev.calledSetLastAction);
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void PresenterMethods_UpdateExpense_InvalidCategory()
+        {
+            //Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
+            p.ConnectToDatabase(messyDB, false);
+            ev.SetToFalse();
+            Expense firstExpenseInFile = p.GetExpenses().First();
+
+            //Act
+            p.UpdateExpense(firstExpenseInFile.Id, firstExpenseInFile.Date, -1, firstExpenseInFile.Amount.ToString(), "Updated Item");
+
+            //Assert
+            Assert.True(ev.calledShowError);
+            Assert.False(ev.calledSetLastAction);
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void PresenterMethods_UpdateExpense_InvalidDescription()
+        {
+            //Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
+            p.ConnectToDatabase(messyDB, false);
+            ev.SetToFalse();
+            Expense firstExpenseInFile = p.GetExpenses().First();
+
+            const string BAD_DESCRIPTION = "";
+
+            //Act
+            p.UpdateExpense(firstExpenseInFile.Id, firstExpenseInFile.Date, firstExpenseInFile.Category, firstExpenseInFile.Amount.ToString(), BAD_DESCRIPTION);
+
+            //Assert
+            Assert.True(ev.calledShowError);
+            Assert.False(ev.calledSetLastAction);
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void PresenterMethods_UpdateExpense_NoConnection()
+        {
+            //Arrange
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
+            ev.SetToFalse();
+            budgetView.SetToFalse();
+
+            //Act
+            p.UpdateExpense(1, new DateTime(), 1, "15", "Lunch");
+
+            //Assert
+            Assert.True(ev.calledShowError);
+            Assert.False(ev.calledSetLastAction);
+            Assert.False(budgetView.calledRefresh);
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void PresenterMethods_DeleteExpense_Success()
+        {
+            //Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
+            p.ConnectToDatabase(messyDB, false);
+            ev.SetToFalse();
+            budgetView.SetToFalse();
+            Expense firstExpenseInFile = p.GetExpenses().First();
+            int count = p.GetExpenses().Count();
+
+            //Act
+            p.DeleteExpense(firstExpenseInFile.Id, firstExpenseInFile.Description);
+
+            //Assert
+            Assert.True(budgetView.calledRefresh);
+            Assert.Equal(count - 1, p.GetExpenses().Count());
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void PresenterMethods_DeleteExpense_InexistentExpenseItem()
+        {
+            //Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
+            p.ConnectToDatabase(messyDB, false);
+            ev.SetToFalse();
+            budgetView.SetToFalse();
+            int count = p.GetExpenses().Count();
+
+            //Act
+            p.DeleteExpense(100, "Does not exist");
+
+            //Assert
+            Assert.True(budgetView.calledRefresh);
+            Assert.Equal(count, p.GetExpenses().Count());
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void PresenterMethods_FiltersChange_UpdateView()
+        {
+            //Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
+            p.ConnectToDatabase(messyDB, false);
+            ev.SetToFalse();
+            budgetView.SetToFalse();
+
+            //Act
+            p.FiltersChange(null, null, 1, false, false, false);
+
+            //Assert
+            Assert.True(budgetView.calledUpdateView);
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void PresenterMethods_FiltersChange_NullModel()
+        {
+            //Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ExpenseView = ev;
+            ev.SetToFalse();
+            budgetView.SetToFalse();
+
+            //Act
+            p.FiltersChange(null, null, 1, false, false, false);
+
+            //Assert
+            Assert.False(budgetView.calledUpdateView);
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void PresenterMethods_FiltersChange_GroupByMonthAndCategory()
+        {
+            //Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ConnectToDatabase(messyDB, false);
+            p.ExpenseView = ev;
+            ev.SetToFalse();
+            budgetView.SetToFalse();
+            DateTime? start = null;
+            DateTime? end = null;
+            int catId = 1;
+            bool filterCat = false;
+            bool grpByMonth = true;
+            bool grpByCat = true;
+
+            HomeBudget budget = new HomeBudget(messyDB);
+            List<Dictionary<string, object>> expected = budget.GetBudgetDictionaryByCategoryAndMonth(start, end, filterCat, catId);
+
+            //Act
+            p.FiltersChange(start, end, catId, filterCat, grpByMonth, grpByCat);
+            List<Dictionary<string, object>> actual = (List<Dictionary<string, object>>) budgetView.listItems;
+
+            //Assert
+            Assert.True(budgetView.calledUpdateView);
+            Assert.Equal(expected.Count, actual.Count);
+            Assert.Equal(expected.First()["Month"], actual.First()["Month"]);
+            Assert.Equal(expected.First()["Total"], actual.First()["Total"]);
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void PresenterMethods_FiltersChange_GroupByMonth()
+        {
+            //Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ConnectToDatabase(messyDB, false);
+            p.ExpenseView = ev;
+            ev.SetToFalse();
+            budgetView.SetToFalse();
+            DateTime? start = null;
+            DateTime? end = null;
+            int catId = 1;
+            bool filterCat = false;
+            bool grpByMonth = true;
+            bool grpByCat = false;
+
+            HomeBudget budget = new HomeBudget(messyDB);
+            List<BudgetItemsByMonth> expected = budget.GetBudgetItemsByMonth(start, end, filterCat, catId);
+
+            //Act
+            p.FiltersChange(start, end, catId, filterCat, grpByMonth, grpByCat);
+            List<BudgetItemsByMonth> actual = (List<BudgetItemsByMonth>) budgetView.listItems;
+
+            //Assert
+            Assert.True(budgetView.calledUpdateView);
+            Assert.Equal(expected.Count, actual.Count);
+            Assert.Equal(expected.First().Month, actual.First().Month);
+            Assert.Equal(expected.First().Total, actual.First().Total);
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void PresenterMethods_FiltersChange_GroupByCategory()
+        {
+            //Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ConnectToDatabase(messyDB, false);
+            p.ExpenseView = ev;
+            ev.SetToFalse();
+            budgetView.SetToFalse();
+            DateTime? start = null;
+            DateTime? end = null;
+            int catId = 1;
+            bool filterCat = false;
+            bool grpByMonth = false;
+            bool grpByCat = true;
+
+            HomeBudget budget = new HomeBudget(messyDB);
+            List<BudgetItemsByCategory> expected = budget.GetBudgetItemsByCategory(start, end, filterCat, catId);
+
+            //Act
+            p.FiltersChange(start, end, catId, filterCat, grpByMonth, grpByCat);
+            List<BudgetItemsByCategory> actual = (List<BudgetItemsByCategory>)budgetView.listItems;
+
+            //Assert
+            Assert.True(budgetView.calledUpdateView);
+            Assert.Equal(expected.Count, actual.Count);
+            Assert.Equal(expected.First().Category, actual.First().Category);
+            Assert.Equal(expected.First().Total, actual.First().Total);
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void PresenterMethods_FiltersChange_AllItems()
+        {
+            //Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.ConnectToDatabase(messyDB, false);
+            p.ExpenseView = ev;
+            ev.SetToFalse();
+            budgetView.SetToFalse();
+            DateTime? start = null;
+            DateTime? end = null;
+            int catId = 1;
+            bool filterCat = false;
+            bool grpByMonth = false;
+            bool grpByCat = false;
+
+            HomeBudget budget = new HomeBudget(messyDB);
+            List<BudgetItem> expected = budget.GetBudgetItems(start, end, filterCat, catId);
+
+            //Act
+            p.FiltersChange(start, end, catId, filterCat, grpByMonth, grpByCat);
+            List<BudgetItem> actual = (List<BudgetItem>)budgetView.listItems;
+
+            //Assert
+            Assert.True(budgetView.calledUpdateView);
+            Assert.Equal(expected.Count, actual.Count);
+            Assert.Equal(expected.First().Category, actual.First().Category);
+            Assert.Equal(expected.First().CategoryID, actual.First().CategoryID);
+            Assert.Equal(expected.First().ExpenseID, actual.First().ExpenseID);
+            Assert.Equal(expected.First().Date, actual.First().Date);
+            Assert.Equal(expected.First().ShortDescription, actual.First().ShortDescription);
+            Assert.Equal(expected.First().Amount, actual.First().Amount);
+            Assert.Equal(expected.First().Balance, actual.First().Balance);
+
         }
     }
 }
