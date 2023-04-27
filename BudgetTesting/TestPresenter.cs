@@ -782,6 +782,27 @@ namespace BudgetCodeTests
         // ========================================================================
 
         [Fact]
+        public void PresenterMethods_UpdateExpense_NoConnection()
+        {
+            //Arrange
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
+            ev.SetToFalse();
+            budgetView.SetToFalse();
+
+            //Act
+            p.UpdateExpense(1, new DateTime(), 1, "15", "Lunch");
+
+            //Assert
+            Assert.True(ev.calledShowError);
+            Assert.False(ev.calledSetLastAction);
+            Assert.False(budgetView.calledRefresh);
+        }
+
+        // ========================================================================
+
+        [Fact]
         public void PresenterMethods_DeleteExpense_Success()
         {
             //Arrange
