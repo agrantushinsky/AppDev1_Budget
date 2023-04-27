@@ -226,6 +226,7 @@ namespace BudgetCodeTests
             string desc = "Game";
             Category.CategoryType type = Category.CategoryType.Expense;
             ev.SetToFalse();
+            budgetView.calledShowCategories = false;
 
             //Act
             p.AddCategory(desc, type);
@@ -254,6 +255,7 @@ namespace BudgetCodeTests
             p.expenseView = ev;
             p.ConnectToDatabase(messyDB, false);
             ev.SetToFalse();
+            budgetView.calledShowCategories = false;
 
             //Act
             p.AddCategory("", Budget.Category.CategoryType.Expense);
@@ -280,8 +282,7 @@ namespace BudgetCodeTests
             p.ConnectToDatabase(messyDB, false);
             ev.calledSetLastAction = false;
             ev.calledShowError = false;
-
-            // TODO: The ordering of by category is off
+            budgetView.calledShowCategories = false;
 
             //Act
             p.AddCategory("Game", null);
@@ -745,6 +746,33 @@ namespace BudgetCodeTests
 
             //Act
             p.UpdateExpense(firstExpenseInFile.Id, firstExpenseInFile.Date, -1, firstExpenseInFile.Amount.ToString(), "Updated Item");
+
+            //Assert
+            Assert.True(ev.calledShowError);
+            Assert.False(ev.calledSetLastAction);
+        }
+
+        // ========================================================================
+
+        [Fact]
+        public void PresenterMethods_UpdateExpense_InvalidDescription()
+        {
+            //Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            TestExpenseView ev = new TestExpenseView();
+            Presenter p = new Presenter(budgetView);
+            p.expenseView = ev;
+            p.ConnectToDatabase(messyDB, false);
+            ev.SetToFalse();
+            Expense firstExpenseInFile = p.GetExpenses().First();
+
+            const string BAD_DESCRIPTION = "";
+
+            //Act
+            p.UpdateExpense(firstExpenseInFile.Id, firstExpenseInFile.Date, firstExpenseInFile.Category, firstExpenseInFile.Amount.ToString(), BAD_DESCRIPTION);
 
             //Assert
             Assert.True(ev.calledShowError);
