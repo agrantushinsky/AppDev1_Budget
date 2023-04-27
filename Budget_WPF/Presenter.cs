@@ -319,7 +319,7 @@ namespace Budget_WPF
         /// <param name="amountStr">Expense amount</param>
         /// <param name="description">Short description</param>
         /// <returns>True if all the arguments are valid. False otherwise.</returns>
-        public bool ValidateUserInput(DateTime date, int category, string amountStr, string description)
+        private bool ValidateUserInput(DateTime date, int category, string amountStr, string description)
         {
             StringBuilder errorMessage = new();
             double amount;
