@@ -302,16 +302,12 @@ namespace Budget_WPF
             {
                 // Delete the expense
                 _model.expenses.Delete(expId);
-
-                // Set the last action
-                _expenseView.SetLastAction($"Successfully deleted expense: {description}");
             }
 
             catch (Exception ex)
             {
 
             }
-            _expenseView.ClearInputs();
             _budgetView.Refresh();
         }
 

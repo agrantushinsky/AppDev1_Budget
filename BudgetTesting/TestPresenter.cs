@@ -824,8 +824,6 @@ namespace BudgetCodeTests
 
             //Assert
             Assert.True(budgetView.calledRefresh);
-            Assert.True(ev.calledSetLastAction);
-            Assert.True(ev.calledClearInputs);
             Assert.Equal(count - 1, p.GetExpenses().Count());
         }
 
@@ -852,8 +850,6 @@ namespace BudgetCodeTests
 
             //Assert
             Assert.True(budgetView.calledRefresh);
-            Assert.True(ev.calledSetLastAction);
-            Assert.True(ev.calledClearInputs);
             Assert.Equal(count, p.GetExpenses().Count());
         }
 
