@@ -46,7 +46,7 @@ namespace Budget_WPF
             }
             miModify.IsEnabled = miDelete.IsEnabled = false;
 
-            dpStartDate.SelectedDate = DateTime.Today.AddYears(-1);
+            dpStartDate.SelectedDate = DateTime.Today.AddYears(-25);
             dpEndDate.SelectedDate = DateTime.Today;
         }
 
@@ -346,14 +346,46 @@ namespace Budget_WPF
             return MessageBox.Show(message, "Info", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes;
         }
 
+        private int lastIndex = 0;
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
-            ShowError("Search Button ETA: Next sprint.");
+            if(dgExpenses.ItemsSource.GetType() == typeof(List<BudgetItem>))
+            {
+                List<BudgetItem> budgetItems = (List<BudgetItem>)dgExpenses.ItemsSource;
+                lastIndex %= budgetItems.Count;
+                bool allowIndexReset = true;
+                for(int i = lastIndex; i < budgetItems.Count; i++)
+                {
+                    BudgetItem item = budgetItems[i];
+                    // TODO: Skip ids
+                    foreach(var prop in item.GetType().GetProperties())
+                    {
+                        if(prop.GetValue(item).ToString().Contains(txbSearch.Text))
+                        {
+                            dgExpenses.SelectedItem = item;
+                            lastIndex++;
+
+                            return;
+                        }
+                    }
+                    if (i == budgetItems.Count - 1 && allowIndexReset)
+                    {
+                        i = -1;
+                        allowIndexReset = false;
+                    }
+                    lastIndex++;
+                }
+            }
         }
 
         private void Menu_Exit_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void txbSearch_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            lastIndex = 0;
         }
     }
 }
