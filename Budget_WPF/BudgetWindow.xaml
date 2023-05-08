@@ -92,6 +92,6 @@
                 </DataGrid>
             </StackPanel>
         </GroupBox>
-        <TextBlock x:Name="txtbCurrentFile" Grid.Row="2" Grid.ColumnSpan="2">Budget File: None</TextBlock>
+        <TextBlock Background="LightYellow" x:Name="txtbCurrentFile" Grid.Row="2" Grid.ColumnSpan="2">Budget File: None</TextBlock>
     </Grid>
 </Window>
