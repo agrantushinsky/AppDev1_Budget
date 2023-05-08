@@ -46,7 +46,7 @@ namespace Budget_WPF
             }
             miModify.IsEnabled = miDelete.IsEnabled = false;
 
-            dpStartDate.SelectedDate = DateTime.Today.AddYears(-25);
+            dpStartDate.SelectedDate = DateTime.Today.AddYears(-1);
             dpEndDate.SelectedDate = DateTime.Today;
         }
 
@@ -349,20 +349,34 @@ namespace Budget_WPF
         private int lastIndex = 0;
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
+            // TODO: actually select the element
+
             if(dgExpenses.ItemsSource.GetType() == typeof(List<BudgetItem>))
             {
                 List<BudgetItem> budgetItems = (List<BudgetItem>)dgExpenses.ItemsSource;
+                if (budgetItems.Count == 0)
+                    return;
+
                 lastIndex %= budgetItems.Count;
                 bool allowIndexReset = true;
                 for(int i = lastIndex; i < budgetItems.Count; i++)
                 {
                     BudgetItem item = budgetItems[i];
-                    // TODO: Skip ids
+
                     foreach(var prop in item.GetType().GetProperties())
                     {
-                        if(prop.GetValue(item).ToString().Contains(txbSearch.Text))
+                        if (prop.Name == "CategoryID" || prop.Name == "ExpenseID")
+                            continue;
+
+                        string? propertyText = prop.GetValue(item).ToString();
+
+                        if(prop.Name == "Date")
+                            propertyText = ((DateTime)prop.GetValue(item)).ToString("dd/MM/yyyy");
+
+                        if(propertyText.Contains(txbSearch.Text, StringComparison.InvariantCultureIgnoreCase))
                         {
                             dgExpenses.SelectedItem = item;
+                            dgExpenses.Focus();
                             lastIndex++;
 
                             return;
