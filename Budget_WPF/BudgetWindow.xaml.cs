@@ -349,8 +349,6 @@ namespace Budget_WPF
         private int lastIndex = 0;
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: actually select the element
-
             if (dgExpenses.ItemsSource.GetType() == typeof(List<BudgetItem>))
             {
                 List<BudgetItem> budgetItems = (List<BudgetItem>)dgExpenses.ItemsSource;
@@ -381,6 +379,12 @@ namespace Budget_WPF
 
                             return;
                         }
+                    }
+                    if(!allowIndexReset)
+                    {
+                        System.Media.SystemSounds.Asterisk.Play();
+                        ShowError("No match found.");
+                        return;
                     }
                     if (i == budgetItems.Count - 1 && allowIndexReset)
                     {
