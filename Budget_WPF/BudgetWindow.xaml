@@ -6,6 +6,11 @@
         xmlns:local="clr-namespace:Budget_WPF"
         mc:Ignorable="d"
         Title="BudgetWindow" Height="500" Width="1200" MinHeight="400" MinWidth="700" WindowStartupLocation="CenterScreen">
+
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static local:CustomCommands.Modify}" Executed="CommandBinding_Executed_Modify"/>
+        <CommandBinding Command="{x:Static local:CustomCommands.Delete}" Executed="CommandBinding_Executed_Delete"/>
+    </Window.CommandBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>

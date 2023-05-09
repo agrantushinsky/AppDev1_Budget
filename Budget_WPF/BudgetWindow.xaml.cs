@@ -320,7 +320,7 @@ namespace Budget_WPF
 
             string saveLocation = "";
 
-            if(saveFileDialog.ShowDialog() == true)
+            if (saveFileDialog.ShowDialog() == true)
             {
                 saveLocation = saveFileDialog.FileName;
             }
@@ -378,7 +378,7 @@ namespace Budget_WPF
         {
             // TODO: actually select the element
 
-            if(dgExpenses.ItemsSource.GetType() == typeof(List<BudgetItem>))
+            if (dgExpenses.ItemsSource.GetType() == typeof(List<BudgetItem>))
             {
                 List<BudgetItem> budgetItems = (List<BudgetItem>)dgExpenses.ItemsSource;
                 if (budgetItems.Count == 0)
@@ -386,21 +386,21 @@ namespace Budget_WPF
 
                 lastIndex %= budgetItems.Count;
                 bool allowIndexReset = true;
-                for(int i = lastIndex; i < budgetItems.Count; i++)
+                for (int i = lastIndex; i < budgetItems.Count; i++)
                 {
                     BudgetItem item = budgetItems[i];
 
-                    foreach(var prop in item.GetType().GetProperties())
+                    foreach (var prop in item.GetType().GetProperties())
                     {
                         if (prop.Name == "CategoryID" || prop.Name == "ExpenseID")
                             continue;
 
                         string? propertyText = prop.GetValue(item).ToString();
 
-                        if(prop.Name == "Date")
+                        if (prop.Name == "Date")
                             propertyText = ((DateTime)prop.GetValue(item)).ToString("dd/MM/yyyy");
 
-                        if(propertyText.Contains(txbSearch.Text, StringComparison.InvariantCultureIgnoreCase))
+                        if (propertyText.Contains(txbSearch.Text, StringComparison.InvariantCultureIgnoreCase))
                         {
                             dgExpenses.SelectedItem = item;
                             dgExpenses.Focus();
@@ -429,6 +429,7 @@ namespace Budget_WPF
             lastIndex = 0;
         }
 
+
         private void miDetails_Click(object sender, RoutedEventArgs e)
         {
             if(dgExpenses.SelectedItem != null)
@@ -436,5 +437,39 @@ namespace Budget_WPF
                 BudgetDetails details = new BudgetDetails(dgExpenses.SelectedItem);
             }
         }
+
+        private void CommandBinding_Executed_Modify(object sender, ExecutedRoutedEventArgs e)
+        {
+            miModify_Click(sender, e);
+        }
+
+        private void CommandBinding_Executed_Delete(object sender, ExecutedRoutedEventArgs e)
+        {
+            miDelete_Click(sender, e);
+        }
+    }
+
+    public static class CustomCommands 
+    {
+        public static readonly RoutedUICommand Modify = new RoutedUICommand(
+            "Modify",
+            "Modify",
+            typeof(CustomCommands),
+            new InputGestureCollection()
+            {
+                new KeyGesture(Key.M, ModifierKeys.Control)
+            }
+            );
+
+        public static readonly RoutedUICommand Delete = new RoutedUICommand(
+            "Delete",
+            "Delete",
+            typeof(CustomCommands),
+            new InputGestureCollection()
+            {
+                new KeyGesture(Key.X, ModifierKeys.Control)
+            }
+            );
+
     }
 }
