@@ -384,10 +384,12 @@ namespace Budget_WPF
 
                 lastIndex %= budgetItems.Count;
                 bool allowIndexReset = true;
+                // Iterate every budget item.
                 for (int i = lastIndex; i < budgetItems.Count; i++)
                 {
                     BudgetItem item = budgetItems[i];
 
+                    // Loop through all property values expect for IDs to do searching.
                     foreach (var prop in item.GetType().GetProperties())
                     {
                         if (prop.Name == "CategoryID" || prop.Name == "ExpenseID")
@@ -400,24 +402,32 @@ namespace Budget_WPF
 
                         if (propertyText.Contains(txbSearch.Text, StringComparison.InvariantCultureIgnoreCase))
                         {
+                            // Set, focus and scroll to the item that has search match.
                             dgExpenses.SelectedItem = item;
                             dgExpenses.Focus();
+                            dgExpenses.ScrollIntoView(item);
+
+                            // Increment the lastIndex
                             lastIndex++;
 
+                            // Stop the loop
                             return;
                         }
                     }
+                    // Condition for when no searches are found
                     if(!allowIndexReset)
                     {
                         System.Media.SystemSounds.Asterisk.Play();
                         ShowError("No match found.");
                         return;
                     }
+                    // Wrap around the search
                     if (i == budgetItems.Count - 1 && allowIndexReset)
                     {
                         i = -1;
                         allowIndexReset = false;
                     }
+                    // Increment the lastIndex
                     lastIndex++;
                 }
             }

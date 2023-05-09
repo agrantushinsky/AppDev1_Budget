@@ -76,7 +76,7 @@
         </StackPanel>
 
         <GroupBox Header="Expenses" Grid.Column="1" Grid.Row="1">
-            <StackPanel>
+            <StackPanel Height="auto">
                 
                 <!--Search Bar-->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -85,7 +85,7 @@
                 </StackPanel>
 
                 <!-- Table of Expenses-->
-                <DataGrid x:Name="dgExpenses" AutoGenerateColumns="False" IsReadOnly="True" MouseDoubleClick="dgExpenses_MouseDoubleClick">
+                <DataGrid x:Name="dgExpenses" AutoGenerateColumns="False" IsReadOnly="True" MouseDoubleClick="dgExpenses_MouseDoubleClick" Height="auto">
                     <DataGrid.ContextMenu>
                         <ContextMenu>
                             <!--TODO: May need to add Commands for the shortcut Ctrl+X or + M way?-->
