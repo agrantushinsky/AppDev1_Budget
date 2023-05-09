@@ -91,6 +91,7 @@
                             <!--TODO: May need to add Commands for the shortcut Ctrl+X or + M way?-->
                             <MenuItem Header="_Modify" x:Name="miModify" Click="miModify_Click" InputGestureText="Ctrl+M"/>
                             <MenuItem Header="_Delete" x:Name="miDelete" Click="miDelete_Click" InputGestureText="Ctrl+X"/>
+                            <MenuItem Header="View Details" x:Name="miDetails" Click="miDetails_Click"/>
                         </ContextMenu>
 
                     </DataGrid.ContextMenu>
