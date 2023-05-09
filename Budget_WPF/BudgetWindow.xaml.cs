@@ -78,11 +78,32 @@ namespace Budget_WPF
 
         public void UpdateView(object items)
         {
+            miDetails.IsEnabled = true;
+
             //Updates the Menu items on the datagrid
-            if (cbFilterByMonth.IsChecked == true || cbFilterByCategory.IsChecked == true)
+            if(cbFilterByCategory.IsChecked == true ^ cbFilterByMonth.IsChecked == true)
+            {
                 miModify.IsEnabled = miDelete.IsEnabled = false;
-            else
+                miDetails.IsEnabled = true;
+            }
+            else if (cbFilterByMonth.IsChecked == true && cbFilterByCategory.IsChecked == true)
+            {
+                miModify.IsEnabled = miDelete.IsEnabled = false;
+                miDetails.IsEnabled = false;
+            }
+            else if (cbFilterByMonth.IsChecked == true || cbFilterByCategory.IsChecked == true)
+            {
                 miModify.IsEnabled = miDelete.IsEnabled = true;
+                miDetails.IsEnabled = false;
+            }
+            else
+            {
+                miModify.IsEnabled = miDelete.IsEnabled = true;
+                miDetails.IsEnabled = false;
+            }
+
+
+
 
             dgExpenses.Columns.Clear();
 
@@ -171,6 +192,7 @@ namespace Budget_WPF
             }
             else if (items is List<Dictionary<string, object>>)
             {
+
                 List<Dictionary<string, object>> budgetItems = (List<Dictionary<string, object>>)items;
                 dgExpenses.ItemsSource = budgetItems;
 
@@ -332,12 +354,17 @@ namespace Budget_WPF
 
         private void dgExpenses_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (dgExpenses.SelectedValue is not null)
+            if (dgExpenses.SelectedValue is not null && !miDetails.IsEnabled)
             {
                 _addOrUpdateExpense = new AddOrUpdateExpense();
                 _presenter.ExpenseView = _addOrUpdateExpense;
                 _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Update, _presenter, (BudgetItem)dgExpenses.SelectedItem);
                 _addOrUpdateExpense.ShowDialog();
+            }
+            else
+            {
+                BudgetDetails details = new BudgetDetails(dgExpenses.SelectedItem);
+                details.ShowDialog();
             }
         }
 
@@ -400,6 +427,14 @@ namespace Budget_WPF
         private void txbSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
             lastIndex = 0;
+        }
+
+        private void miDetails_Click(object sender, RoutedEventArgs e)
+        {
+            if(dgExpenses.SelectedItem != null)
+            {
+                BudgetDetails details = new BudgetDetails(dgExpenses.SelectedItem);
+            }
         }
     }
 }
