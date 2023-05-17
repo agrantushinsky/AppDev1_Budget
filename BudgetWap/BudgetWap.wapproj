@@ -57,7 +57,7 @@
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <NoWarn>$(NoWarn);NU1702</NoWarn>
     <EntryPointProjectUniqueName>..\Budget_WPF\Budget_WPF.csproj</EntryPointProjectUniqueName>
-    <PackageCertificateThumbprint>B49F0FDA1C62DA558B5F8873D3A897A3A23E5FD7</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>469E93FC58F75DCB14E31E0182AB0AD335E6DA37</PackageCertificateThumbprint>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>

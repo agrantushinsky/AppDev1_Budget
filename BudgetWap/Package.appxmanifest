@@ -8,8 +8,8 @@
 
   <Identity
     Name="bcab2ed1-d7d6-482d-b376-9f9e9e012bf4"
-    Publisher="CN=NoahsArj"
-    Version="1.0.2.0" />
+    Publisher="CN=noaharj"
+    Version="1.0.3.0" />
 
   <Properties>
     <DisplayName>NoahsArj</DisplayName>
@@ -35,7 +35,7 @@
         Description="NoahsArj Budget application"
         BackgroundColor="transparent"
         Square44x44Logo="Images\Square44x44Logo.png" Square150x150Logo="Images\Wide310x150Logo.png">
-        <uap:DefaultTile Wide310x150Logo="Images\Wide310x150Logo.png"  >
+        <uap:DefaultTile  Square71x71Logo="Square71x71Logo.png">
           <uap:ShowNameOnTiles>
             <uap:ShowOn Tile="square150x150Logo"/>
           </uap:ShowNameOnTiles>
