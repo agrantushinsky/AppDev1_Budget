@@ -199,6 +199,5 @@ namespace Budget_WPF
                 tbx_Amount.Text = currentExpenseItem.Amount.ToString();
             }
         }
-
     }
 }
