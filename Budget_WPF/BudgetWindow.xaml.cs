@@ -293,7 +293,7 @@ namespace Budget_WPF
                 miDetails.IsEnabled = false;
             }
 
-
+            // Clear the columns before adding columns
             dgExpenses.Columns.Clear();
 
             // Create rightAligned style.
@@ -315,6 +315,7 @@ namespace Budget_WPF
 
                 // Category column
                 DataGridTextColumn categoryColumn = new();
+
                 categoryColumn.Header = "Category";
                 categoryColumn.Binding = new Binding("Category");
                 dgExpenses.Columns.Add(categoryColumn);
