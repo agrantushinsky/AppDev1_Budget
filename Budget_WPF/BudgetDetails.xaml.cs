@@ -84,6 +84,5 @@ namespace Budget_WPF
             balanceColumn.CellStyle = rightAligned;
             dgDetails.Columns.Add(balanceColumn);
         }
-
     }
 }
