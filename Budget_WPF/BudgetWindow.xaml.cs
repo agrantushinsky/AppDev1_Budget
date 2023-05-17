@@ -470,6 +470,7 @@ namespace Budget_WPF
 
     }
 
+    // Class for keybinds
     public static class CustomCommands 
     {
         public static readonly RoutedUICommand Modify = new RoutedUICommand(
