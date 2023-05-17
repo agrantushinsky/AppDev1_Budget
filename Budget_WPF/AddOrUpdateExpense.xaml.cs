@@ -40,11 +40,49 @@ namespace Budget_WPF
             InitializeComponent();
         }
 
+        //================
+        // Event handlers
+        //================
+
         private void btn_Save_Click(object sender, RoutedEventArgs e)
         {
             SaveExpense();
         }
 
+        private void btnAddCategory_Click(object sender, RoutedEventArgs e)
+        {
+            if (_presenter.IsFileSelected())
+                AddCategory();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = !_presenter.UnsavedChangesCheck(tbx_Description.Text, tbx_Amount.Text);
+        }
+
+        private void btn_DiscardOrClose_Click(object sender, RoutedEventArgs e)
+        {
+            ClearInputs();
+
+            if (currentMode == Mode.Update)
+            {
+                this.Close();
+            }
+        }
+
+        private void btn_CloseOrDelete_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentMode == Mode.Update)
+            {
+                _presenter.DeleteExpense(currentExpenseItem.Id, currentExpenseItem.Description);
+            }
+
+            this.Close();
+        }
+
+        //==================
+        //Interface methods
+        //==================
 
         public void AddCategory()
         {
@@ -107,23 +145,11 @@ namespace Budget_WPF
             MessageBox.Show(message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
-
-        private void btnAddCategory_Click(object sender, RoutedEventArgs e)
-        {
-            if(_presenter.IsFileSelected())    
-                AddCategory();
-        }
-
         public void ClearInputs()
         {
             tbx_Amount.Text = "";
             tbx_Description.Text = "";
             cbCredit.IsChecked = false;
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            e.Cancel = !_presenter.UnsavedChangesCheck(tbx_Description.Text, tbx_Amount.Text);
         }
 
         public bool ShowMessageWithConfirmation(string message)
@@ -134,26 +160,6 @@ namespace Budget_WPF
         public void SetLastAction(string message)
         {
             txb_LastAction.Text = $"[{DateTime.Now.ToShortTimeString()}] {message}";
-        }
-
-        private void btn_DiscardOrClose_Click(object sender, RoutedEventArgs e)
-        {
-            ClearInputs();
-
-            if(currentMode == Mode.Update)
-            {
-                this.Close();
-            }
-        }
-
-        private void btn_CloseOrDelete_Click(object sender, RoutedEventArgs e)
-        {
-            if (currentMode == Mode.Update)
-            {
-                _presenter.DeleteExpense(currentExpenseItem.Id, currentExpenseItem.Description);
-            }
-
-            this.Close();
         }
 
         public void SetAddOrUpdateView(Mode mode, Presenter presenter, BudgetItem budgetItem = null)

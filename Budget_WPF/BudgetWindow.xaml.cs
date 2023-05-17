@@ -50,6 +50,198 @@ namespace Budget_WPF
             dpEndDate.SelectedDate = DateTime.Today;
         }
 
+        //================
+        // Event handlers
+        //================
+
+        private void Menu_OpenRecent_Click(object sender, RoutedEventArgs e)
+        {
+            _presenter.ConnectToDatabase(_presenter.GetRecentFile(), false);
+            _filename = _presenter.GetRecentFile();
+        }
+
+        private void Menu_OpenFile_Click(object sender, RoutedEventArgs e)
+        {
+            OpenExistingFile();
+        }
+
+        private void Menu_NewFile_Click(object sender, RoutedEventArgs e)
+        {
+            OpenNewFile();
+        }
+
+        private void btn_AddExpense_Click(object sender, RoutedEventArgs e)
+        {
+            _addOrUpdateExpense = new AddOrUpdateExpense();
+            _presenter.ExpenseView = _addOrUpdateExpense;
+            _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Add, _presenter);
+            _addOrUpdateExpense.ShowDialog();
+        }
+
+        private void miModify_Click(object sender, RoutedEventArgs e)
+        {
+            if (dgExpenses.SelectedValue is not null)
+            {
+                _addOrUpdateExpense = new AddOrUpdateExpense();
+                _presenter.ExpenseView = _addOrUpdateExpense;
+                _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Update, _presenter, (BudgetItem)dgExpenses.SelectedItem);
+                _addOrUpdateExpense.ShowDialog();
+            }
+        }
+
+        private void miDelete_Click(object sender, RoutedEventArgs e)
+        {
+            if (dgExpenses.SelectedValue is not null)
+            {
+                BudgetItem expense = (BudgetItem)dgExpenses.SelectedItem;
+                _presenter.DeleteExpense(expense.ExpenseID, expense.ShortDescription);
+            }
+        }
+
+        private void Menu_SaveAs_Click(object sender, RoutedEventArgs e)
+        {
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Database File | *.db";
+
+            string saveLocation = "";
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                saveLocation = saveFileDialog.FileName;
+            }
+
+            if (!string.IsNullOrEmpty(saveLocation))
+            {
+                System.IO.File.Copy(_filename, saveLocation, true);
+            }
+        }
+
+        private void SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Refresh();
+        }
+
+        private void CheckBox_Changed(object sender, RoutedEventArgs e)
+        {
+            Refresh();
+        }
+
+        private void cmbCategories_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Refresh();
+        }
+
+        private void dgExpenses_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (dgExpenses.SelectedValue is not null && !miDetails.IsEnabled)
+            {
+                _addOrUpdateExpense = new AddOrUpdateExpense();
+                _presenter.ExpenseView = _addOrUpdateExpense;
+                _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Update, _presenter, (BudgetItem)dgExpenses.SelectedItem);
+                _addOrUpdateExpense.ShowDialog();
+            }
+            else
+            {
+                BudgetDetails details = new BudgetDetails(dgExpenses.SelectedItem);
+                details.ShowDialog();
+            }
+        }
+
+
+        private int lastIndex = 0;
+        private void btnSearch_Click(object sender, RoutedEventArgs e)
+        {
+            if (dgExpenses.ItemsSource.GetType() == typeof(List<BudgetItem>))
+            {
+                List<BudgetItem> budgetItems = (List<BudgetItem>)dgExpenses.ItemsSource;
+                if (budgetItems.Count == 0)
+                    return;
+
+                lastIndex %= budgetItems.Count;
+                bool allowIndexReset = true;
+                // Iterate every budget item.
+                for (int i = lastIndex; i < budgetItems.Count; i++)
+                {
+                    BudgetItem item = budgetItems[i];
+
+                    // Loop through all property values expect for IDs to do searching.
+                    foreach (var prop in item.GetType().GetProperties())
+                    {
+                        if (prop.Name == "CategoryID" || prop.Name == "ExpenseID")
+                            continue;
+
+                        string? propertyText = prop.GetValue(item).ToString();
+
+                        if (prop.Name == "Date")
+                            propertyText = ((DateTime)prop.GetValue(item)).ToString("dd/MM/yyyy");
+
+                        if (propertyText.Contains(txbSearch.Text, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            // Set, focus and scroll to the item that has search match.
+                            dgExpenses.SelectedItem = item;
+                            dgExpenses.Focus();
+                            dgExpenses.ScrollIntoView(item);
+
+                            // Increment the lastIndex
+                            lastIndex++;
+
+                            // Stop the loop
+                            return;
+                        }
+                    }
+                    // Condition for when no searches are found
+                    if (!allowIndexReset)
+                    {
+                        System.Media.SystemSounds.Asterisk.Play();
+                        ShowError("No match found.");
+                        return;
+                    }
+                    // Wrap around the search
+                    if (i == budgetItems.Count - 1 && allowIndexReset)
+                    {
+                        i = -1;
+                        allowIndexReset = false;
+                    }
+                    // Increment the lastIndex
+                    lastIndex++;
+                }
+            }
+        }
+
+        private void Menu_Exit_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void txbSearch_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            lastIndex = 0;
+        }
+
+        private void miDetails_Click(object sender, RoutedEventArgs e)
+        {
+            if (dgExpenses.SelectedItem != null)
+            {
+                BudgetDetails details = new BudgetDetails(dgExpenses.SelectedItem);
+            }
+        }
+
+        private void CommandBinding_Executed_Modify(object sender, ExecutedRoutedEventArgs e)
+        {
+            miModify_Click(sender, e);
+        }
+
+        private void CommandBinding_Executed_Delete(object sender, ExecutedRoutedEventArgs e)
+        {
+            miDelete_Click(sender, e);
+        }
+
+
+        //==================
+        //Interface methods
+        //==================
+
         public void Refresh()
         {
             Category? category = cmbCategories.SelectedItem as Category;
@@ -101,8 +293,6 @@ namespace Budget_WPF
                 miModify.IsEnabled = miDelete.IsEnabled = true;
                 miDetails.IsEnabled = false;
             }
-
-
 
 
             dgExpenses.Columns.Clear();
@@ -244,22 +434,6 @@ namespace Budget_WPF
             }
         }
 
-        private void Menu_OpenRecent_Click(object sender, RoutedEventArgs e)
-        {
-            _presenter.ConnectToDatabase(_presenter.GetRecentFile(), false);
-            _filename = _presenter.GetRecentFile();
-        }
-
-        private void Menu_OpenFile_Click(object sender, RoutedEventArgs e)
-        {
-            OpenExistingFile();
-        }
-
-        private void Menu_NewFile_Click(object sender, RoutedEventArgs e)
-        {
-            OpenNewFile();
-        }
-
         public void OpenExistingFile()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -284,88 +458,10 @@ namespace Budget_WPF
             }
         }
 
-        private void btn_AddExpense_Click(object sender, RoutedEventArgs e)
-        {
-            _addOrUpdateExpense = new AddOrUpdateExpense();
-            _presenter.ExpenseView = _addOrUpdateExpense;
-            _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Add, _presenter);
-            _addOrUpdateExpense.ShowDialog();
-        }
-
-        private void miModify_Click(object sender, RoutedEventArgs e)
-        {
-            if (dgExpenses.SelectedValue is not null)
-            {
-                _addOrUpdateExpense = new AddOrUpdateExpense();
-                _presenter.ExpenseView = _addOrUpdateExpense;
-                _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Update, _presenter, (BudgetItem)dgExpenses.SelectedItem);
-                _addOrUpdateExpense.ShowDialog();
-            }
-        }
-
-        private void miDelete_Click(object sender, RoutedEventArgs e)
-        {
-            if (dgExpenses.SelectedValue is not null)
-            {
-                BudgetItem expense = (BudgetItem)dgExpenses.SelectedItem;
-                _presenter.DeleteExpense(expense.ExpenseID, expense.ShortDescription);
-            }
-        }
-
-        private void Menu_SaveAs_Click(object sender, RoutedEventArgs e)
-        {
-
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "Database File | *.db";
-
-            string saveLocation = "";
-
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                saveLocation = saveFileDialog.FileName;
-            }
-
-            if (!string.IsNullOrEmpty(saveLocation))
-            {
-                System.IO.File.Copy(_filename, saveLocation, true);
-            }
-        }
-
-        private void SelectedDateChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Refresh();
-        }
-
-        private void CheckBox_Changed(object sender, RoutedEventArgs e)
-        {
-            Refresh();
-        }
-
-        private void cmbCategories_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Refresh();
-        }
-
         public void ShowCategories(List<Category> categories)
         {
             cmbCategories.DisplayMemberPath = "Description";
             cmbCategories.ItemsSource = categories;
-        }
-
-        private void dgExpenses_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (dgExpenses.SelectedValue is not null && !miDetails.IsEnabled)
-            {
-                _addOrUpdateExpense = new AddOrUpdateExpense();
-                _presenter.ExpenseView = _addOrUpdateExpense;
-                _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Update, _presenter, (BudgetItem)dgExpenses.SelectedItem);
-                _addOrUpdateExpense.ShowDialog();
-            }
-            else
-            {
-                BudgetDetails details = new BudgetDetails(dgExpenses.SelectedItem);
-                details.ShowDialog();
-            }
         }
 
         public bool ShowMessageWithConfirmation(string message)
@@ -373,94 +469,6 @@ namespace Budget_WPF
             return MessageBox.Show(message, "Info", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes;
         }
 
-        private int lastIndex = 0;
-        private void btnSearch_Click(object sender, RoutedEventArgs e)
-        {
-            if (dgExpenses.ItemsSource.GetType() == typeof(List<BudgetItem>))
-            {
-                List<BudgetItem> budgetItems = (List<BudgetItem>)dgExpenses.ItemsSource;
-                if (budgetItems.Count == 0)
-                    return;
-
-                lastIndex %= budgetItems.Count;
-                bool allowIndexReset = true;
-                // Iterate every budget item.
-                for (int i = lastIndex; i < budgetItems.Count; i++)
-                {
-                    BudgetItem item = budgetItems[i];
-
-                    // Loop through all property values expect for IDs to do searching.
-                    foreach (var prop in item.GetType().GetProperties())
-                    {
-                        if (prop.Name == "CategoryID" || prop.Name == "ExpenseID")
-                            continue;
-
-                        string? propertyText = prop.GetValue(item).ToString();
-
-                        if (prop.Name == "Date")
-                            propertyText = ((DateTime)prop.GetValue(item)).ToString("dd/MM/yyyy");
-
-                        if (propertyText.Contains(txbSearch.Text, StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            // Set, focus and scroll to the item that has search match.
-                            dgExpenses.SelectedItem = item;
-                            dgExpenses.Focus();
-                            dgExpenses.ScrollIntoView(item);
-
-                            // Increment the lastIndex
-                            lastIndex++;
-
-                            // Stop the loop
-                            return;
-                        }
-                    }
-                    // Condition for when no searches are found
-                    if(!allowIndexReset)
-                    {
-                        System.Media.SystemSounds.Asterisk.Play();
-                        ShowError("No match found.");
-                        return;
-                    }
-                    // Wrap around the search
-                    if (i == budgetItems.Count - 1 && allowIndexReset)
-                    {
-                        i = -1;
-                        allowIndexReset = false;
-                    }
-                    // Increment the lastIndex
-                    lastIndex++;
-                }
-            }
-        }
-
-        private void Menu_Exit_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
-
-        private void txbSearch_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            lastIndex = 0;
-        }
-
-
-        private void miDetails_Click(object sender, RoutedEventArgs e)
-        {
-            if(dgExpenses.SelectedItem != null)
-            {
-                BudgetDetails details = new BudgetDetails(dgExpenses.SelectedItem);
-            }
-        }
-
-        private void CommandBinding_Executed_Modify(object sender, ExecutedRoutedEventArgs e)
-        {
-            miModify_Click(sender, e);
-        }
-
-        private void CommandBinding_Executed_Delete(object sender, ExecutedRoutedEventArgs e)
-        {
-            miDelete_Click(sender, e);
-        }
     }
 
     public static class CustomCommands 
