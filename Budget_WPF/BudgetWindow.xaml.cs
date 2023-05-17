@@ -134,17 +134,21 @@ namespace Budget_WPF
 
         private void dgExpenses_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (dgExpenses.SelectedValue is not null && !miDetails.IsEnabled)
+            if (dgExpenses.SelectedValue is not null)
             {
-                _addOrUpdateExpense = new AddOrUpdateExpense();
-                _presenter.ExpenseView = _addOrUpdateExpense;
-                _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Update, _presenter, (BudgetItem)dgExpenses.SelectedItem);
-                _addOrUpdateExpense.ShowDialog();
-            }
-            else
-            {
-                BudgetDetails details = new BudgetDetails(dgExpenses.SelectedItem);
-                details.ShowDialog();
+                if (!miDetails.IsEnabled && miModify.IsEnabled)
+                {
+                    _addOrUpdateExpense = new AddOrUpdateExpense();
+                    _presenter.ExpenseView = _addOrUpdateExpense;
+                    _addOrUpdateExpense.SetAddOrUpdateView(AddOrUpdateExpense.Mode.Update, _presenter, (BudgetItem)dgExpenses.SelectedItem);
+                    _addOrUpdateExpense.ShowDialog();
+                }
+                else if(miDetails.IsEnabled)
+                {
+                    BudgetDetails details = new BudgetDetails(dgExpenses.SelectedItem);
+                    details.ShowDialog();
+                }
+
             }
         }
 
