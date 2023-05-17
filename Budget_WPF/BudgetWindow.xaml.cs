@@ -151,6 +151,7 @@ namespace Budget_WPF
         private int lastIndex = 0;
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
+            // Make sure the datagrid is not in a summary mode
             if (dgExpenses.ItemsSource.GetType() == typeof(List<BudgetItem>))
             {
                 List<BudgetItem> budgetItems = (List<BudgetItem>)dgExpenses.ItemsSource;
