@@ -44,7 +44,7 @@ namespace Budget_WPF
             {
                 miOpenRecent.IsEnabled = false;
             }
-            miModify.IsEnabled = miDelete.IsEnabled = false;
+            miModify.IsEnabled = miDelete.IsEnabled = btnSearch.IsEnabled = false;
 
             dpStartDate.SelectedDate = DateTime.Today.AddYears(-1);
             dpEndDate.SelectedDate = DateTime.Today;
@@ -153,10 +153,10 @@ namespace Budget_WPF
         }
 
         private int lastIndex = 0;
-        private void btnSearch_Click(object sender, RoutedEventArgs e)
+        private void ExecuteSearch()
         {
             // Make sure the datagrid is not in a summary mode
-            if (dgExpenses.ItemsSource.GetType() == typeof(List<BudgetItem>))
+            if (btnSearch.IsEnabled && dgExpenses.ItemsSource.GetType() == typeof(List<BudgetItem>))
             {
                 List<BudgetItem> budgetItems = (List<BudgetItem>)dgExpenses.ItemsSource;
                 if (budgetItems.Count == 0)
@@ -213,6 +213,11 @@ namespace Budget_WPF
             }
         }
 
+        private void btnSearch_Click(object sender, RoutedEventArgs e)
+        {
+            ExecuteSearch();
+        }
+
         private void Menu_Exit_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
@@ -250,7 +255,6 @@ namespace Budget_WPF
         {
             Category? category = cmbCategories.SelectedItem as Category;
             _presenter.FiltersChange(dpStartDate.SelectedDate, dpEndDate.SelectedDate, category is null ? -1 : category.Id, cbFilterCategory.IsChecked == true, cbFilterByMonth.IsChecked == true, cbFilterByCategory.IsChecked == true);
-
         }
 
         public void ShowCurrentFile(string filename)
@@ -274,7 +278,7 @@ namespace Budget_WPF
 
         public void UpdateView(object items)
         {
-            miDetails.IsEnabled = true;
+            miDetails.IsEnabled = btnSearch.IsEnabled = true;
 
             //Updates the Menu items on the datagrid
             if(cbFilterByCategory.IsChecked == true ^ cbFilterByMonth.IsChecked == true)
@@ -474,6 +478,13 @@ namespace Budget_WPF
             return MessageBox.Show(message, "Info", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes;
         }
 
+        private void txbSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter)
+            {
+                ExecuteSearch();
+            }
+        }
     }
 
     // Class for keybinds

@@ -81,7 +81,7 @@
                 <!--Search Bar-->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Content="Search" x:Name="btnSearch" Click="btnSearch_Click"/>
-                    <TextBox Width="200" x:Name="txbSearch" TextChanged="txbSearch_TextChanged"/>
+                    <TextBox Width="200" x:Name="txbSearch" TextChanged="txbSearch_TextChanged" KeyDown="txbSearch_KeyDown"/>
                 </StackPanel>
 
                 <!-- Table of Expenses-->
