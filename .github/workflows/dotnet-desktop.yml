@@ -79,9 +79,9 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.0.2
 
-    # Added - Setup vstest
-    - name: Setup vstest
-      uses: darenm/Setup-VSTest@v1
+    # Added - Run unit tests
+    - name: Execute unit tests
+      run: dotnet test $env:Test_Project_Path
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
@@ -90,11 +90,6 @@ jobs:
         Configuration: ${{ matrix.configuration }}
         RuntimeIdentifier: win-${{ matrix.targetplatform }}
         TargetPlatform: ${{ matrix.targetplatform }}
-        
-              
-    # Added - Run unit tests
-    - name: Execute unit tests
-      run: vstest.console.exe $env:Test_DLL
 
     # Decode the base 64 encoded pfx and save the Signing_Certificate
     - name: Decode the pfx
