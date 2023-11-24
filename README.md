@@ -20,6 +20,7 @@ Binaries can be found in `./Budget_WPF/bin/[x86|x64]/[Debug|Release]/net6.0-wind
 
 # Running Tests
 Run tests by following `Test -> Run All Tests`.
+![Screenshot 2023-11-23 215008](https://github.com/agrantushinsky/AppDev1_Budget/assets/97311487/ff37dd3e-444b-4eb1-b89c-33709318ea91)
 
 # Authors
 - Aidan Grant-Ushinsky
